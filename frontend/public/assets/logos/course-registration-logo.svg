@@ -1,0 +1,16 @@
+<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Logo hệ thống đăng ký môn học</title>
+  <desc id="desc">Biểu tượng quyển sách, lịch học và dấu chọn cho hệ thống đăng ký môn học.</desc>
+  <rect width="160" height="160" rx="32" fill="#EAF2FF"/>
+  <rect x="34" y="42" width="70" height="78" rx="10" fill="#2563EB"/>
+  <path d="M46 55H94V110H46C40 110 36 106 36 100V65C36 59 40 55 46 55Z" fill="#FFFFFF" opacity="0.96"/>
+  <path d="M47 67H89" stroke="#93C5FD" stroke-width="5" stroke-linecap="round"/>
+  <path d="M47 82H82" stroke="#93C5FD" stroke-width="5" stroke-linecap="round"/>
+  <path d="M47 97H75" stroke="#93C5FD" stroke-width="5" stroke-linecap="round"/>
+  <rect x="80" y="34" width="48" height="54" rx="10" fill="#0F172A"/>
+  <path d="M93 28V44M115 28V44" stroke="#F97316" stroke-width="7" stroke-linecap="round"/>
+  <path d="M92 57H116" stroke="#CBD5E1" stroke-width="4" stroke-linecap="round"/>
+  <path d="M92 70H108" stroke="#CBD5E1" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="108" cy="106" r="25" fill="#10B981"/>
+  <path d="M96 106L104 114L121 96" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

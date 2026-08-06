@@ -1,0 +1,18 @@
+<svg width="900" height="360" viewBox="0 0 900 360" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Minh họa bảng điều khiển học tập</title>
+  <desc id="desc">Lịch học, sách và dấu chọn tượng trưng cho trạng thái đăng ký môn học.</desc>
+  <rect width="900" height="360" rx="28" fill="#DBEAFE"/>
+  <rect x="74" y="70" width="260" height="210" rx="24" fill="#FFFFFF"/>
+  <path d="M110 112H298" stroke="#2563EB" stroke-width="12" stroke-linecap="round"/>
+  <path d="M110 158H262" stroke="#CBD5E1" stroke-width="10" stroke-linecap="round"/>
+  <path d="M110 200H292" stroke="#CBD5E1" stroke-width="10" stroke-linecap="round"/>
+  <path d="M110 242H220" stroke="#CBD5E1" stroke-width="10" stroke-linecap="round"/>
+  <rect x="410" y="70" width="340" height="220" rx="24" fill="#1E293B"/>
+  <rect x="450" y="116" width="66" height="56" rx="10" fill="#60A5FA"/>
+  <rect x="542" y="116" width="66" height="56" rx="10" fill="#34D399"/>
+  <rect x="634" y="116" width="66" height="56" rx="10" fill="#FDBA74"/>
+  <rect x="450" y="202" width="250" height="16" rx="8" fill="#E2E8F0"/>
+  <rect x="450" y="238" width="188" height="16" rx="8" fill="#94A3B8"/>
+  <circle cx="744" cy="250" r="54" fill="#10B981"/>
+  <path d="M718 250L735 267L771 229" stroke="#FFFFFF" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

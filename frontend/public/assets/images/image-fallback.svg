@@ -1,0 +1,8 @@
+<svg width="480" height="320" viewBox="0 0 480 320" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Ảnh dự phòng</title>
+  <desc id="desc">Khung ảnh dự phòng dùng khi tài nguyên chính không tải được.</desc>
+  <rect width="480" height="320" rx="24" fill="#F1F5F9"/>
+  <path d="M92 238L186 144L244 202L282 164L388 270H92V238Z" fill="#93C5FD"/>
+  <circle cx="338" cy="96" r="34" fill="#FBBF24"/>
+  <rect x="68" y="52" width="344" height="216" rx="22" stroke="#64748B" stroke-width="12"/>
+</svg>

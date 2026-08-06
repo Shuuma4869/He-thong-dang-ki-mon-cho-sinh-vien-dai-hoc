@@ -1,0 +1,34 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Minh họa khuôn viên đại học hiện đại</title>
+  <desc id="desc">Hình vector nguyên bản mô tả khuôn viên đại học, cây xanh và tòa nhà học tập.</desc>
+  <rect width="1200" height="900" fill="#0F172A"/>
+  <path d="M0 0H1200V900H0V0Z" fill="url(#sky)"/>
+  <circle cx="970" cy="155" r="74" fill="#FDBA74" opacity="0.85"/>
+  <path d="M0 680C190 620 310 660 480 610C675 552 830 580 1200 505V900H0V680Z" fill="#1D4ED8" opacity="0.18"/>
+  <path d="M0 730C220 690 410 720 600 675C785 632 950 646 1200 590V900H0V730Z" fill="#0F766E" opacity="0.22"/>
+  <rect x="235" y="300" width="690" height="360" rx="18" fill="#E2E8F0"/>
+  <rect x="270" y="250" width="620" height="85" rx="14" fill="#F8FAFC"/>
+  <path d="M220 315L580 145L940 315H220Z" fill="#2563EB"/>
+  <path d="M292 318L580 190L868 318H292Z" fill="#93C5FD"/>
+  <rect x="320" y="382" width="88" height="88" rx="10" fill="#2563EB" opacity="0.9"/>
+  <rect x="458" y="382" width="88" height="88" rx="10" fill="#2563EB" opacity="0.9"/>
+  <rect x="596" y="382" width="88" height="88" rx="10" fill="#2563EB" opacity="0.9"/>
+  <rect x="734" y="382" width="88" height="88" rx="10" fill="#2563EB" opacity="0.9"/>
+  <rect x="320" y="510" width="88" height="88" rx="10" fill="#2563EB" opacity="0.82"/>
+  <rect x="458" y="510" width="88" height="88" rx="10" fill="#2563EB" opacity="0.82"/>
+  <rect x="596" y="500" width="88" height="160" rx="10" fill="#0F172A" opacity="0.9"/>
+  <rect x="734" y="510" width="88" height="88" rx="10" fill="#2563EB" opacity="0.82"/>
+  <path d="M140 710H1060" stroke="#F8FAFC" stroke-width="28" stroke-linecap="round" opacity="0.85"/>
+  <path d="M185 715C260 670 325 670 410 715M800 715C870 670 952 670 1028 715" stroke="#10B981" stroke-width="22" stroke-linecap="round"/>
+  <path d="M150 626C150 570 195 525 251 525C307 525 352 570 352 626H150Z" fill="#22C55E"/>
+  <rect x="238" y="620" width="24" height="95" rx="8" fill="#92400E"/>
+  <path d="M925 642C925 584 972 537 1030 537C1088 537 1135 584 1135 642H925Z" fill="#22C55E"/>
+  <rect x="1018" y="636" width="24" height="96" rx="8" fill="#92400E"/>
+  <defs>
+    <linearGradient id="sky" x1="600" y1="0" x2="600" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1E3A8A"/>
+      <stop offset="0.55" stop-color="#1D4ED8"/>
+      <stop offset="1" stop-color="#0F172A"/>
+    </linearGradient>
+  </defs>
+</svg>
