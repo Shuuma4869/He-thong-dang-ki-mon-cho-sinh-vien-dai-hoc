@@ -1,6 +1,0 @@
-Thu muc nay luu cac tai nguyen cu duoc chuyen ra khoi runtime.
-
-logo1.svg, logo2.svg va phenikaa.svg khong phai SVG hop le trong audit ban dau.
-search_logo.js la script thu nghiem tim/tai logo tu nguon ngoai, khong thuoc runtime cua ung dung.
-
-Frontend hien dung bo asset local moi trong frontend/public/assets/.

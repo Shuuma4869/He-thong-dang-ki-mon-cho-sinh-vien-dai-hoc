@@ -2,6 +2,18 @@
 
 Không code trực tiếp trên `main`.
 
+## Clone repository
+
+```powershell
+cd D:\Projects
+git clone <URL_REPOSITORY_MOI> he-thong-dang-ky-mon-hoc
+cd he-thong-dang-ky-mon-hoc
+git switch develop
+git pull origin develop
+```
+
+Nên clone vào đường dẫn không dấu tiếng Việt, ví dụ `D:\Projects\he-thong-dang-ky-mon-hoc`, để tránh lỗi classpath Maven/Spring Boot trên Windows.
+
 Luồng đề xuất:
 
 ```powershell

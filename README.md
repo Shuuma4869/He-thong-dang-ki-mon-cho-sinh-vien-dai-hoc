@@ -55,9 +55,12 @@ javac -version
 ## Clone dự án
 
 ```powershell
-git clone <URL_REPOSITORY>
-cd <THU_MUC_DU_AN>
+cd D:\Projects
+git clone <URL_REPOSITORY_MOI> he-thong-dang-ky-mon-hoc
+cd he-thong-dang-ky-mon-hoc
 ```
+
+Nên clone vào thư mục không dấu tiếng Việt, ví dụ `D:\Projects\he-thong-dang-ky-mon-hoc`, để tránh lỗi classpath Maven/Spring Boot trên Windows.
 
 Không cần tạo file secret để build starter.
 
