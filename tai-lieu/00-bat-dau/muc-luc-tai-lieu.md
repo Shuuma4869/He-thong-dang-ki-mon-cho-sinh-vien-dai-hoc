@@ -3,7 +3,6 @@
 ## Bắt đầu
 
 - `gioi-thieu-du-an.md`
-- `huong-dan-lam-viec-voi-codex.md`
 
 ## Kiến trúc
 

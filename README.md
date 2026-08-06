@@ -157,7 +157,6 @@ Script này chạy frontend typecheck, frontend build, backend test và backend 
 +-- .env.example       # Env template cấp root
 +-- .gitattributes     # Quy tắc line ending
 +-- .editorconfig      # Quy tắc editor
-+-- AGENTS.md          # Hướng dẫn làm việc với Codex
 +-- LICENSE
 +-- pom.xml            # Maven aggregator để chạy wrapper từ root
 +-- README.md
