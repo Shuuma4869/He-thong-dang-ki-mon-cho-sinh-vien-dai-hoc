@@ -56,7 +56,7 @@ javac -version
 
 ```powershell
 cd D:\Projects
-git clone <URL_REPOSITORY_MOI> he-thong-dang-ky-mon-hoc
+git clone https://github.com/Shuuma4869/He-thong-dang-ki-mon-.git he-thong-dang-ky-mon-hoc
 cd he-thong-dang-ky-mon-hoc
 ```
 
