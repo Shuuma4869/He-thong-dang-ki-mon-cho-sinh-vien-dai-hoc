@@ -1,0 +1,14 @@
+package vn.edu.phenikaa.courseregistration.model;
+
+/** Dòng chi tiết trong phiếu đăng ký. */
+public class RegistrationDetail {
+    private String courseId;
+
+    public String getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(String courseId) {
+        this.courseId = courseId;
+    }
+}

@@ -1,0 +1,9 @@
+<svg width="320" height="220" viewBox="0 0 320 220" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Không có môn học phù hợp</title>
+  <desc id="desc">Minh họa trạng thái rỗng khi bộ lọc không tìm thấy môn học.</desc>
+  <rect width="320" height="220" rx="24" fill="#F8FAFC"/>
+  <rect x="72" y="50" width="136" height="112" rx="16" fill="#DBEAFE"/>
+  <path d="M96 78H184M96 106H166M96 134H150" stroke="#2563EB" stroke-width="9" stroke-linecap="round"/>
+  <circle cx="216" cy="141" r="38" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="10"/>
+  <path d="M243 168L272 197" stroke="#94A3B8" stroke-width="12" stroke-linecap="round"/>
+</svg>

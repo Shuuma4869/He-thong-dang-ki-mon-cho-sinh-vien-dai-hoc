@@ -1,0 +1,8 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Avatar sinh viên mặc định</title>
+  <desc id="desc">Avatar vector trung tính cho sinh viên.</desc>
+  <rect width="256" height="256" rx="128" fill="#DBEAFE"/>
+  <circle cx="128" cy="96" r="42" fill="#2563EB"/>
+  <path d="M58 220C67 178 94 154 128 154C162 154 189 178 198 220H58Z" fill="#1E40AF"/>
+  <path d="M88 96C98 72 110 60 128 60C146 60 158 72 168 96C154 86 102 86 88 96Z" fill="#0F172A"/>
+</svg>
