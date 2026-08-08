@@ -11,6 +11,7 @@ import { RegisteredCoursesPage } from '@/features/registration/pages/RegisteredC
 import { TimetableWeeklyPage } from '@/features/timetable/pages/TimetableWeeklyPage';
 import { NotificationsPage } from '@/features/notifications/pages/NotificationsPage';
 import { ProfilePage } from '@/features/profile/pages/ProfilePage';
+import { profileApi } from '@/features/profile/api/profileApi';
 import { DesignSystemModal } from '@/dev/DesignSystemModal';
 
 import { Course } from '@/features/courses/types/course.types';
@@ -20,17 +21,35 @@ import { NavigationTab } from '@/shared/types/navigation.types';
 import { ToastMessage } from '@/shared/types/ui.types';
 import { APP_TITLE } from '@/shared/constants/app';
 import {
-  INITIAL_STUDENT,
   SEMESTERS,
   COURSES_MOCK,
   INITIAL_REGISTERED_IDS,
   NOTIFICATIONS_MOCK,
 } from '@/mocks/mockData';
 
+const AUTH_STUDENT_ID_STORAGE_KEY = 'courseRegistration.studentId';
+
+function getStoredStudentId(): string | null {
+  return localStorage.getItem(AUTH_STUDENT_ID_STORAGE_KEY)
+    ?? sessionStorage.getItem(AUTH_STUDENT_ID_STORAGE_KEY);
+}
+
+function clearStoredStudentId() {
+  localStorage.removeItem(AUTH_STUDENT_ID_STORAGE_KEY);
+  sessionStorage.removeItem(AUTH_STUDENT_ID_STORAGE_KEY);
+}
+
+function storeStudentId(studentId: string, rememberMe: boolean) {
+  clearStoredStudentId();
+  const storage = rememberMe ? localStorage : sessionStorage;
+  storage.setItem(AUTH_STUDENT_ID_STORAGE_KEY, studentId);
+}
+
 export default function App() {
   // Authentication State
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [student, setStudent] = useState<Student>(INITIAL_STUDENT);
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [student, setStudent] = useState<Student | null>(null);
+  const isAuthenticated = student !== null;
 
   // Active Navigation Tab
   const [activeTab, setActiveTab] = useState<NavigationTab>('dashboard');
@@ -71,19 +90,51 @@ export default function App() {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
+  useEffect(() => {
+    let isMounted = true;
+    const storedStudentId = getStoredStudentId();
+
+    if (!storedStudentId) {
+      setIsInitializing(false);
+      return;
+    }
+
+    profileApi
+      .getStudentById(storedStudentId)
+      .then((storedStudent) => {
+        if (isMounted) {
+          setStudent(storedStudent);
+        }
+      })
+      .catch(() => {
+        clearStoredStudentId();
+        if (isMounted) {
+          setStudent(null);
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsInitializing(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   // Login handler
-  const handleLoginSuccess = (studentIdInput: string) => {
-    setStudent((prev) => ({
-      ...prev,
-      id: studentIdInput || prev.id,
-    }));
-    setIsAuthenticated(true);
-    addToast('success', 'Đăng nhập thành công', `Chào mừng ${student.name} quay trở lại Phenikaa Portal!`);
+  const handleLoginSuccess = (loggedInStudent: Student, rememberMe: boolean) => {
+    setStudent(loggedInStudent);
+    storeStudentId(loggedInStudent.id, rememberMe);
+    setActiveTab('dashboard');
+    addToast('success', 'Đăng nhập thành công', `Chào mừng ${loggedInStudent.name} quay trở lại Phenikaa Portal!`);
   };
 
   // Logout handler
   const handleLogout = () => {
-    setIsAuthenticated(false);
+    clearStoredStudentId();
+    setStudent(null);
     setActiveTab('dashboard');
     addToast('info', 'Đã đăng xuất', 'Bạn đã đăng xuất khỏi hệ thống an toàn.');
   };
@@ -155,6 +206,16 @@ export default function App() {
     setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
     addToast('success', 'Đã cập nhật', 'Đã đánh dấu tất cả thông báo là đã đọc.');
   };
+
+  if (isInitializing) {
+    return (
+      <main className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
+        <div className="rounded-2xl border border-slate-200 bg-white px-6 py-5 text-sm font-semibold text-slate-700 shadow-sm">
+          Đang khôi phục phiên đăng nhập...
+        </div>
+      </main>
+    );
+  }
 
   // If not authenticated, render Login Page
   if (!isAuthenticated) {

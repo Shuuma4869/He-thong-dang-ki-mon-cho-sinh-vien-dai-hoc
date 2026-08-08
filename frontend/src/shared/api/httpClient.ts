@@ -1,4 +1,7 @@
 import { ApiError } from '@/shared/api/apiError';
+import { API_BASE_PATH } from '@/shared/constants/apiEndpoints';
+
+const DEFAULT_API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? API_BASE_PATH;
 
 export interface HttpRequestOptions extends RequestInit {
   baseUrl?: string;
@@ -21,7 +24,7 @@ export async function requestJson<TResponse>(
   path: string,
   options: HttpRequestOptions = {}
 ): Promise<TResponse> {
-  const { baseUrl = '', headers, ...requestOptions } = options;
+  const { baseUrl = DEFAULT_API_BASE_URL, headers, ...requestOptions } = options;
   const response = await fetch(`${baseUrl}${path}`, {
     ...requestOptions,
     headers: {
@@ -35,7 +38,7 @@ export async function requestJson<TResponse>(
   if (!response.ok) {
     const errorBody = body as Partial<ApiErrorEnvelope> | undefined;
     throw new ApiError(
-      errorBody?.message ?? 'Yêu cầu API thất bại.',
+      errorBody?.message ?? 'Yeu cau API that bai.',
       response.status,
       errorBody?.errorCode,
       errorBody

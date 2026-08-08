@@ -75,3 +75,8 @@ Từng validator không được phụ thuộc nguy hiểm vào thứ tự. Nh�
 - Trùng lịch khi cùng `DayOfWeek` và `newStart < existingEnd` và `newEnd > existingStart`.
 - So sánh bằng `LocalTime.isBefore`, không convert sang String.
 
+## Trạng thái F10
+
+F10 chỉ tích hợp frontend Auth/Profile với backend API hiện có.
+
+Không thay đổi validator, không thêm rule đăng ký mới và không thay đổi business logic Student, Course hoặc Registration trong phase này.

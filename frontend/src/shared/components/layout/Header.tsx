@@ -95,6 +95,9 @@ export const Header: React.FC<HeaderProps> = ({
     }
   };
 
+  const studentEmail = student.email ?? 'Chua dong bo email';
+  const studentFaculty = student.faculty ?? 'Chua dong bo khoa';
+
   return (
     <header className="sticky top-0 z-30 h-16 bg-white border-b border-slate-200 px-4 lg:px-8 flex items-center justify-between shadow-2xs">
       {/* Left Area: Global Search with Live Autocomplete Suggestions */}
@@ -358,9 +361,9 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <div className="px-4 py-3 border-b border-slate-100">
                 <p className="text-sm font-bold text-slate-900">{student.name}</p>
-                <p className="text-xs text-slate-500 mt-0.5">{student.email}</p>
+                <p className="text-xs text-slate-500 mt-0.5">{studentEmail}</p>
                 <div className="mt-2 inline-flex items-center px-2 py-0.5 text-[10px] font-semibold bg-blue-50 text-blue-700 rounded border border-blue-200">
-                  {student.className} - {student.faculty}
+                  {student.className} - {studentFaculty}
                 </div>
               </div>
 

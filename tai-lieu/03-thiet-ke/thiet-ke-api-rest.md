@@ -179,3 +179,25 @@ Controller
 ```
 
 Controller không được đọc file hoặc chứa rule nghiệp vụ chi tiết.
+
+## Frontend API contract sau F10
+
+Frontend đã nối API thật cho Auth và Profile:
+
+- `AUTH_LOGIN = /auth/login`
+- `STUDENT_BY_ID(studentId) = /students/{studentId}`
+
+Feature API bắt buộc đi qua shared `requestApi`, không gọi `fetch` trực tiếp trong page.
+
+`requestApi<T>` nhận envelope `ApiResponse<T>` từ backend và trả trực tiếp `data`. Vì vậy `authApi` và `profileApi` không unwrap response lần thứ hai.
+
+Luồng khôi phục phiên frontend:
+
+1. Đọc `studentId` từ `localStorage` hoặc `sessionStorage`.
+2. Gọi `GET /api/students/{studentId}` để xác thực lại sinh viên còn tồn tại.
+3. Nếu thành công, set `currentStudent`.
+4. Nếu thất bại, xóa storage và hiển thị màn đăng nhập.
+
+Frontend không lưu password, token, JWT hoặc thông tin xác thực production trong F10.
+
+Course, Registration và Timetable chưa chuyển sang API thật trong phase này.

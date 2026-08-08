@@ -1,25 +1,29 @@
 import React, { useState } from 'react';
 import { Check, Lock, User, Eye, EyeOff, ShieldCheck, ArrowRight } from 'lucide-react';
 import { PhenikaaLogo } from '@/shared/components/branding/PhenikaaLogo';
+import { authApi } from '@/features/auth/api/authApi';
+import { Student } from '@/features/profile/types/profile.types';
+import { getApiErrorMessage } from '@/shared/api/apiError';
 
 interface LoginPageProps {
-  onLoginSuccess: (studentId: string) => void;
+  onLoginSuccess: (student: Student, rememberMe: boolean) => void;
 }
 
 export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const [studentId, setStudentId] = useState('21010045');
-  const [password, setPassword] = useState('••••••••');
+  const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [showForgotMsg, setShowForgotMsg] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
+    const normalizedStudentId = studentId.trim();
 
-    if (!studentId.trim()) {
+    if (!normalizedStudentId) {
       setErrorMessage('Vui lòng nhập Mã sinh viên');
       return;
     }
@@ -30,11 +34,18 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
     setIsLoading(true);
 
-    // Simulate authentic authentication delay
-    setTimeout(() => {
+    try {
+      const student = await authApi.login({
+        studentId: normalizedStudentId,
+        password,
+      });
+
+      onLoginSuccess(student, rememberMe);
+    } catch (error) {
+      setErrorMessage(getApiErrorMessage(error));
+    } finally {
       setIsLoading(false);
-      onLoginSuccess(studentId);
-    }, 600);
+    }
   };
 
   return (

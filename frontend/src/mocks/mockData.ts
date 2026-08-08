@@ -8,6 +8,7 @@ export const INITIAL_STUDENT: Student = {
   avatarUrl: '',
   className: 'CNTT-K16',
   major: 'Công nghệ Thông tin',
+  maxCredits: 24,
   faculty: 'Khoa Công nghệ Thông tin',
   cohort: '2021 - 2025',
   email: '21010045@st.phenikaa-uni.edu.vn',

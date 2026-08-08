@@ -52,3 +52,14 @@ Không được:
 Schema JSON chi tiết được khóa trong `tai-lieu/02-kien-truc/schema-json.md`.
 
 Trong phase khóa domain, các file `data/*.json` có thể giữ `[]` để tránh thêm dữ liệu demo trước khi repository/service/test hoàn chỉnh.
+
+## Ranh giới frontend sau F10
+
+Frontend không đọc trực tiếp thư mục `data/`.
+
+Auth/Profile lấy dữ liệu qua REST API:
+
+- `POST /api/auth/login`
+- `GET /api/students/{studentId}`
+
+Các màn Course, Registration, Timetable và Notifications chưa chuyển sang backend trong F10, vì vậy vẫn sử dụng mock frontend hiện có cho mục đích demo giao diện.

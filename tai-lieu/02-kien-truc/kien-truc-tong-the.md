@@ -42,3 +42,18 @@ Không được phá vỡ luồng này.
 - Model chỉ biểu diễn dữ liệu, không đọc JSON.
 - Frontend không đọc trực tiếp `data/*.json`.
 
+## Trạng thái tích hợp frontend F10
+
+Frontend đã chuyển riêng luồng Auth và Profile sang gọi backend thật qua shared API client.
+
+Các điểm đã khóa:
+
+- `POST /api/auth/login` được gọi từ `authApi.login`.
+- `GET /api/students/{studentId}` được gọi từ `profileApi.getStudentById`.
+- `requestApi` là lớp unwrap `ApiResponse.data` dùng chung.
+- `LoginPage` không đăng nhập giả bằng timeout và không báo thành công trước khi backend trả kết quả.
+- `App` quản lý `currentStudent`, trạng thái khởi tạo phiên và storage `studentId`.
+- `rememberMe = true` lưu `studentId` trong `localStorage`; `rememberMe = false` lưu trong `sessionStorage`.
+- Password chỉ gửi trong request đăng nhập, không lưu vào storage.
+
+Course, Registration, Timetable và Notifications trên frontend vẫn đang dùng mock data trong phase này.

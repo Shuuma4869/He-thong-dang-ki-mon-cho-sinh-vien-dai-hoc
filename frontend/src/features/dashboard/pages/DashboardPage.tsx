@@ -35,8 +35,14 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
   currentSemester,
 }) => {
   const totalCredits = registeredCourses.reduce((sum, c) => sum + c.credits, 0);
-  const maxCredits = 24;
+  const maxCredits = student.maxCredits;
   const minCredits = 12;
+  const studentFaculty = student.faculty ?? 'Chua dong bo khoa';
+  const cpaText = typeof student.cpa === 'number' ? student.cpa.toFixed(2) : 'Chua dong bo';
+  const creditsProgressText =
+    typeof student.creditsPassed === 'number' && typeof student.totalCreditsRequired === 'number'
+      ? `${student.creditsPassed}/${student.totalCreditsRequired} Tin chi`
+      : 'Chua dong bo';
 
   // Find today's classes (Assume today is Monday / Thứ 2 for realistic demo)
   const todaysClasses = registeredCourses.filter((course) =>
@@ -69,7 +75,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
               Xin chào, {student.name}!
             </h1>
             <p className="text-blue-100 text-xs sm:text-sm font-medium opacity-90 max-w-2xl">
-              Lớp <strong className="text-white">{student.className}</strong> • Ngành <strong className="text-white">{student.major}</strong> • {student.faculty}
+              Lớp <strong className="text-white">{student.className}</strong> • Ngành <strong className="text-white">{student.major}</strong> • {studentFaculty}
             </p>
           </div>
 
@@ -145,13 +151,15 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
           </div>
           <div>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-slate-900">{student.cpa}</span>
-              <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
-                Xếp loại: Giỏi
-              </span>
+              <span className="text-2xl font-bold text-slate-900">{cpaText}</span>
+              {typeof student.cpa === 'number' && (
+                <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                  Xếp loại: Giỏi
+                </span>
+              )}
             </div>
             <p className="text-[11px] text-slate-500 mt-2">
-              Tích lũy: {student.creditsPassed}/{student.totalCreditsRequired} Tín chỉ
+              Tích lũy: {creditsProgressText}
             </p>
           </div>
         </div>
