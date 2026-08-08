@@ -1,18 +1,21 @@
 package vn.edu.phenikaa.courseregistration.model;
 
-/** Lớp cơ sở thể hiện kế thừa cho người dùng trong hệ thống. */
+/**
+ * Lớp cha dùng chung cho các loại người dùng trong hệ thống.
+ *
+ * <p>User chỉ giữ thông tin định danh chung. Các thuộc tính hoặc hành vi riêng
+ * của sinh viên, giảng viên, quản trị viên phải được đặt ở lớp con tương ứng.</p>
+ */
 public abstract class User {
     private String id;
     private String fullName;
-    private String email;
 
     protected User() {
     }
 
-    protected User(String id, String fullName, String email) {
+    protected User(String id, String fullName) {
         this.id = id;
         this.fullName = fullName;
-        this.email = email;
     }
 
     public String getId() {
@@ -29,13 +32,5 @@ public abstract class User {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 }

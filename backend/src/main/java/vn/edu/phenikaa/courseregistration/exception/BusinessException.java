@@ -1,8 +1,22 @@
 package vn.edu.phenikaa.courseregistration.exception;
 
-/** Exception nghiệp vụ dùng cho các rule đăng ký sau này. */
+/**
+ * Exception chuẩn cho lỗi nghiệp vụ có thể hiển thị qua REST API.
+ */
 public class BusinessException extends RuntimeException {
-    public BusinessException(String message) {
+    private final String errorCode;
+
+    public BusinessException(String errorCode, String message) {
         super(message);
+        this.errorCode = errorCode;
+    }
+
+    public BusinessException(String errorCode, String message, Throwable cause) {
+        super(message, cause);
+        this.errorCode = errorCode;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
     }
 }
