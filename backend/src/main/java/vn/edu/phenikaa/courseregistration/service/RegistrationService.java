@@ -120,6 +120,15 @@ public class RegistrationService implements Registrable {
         return registration;
     }
 
+    public List<Registration> findActiveRegistrationsByStudent(String studentId) {
+        studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException(studentId));
+
+        return registrationRepository.findByStudentId(studentId).stream()
+                .filter(registration -> RegistrationStatus.ACTIVE == registration.getStatus())
+                .toList();
+    }
+
     public int calculateTotalCredits(String studentId) {
         studentRepository.findById(studentId)
                 .orElseThrow(() -> new StudentNotFoundException(studentId));
