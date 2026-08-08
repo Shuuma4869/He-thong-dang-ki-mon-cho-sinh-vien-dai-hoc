@@ -12,6 +12,56 @@ Các endpoint backend đi dưới prefix:
 
 Frontend shared constants hiện khóa `API_BASE_PATH = '/api'`. Feature frontend chưa chuyển sang gọi API thật, mock data vẫn chạy.
 
+## Auth API
+
+Endpoint đã triển khai trong Full Solution local:
+
+```text
+POST /api/auth/login
+```
+
+Đây là demo authentication cho đồ án OOP, không phải cơ chế authentication production-ready.
+
+Backend chỉ xác định sinh viên bằng `studentId` và kiểm tra sinh viên có tồn tại qua `StudentRepository`.
+Trường `password` có thể xuất hiện trong request để tương thích giao diện hiện tại, nhưng không được lưu,
+không được mã hóa, không được xác thực giả và không tạo token.
+
+Không sử dụng:
+
+- JWT
+- Spring Security
+- OAuth
+- Database account
+- Access token / refresh token
+
+Request:
+
+```json
+{
+  "studentId": "SV001",
+  "password": "anything"
+}
+```
+
+Response thành công dùng `StudentResponse` trong envelope `ApiResponse`:
+
+```json
+{
+  "success": true,
+  "message": "Dang nhap thanh cong.",
+  "data": {
+    "studentId": "SV001",
+    "fullName": "Nguyen Van A",
+    "className": "CNTT1",
+    "major": "Cong nghe thong tin",
+    "maxCredits": 18
+  }
+}
+```
+
+Nếu sinh viên không tồn tại, API trả lỗi với `errorCode = STUDENT_NOT_FOUND`.
+Nếu request thiếu `studentId`, API trả lỗi với `errorCode = VALIDATION_ERROR`.
+
 ## Student API
 
 Endpoint đã triển khai trong Full Solution local:
@@ -25,6 +75,16 @@ Mục đích:
 - Trả thông tin sinh viên theo mã sinh viên.
 - Không thực hiện đăng nhập.
 - Không trả dữ liệu đăng ký môn học.
+
+Profile frontend sử dụng chính endpoint này:
+
+```text
+GET /api/students/{studentId}
+```
+
+Không tạo `ProfileController` riêng nếu chỉ trả về cùng dữ liệu sinh viên. Nếu cần tổng số tín chỉ đã đăng
+ký trong các phase sau, frontend nên lấy từ Registration API hoặc response composition riêng, không lưu
+duplicated field vào `Student`.
 
 Response `data` dùng `StudentResponse`:
 

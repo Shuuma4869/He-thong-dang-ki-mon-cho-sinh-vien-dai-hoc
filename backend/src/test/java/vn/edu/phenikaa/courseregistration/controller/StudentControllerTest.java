@@ -34,7 +34,10 @@ class StudentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.studentId").value("SV001"))
-                .andExpect(jsonPath("$.data.fullName").value("Nguyen Van A"));
+                .andExpect(jsonPath("$.data.fullName").value("Nguyen Van A"))
+                .andExpect(jsonPath("$.data.className").value("CNTT1"))
+                .andExpect(jsonPath("$.data.major").value("Cong nghe thong tin"))
+                .andExpect(jsonPath("$.data.maxCredits").value(18));
     }
 
     @Test
