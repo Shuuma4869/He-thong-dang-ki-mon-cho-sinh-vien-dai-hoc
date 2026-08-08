@@ -1,34 +1,77 @@
 # Thiết kế validator
 
-Trong bước khóa shared technical foundation, chỉ khóa contract validator. Chưa triển khai validator cụ thể cho Student, Course hoặc Registration.
+Validator kiểm tra các rule đăng ký học phần bằng `RegistrationValidationContext`.
 
-## Contract dùng chung
+## Validation chain
 
-`CourseValidator` là interface nền tảng cho các rule kiểm tra học phần.
+Luồng bắt buộc:
 
-Contract hiện tại:
-
-```java
-void validate(Course course);
+```text
+RegistrationService
+-> tạo RegistrationValidationContext
+-> chạy List<CourseValidator>
 ```
 
-Ý nghĩa:
+`RegistrationValidationContext` chỉ mang dữ liệu validation:
 
-- Mỗi validator cụ thể chỉ phụ trách một nhóm rule.
-- Validator được gọi từ service khi triển khai nghiệp vụ.
-- Validator không tự đọc file.
-- Validator không gọi trực tiếp `JsonFileUtils`.
-- Validator báo lỗi nghiệp vụ bằng `BusinessException` khi rule không hợp lệ.
+- `Student student`
+- `String requestedCourseId`
+- `Optional<Course> requestedCourse`
+- `List<Course> registeredCourses`
 
-## Validator dự kiến ở phase sau
+Context không đọc repository, không đọc JSON, không chứa ObjectMapper, không chứa persistence logic và không là Spring bean.
 
-Các validator có thể được tạo sau khi bắt đầu triển khai nghiệp vụ:
+## CourseValidator contract
 
-- Kiểm tra học phần tồn tại.
-- Kiểm tra lớp còn chỗ.
-- Kiểm tra sinh viên chưa đăng ký trùng môn.
-- Kiểm tra không vượt giới hạn tín chỉ.
-- Kiểm tra không trùng lịch học.
+```java
+void validate(RegistrationValidationContext context);
+```
 
-Không được tạo class validator cụ thể nếu chưa có service/repository contract tương ứng và test đi kèm.
+Nếu không hợp lệ, validator ném `BusinessException` phù hợp. Nếu hợp lệ, validator return bình thường.
+
+Không dùng:
+
+- boolean return.
+- String error return.
+- Một method chứa toàn bộ rule thay cho validator chain.
+
+## Thứ tự validator dự kiến
+
+1. `CourseExistenceValidator`
+2. `CapacityValidator`
+3. `DuplicateCourseValidator`
+4. `CreditLimitValidator`
+5. `ScheduleConflictValidator`
+
+Từng validator không được phụ thuộc nguy hiểm vào thứ tự. Những validator cần học phần mới có thể gọi `context.requireRequestedCourse()` để an toàn nếu thứ tự bị thay đổi.
+
+## Rule cụ thể
+
+`CourseExistenceValidator`:
+
+- Kiểm tra `context.getRequestedCourse().isPresent()`.
+- Nếu rỗng, ném `CourseNotFoundException`.
+
+`CapacityValidator`:
+
+- Lấy course qua `context.requireRequestedCourse()`.
+- Nếu `currentCapacity >= maxCapacity`, ném `CourseFullException`.
+
+`DuplicateCourseValidator`:
+
+- So `context.getRequestedCourseId()` với `courseId` của `context.getRegisteredCourses()`.
+- Nếu đã có, ném `DuplicateRegistrationException`.
+
+`CreditLimitValidator`:
+
+- Tính tổng tín chỉ từ `registeredCourses`.
+- Cộng tín chỉ của course mới.
+- So với `student.maxCredits`.
+- Nếu vượt, ném `CreditLimitExceededException`.
+
+`ScheduleConflictValidator`:
+
+- So lịch course mới với lịch của các course đã đăng ký.
+- Trùng lịch khi cùng `DayOfWeek` và `newStart < existingEnd` và `newEnd > existingStart`.
+- So sánh bằng `LocalTime.isBefore`, không convert sang String.
 
