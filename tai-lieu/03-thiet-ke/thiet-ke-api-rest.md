@@ -38,6 +38,43 @@ Response `data` dùng `StudentResponse`:
 }
 ```
 
+## Course API
+
+Endpoints đã triển khai trong Full Solution local:
+
+```text
+GET /api/courses
+GET /api/courses/{courseId}
+GET /api/courses/search?keyword=...
+```
+
+Mục đích:
+
+- Trả danh sách học phần.
+- Trả chi tiết một học phần.
+- Tìm kiếm học phần theo mã hoặc tên.
+
+Response `data` dùng `CourseResponse`:
+
+```json
+{
+  "courseId": "OOP101",
+  "courseName": "Lap trinh huong doi tuong",
+  "credits": 3,
+  "lecturerId": "GV001",
+  "maxCapacity": 60,
+  "currentCapacity": 20,
+  "schedules": [
+    {
+      "dayOfWeek": "MONDAY",
+      "startTime": "07:30:00",
+      "endTime": "09:30:00",
+      "room": "A101"
+    }
+  ]
+}
+```
+
 ## Response thành công
 
 Mọi API thành công phải trả envelope:
