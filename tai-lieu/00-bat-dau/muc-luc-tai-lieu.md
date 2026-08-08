@@ -11,6 +11,7 @@
 - `../02-kien-truc/kien-truc-frontend.md`
 - `../02-kien-truc/kien-truc-backend.md`
 - `../02-kien-truc/kien-truc-du-lieu-va-file-io.md`
+- `../02-kien-truc/schema-json.md`
 
 ## Thiết kế
 

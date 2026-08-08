@@ -47,3 +47,8 @@ Không được:
 - Model đọc file.
 - Frontend đọc file `data/*.json`.
 
+## Schema dữ liệu
+
+Schema JSON chi tiết được khóa trong `tai-lieu/02-kien-truc/schema-json.md`.
+
+Trong phase khóa domain, các file `data/*.json` có thể giữ `[]` để tránh thêm dữ liệu demo trước khi repository/service/test hoàn chỉnh.

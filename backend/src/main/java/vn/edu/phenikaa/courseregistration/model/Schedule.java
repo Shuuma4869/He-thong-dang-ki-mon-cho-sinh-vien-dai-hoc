@@ -1,28 +1,47 @@
 package vn.edu.phenikaa.courseregistration.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 
 /** Model lịch học của một lớp học phần. */
 public class Schedule {
-    private int dayOfWeek;
-    private List<Integer> periods = new ArrayList<>();
+    private DayOfWeek dayOfWeek;
+    private LocalTime startTime;
+    private LocalTime endTime;
     private String room;
 
-    public int getDayOfWeek() {
+    public Schedule() {
+    }
+
+    public Schedule(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime, String room) {
+        this.dayOfWeek = dayOfWeek;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.room = room;
+    }
+
+    public DayOfWeek getDayOfWeek() {
         return dayOfWeek;
     }
 
-    public void setDayOfWeek(int dayOfWeek) {
+    public void setDayOfWeek(DayOfWeek dayOfWeek) {
         this.dayOfWeek = dayOfWeek;
     }
 
-    public List<Integer> getPeriods() {
-        return periods;
+    public LocalTime getStartTime() {
+        return startTime;
     }
 
-    public void setPeriods(List<Integer> periods) {
-        this.periods = periods;
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
     }
 
     public String getRoom() {
