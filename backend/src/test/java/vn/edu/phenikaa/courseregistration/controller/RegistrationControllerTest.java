@@ -108,6 +108,16 @@ class RegistrationControllerTest {
                 .andExpect(jsonPath("$.errorCode").value("DUPLICATE_REGISTRATION"));
     }
 
+    @Test
+    void registerReturnsValidationErrorWhenCourseIdMissing() throws Exception {
+        mockMvc.perform(post("/api/students/SV001/registrations")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"));
+    }
+
     private Registration registration(String registrationId, String studentId, String... courseIds) {
         List<RegistrationDetail> details = List.of(courseIds).stream()
                 .map(RegistrationDetail::new)

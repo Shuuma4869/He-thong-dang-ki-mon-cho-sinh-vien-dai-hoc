@@ -1,5 +1,6 @@
 package vn.edu.phenikaa.courseregistration.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,7 +37,7 @@ public class RegistrationController {
     @PostMapping
     public ApiResponse<RegistrationResponse> register(
             @PathVariable String studentId,
-            @RequestBody RegistrationRequest request
+            @Valid @RequestBody RegistrationRequest request
     ) {
         return ApiResponse.success(
                 "Dang ky hoc phan thanh cong.",
