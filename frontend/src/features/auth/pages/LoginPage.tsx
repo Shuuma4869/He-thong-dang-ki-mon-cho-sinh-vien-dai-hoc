@@ -1,14 +1,42 @@
 import React, { useState } from 'react';
-import { Check, Lock, User, Eye, EyeOff, ShieldCheck, ArrowRight } from 'lucide-react';
+import {
+  ArrowRight,
+  BookOpenCheck,
+  CalendarDays,
+  Eye,
+  EyeOff,
+  Lock,
+  ShieldCheck,
+  TrendingUp,
+  User,
+} from 'lucide-react';
 import { PhenikaaLogo } from '@/shared/components/branding/PhenikaaLogo';
 
 interface LoginPageProps {
   onLoginSuccess: (studentId: string) => void;
 }
 
+const featureCards = [
+  {
+    title: 'Đăng ký học phần',
+    subtitle: 'Dễ dàng và nhanh chóng',
+    icon: BookOpenCheck,
+  },
+  {
+    title: 'Quản lý thời khóa biểu',
+    subtitle: 'Xem và sắp xếp lịch học',
+    icon: CalendarDays,
+  },
+  {
+    title: 'Theo dõi tiến độ học tập',
+    subtitle: 'Nắm bắt kết quả học tập',
+    icon: TrendingUp,
+  },
+];
+
 export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
-  const [studentId, setStudentId] = useState('21010045');
-  const [password, setPassword] = useState('••••••••');
+  const [studentId, setStudentId] = useState('SV001');
+  const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -30,169 +58,178 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
     setIsLoading(true);
 
-    // Simulate authentic authentication delay
     setTimeout(() => {
       setIsLoading(false);
-      onLoginSuccess(studentId);
+      onLoginSuccess(studentId.trim());
     }, 600);
   };
 
   return (
-    <div className="min-h-screen w-full flex bg-[#F8FAFC]">
-      {/* LEFT PANEL - 55% */}
-      <div className="hidden lg:flex lg:w-[55%] relative overflow-hidden bg-slate-900">
-        {/* Local campus illustration background */}
-        <img
-          src="/assets/images/login-campus-illustration.svg"
-          alt="Minh họa khuôn viên đại học hiện đại"
-          className="absolute inset-0 w-full h-full object-cover object-center"
+    <div className="min-h-screen w-full overflow-hidden bg-[#F6FAFF] lg:grid lg:grid-cols-[52%_48%]">
+      <section className="relative hidden min-h-screen overflow-hidden bg-[#061C63] px-10 py-10 text-white lg:flex lg:flex-col lg:justify-between xl:px-14">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_28%_18%,rgba(37,99,235,0.72),transparent_34%),radial-gradient(circle_at_68%_8%,rgba(30,64,175,0.56),transparent_28%),linear-gradient(160deg,#061342_0%,#052A87_54%,#1F6FD7_100%)]" />
+        <div className="absolute left-[-84px] top-[50%] h-52 w-52 rounded-full bg-blue-400/18" />
+        <div className="absolute right-16 top-16 h-36 w-36 rounded-full border border-blue-200/20" />
+        <div className="absolute right-28 top-8 h-5 w-5 rounded-full border border-blue-100/45" />
+        <div
+          className="absolute right-24 top-20 h-20 w-28 opacity-55"
+          style={{
+            backgroundImage: 'radial-gradient(circle, rgba(219,234,254,0.78) 1.6px, transparent 1.8px)',
+            backgroundSize: '24px 24px',
+          }}
+        />
+        <div
+          className="absolute right-16 top-[34%] h-28 w-28 opacity-70"
+          style={{
+            backgroundImage: 'radial-gradient(circle, rgba(219,234,254,0.75) 1.8px, transparent 2px)',
+            backgroundSize: '22px 22px',
+          }}
         />
 
-        {/* Soft dark gradient overlay around 25% */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-900/35 to-slate-900/30" />
+        <div className="relative z-10 flex h-full flex-col">
+          <PhenikaaLogo variant="light" size="xl" />
 
-        {/* Content Overlay */}
-        <div className="relative z-10 w-full h-full flex flex-col justify-between p-12 lg:p-16 text-white">
-          {/* Top Logo */}
-          <div>
-            <PhenikaaLogo variant="light" size="lg" />
-          </div>
-
-          {/* Center Headline & Subtitle */}
-          <div className="max-w-xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 backdrop-blur-xs text-xs font-semibold text-blue-200">
-              <ShieldCheck className="w-3.5 h-3.5 text-blue-300" />
+          <div className="mt-20 max-w-xl xl:mt-24">
+            <div className="inline-flex items-center gap-2 rounded-xl border border-blue-300/30 bg-blue-500/80 px-4 py-2 text-sm font-bold text-blue-50 shadow-lg shadow-blue-950/20">
+              <ShieldCheck className="h-4 w-4" />
               <span>Cổng Thông Tin Sinh Viên Chính Thức</span>
             </div>
 
-            <h1 className="text-3xl xl:text-4xl font-bold tracking-tight text-white leading-tight">
+            <h1 className="mt-8 text-5xl font-extrabold leading-[1.12] text-white xl:text-6xl">
               Hệ thống Đăng ký Môn học
             </h1>
 
-            <p className="text-base text-slate-200 leading-relaxed font-normal opacity-90">
+            <p className="mt-5 max-w-lg text-xl leading-8 text-blue-50/95">
               Nền tảng hỗ trợ sinh viên đăng ký học phần nhanh chóng, chính xác và thuận tiện.
             </p>
           </div>
 
-          {/* Bottom Features Bullet List */}
-          <div className="pt-8 border-t border-white/15">
-            <div className="grid grid-cols-3 gap-6">
-              <div className="flex items-center gap-2.5">
-                <div className="w-6 h-6 rounded-full bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center shrink-0">
-                  <Check className="w-3.5 h-3.5 text-emerald-400 stroke-[3]" />
-                </div>
-                <span className="text-sm font-medium text-slate-100">Đăng ký học phần</span>
-              </div>
+          <div className="relative mt-auto min-h-[335px]">
+            <img
+              src="/assets/images/login-workspace-illustration.svg"
+              alt="Minh họa bàn học với laptop đăng ký môn học"
+              className="absolute bottom-[-28px] left-[-62px] w-[calc(100%+118px)] max-w-none xl:bottom-[-18px]"
+            />
 
-              <div className="flex items-center gap-2.5">
-                <div className="w-6 h-6 rounded-full bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center shrink-0">
-                  <Check className="w-3.5 h-3.5 text-emerald-400 stroke-[3]" />
-                </div>
-                <span className="text-sm font-medium text-slate-100">Quản lý thời khóa biểu</span>
-              </div>
-
-              <div className="flex items-center gap-2.5">
-                <div className="w-6 h-6 rounded-full bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center shrink-0">
-                  <Check className="w-3.5 h-3.5 text-emerald-400 stroke-[3]" />
-                </div>
-                <span className="text-sm font-medium text-slate-100">Theo dõi tiến độ học tập</span>
-              </div>
+            <div className="absolute bottom-0 left-0 right-0 grid grid-cols-3 overflow-hidden rounded-2xl border border-white/40 bg-white/95 p-4 text-slate-900 shadow-2xl shadow-blue-950/25 backdrop-blur">
+              {featureCards.map((feature, index) => {
+                const Icon = feature.icon;
+                return (
+                  <div
+                    key={feature.title}
+                    className={`flex min-w-0 flex-col items-center gap-2 px-4 py-2 text-center ${
+                      index > 0 ? 'border-l border-slate-200' : ''
+                    }`}
+                  >
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+                      <Icon className="h-7 w-7" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-extrabold text-slate-900">{feature.title}</p>
+                      <p className="mt-1 text-xs font-medium text-slate-500">{feature.subtitle}</p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* RIGHT PANEL - 45% */}
-      <div className="w-full lg:w-[45%] flex flex-col justify-between p-6 sm:p-12 lg:p-16 bg-[#F8FAFC]">
-        {/* Mobile Header Logo */}
-        <div className="lg:hidden mb-6">
-          <PhenikaaLogo size="md" />
+      <section className="relative flex min-h-screen flex-col justify-between overflow-hidden bg-[#F8FBFF] px-5 py-8 sm:px-8 lg:px-12 xl:px-16">
+        <div className="absolute right-[-86px] top-[-86px] h-56 w-56 rounded-full bg-blue-100/80" />
+        <div className="absolute right-[-22px] top-[-30px] h-28 w-28 rounded-full bg-white/80" />
+        <div className="absolute bottom-[-92px] right-[-62px] h-48 w-48 rounded-full bg-blue-100/70" />
+        <div
+          className="absolute bottom-24 right-16 hidden h-24 w-24 opacity-50 sm:block"
+          style={{
+            backgroundImage: 'radial-gradient(circle, rgba(37,99,235,0.42) 1.8px, transparent 2px)',
+            backgroundSize: '22px 22px',
+          }}
+        />
+
+        <div className="relative z-10 mb-6 lg:hidden">
+          <PhenikaaLogo size="lg" />
         </div>
 
-        {/* Centered Login Card Container */}
-        <div className="my-auto w-full max-w-md mx-auto">
-          <div className="bg-white p-8 sm:p-10 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-            {/* Header branding */}
-            <div className="text-center space-y-2">
-              <div className="flex justify-center mb-3">
-                <PhenikaaLogo size="lg" variant="icon" />
+        <div className="relative z-10 my-auto mx-auto w-full max-w-[540px]">
+          <div className="rounded-[28px] border border-white bg-white/95 px-6 py-8 shadow-[0_24px_80px_rgba(15,23,42,0.12)] sm:px-10 sm:py-11 xl:px-12">
+            <div className="text-center">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 shadow-sm">
+                <PhenikaaLogo size="xl" variant="icon" />
               </div>
-              <p className="text-xs font-bold tracking-widest text-blue-600 uppercase">
-                ĐẠI HỌC PHENIKAA
+              <p className="mt-5 text-sm font-extrabold uppercase text-blue-600">
+                Đại học Phenikaa
               </p>
-              <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
+              <h2 className="mt-4 text-3xl font-extrabold leading-tight text-slate-950">
                 Hệ thống Đăng ký Môn học
               </h2>
-              <p className="text-xs text-slate-500">
+              <p className="mt-3 text-sm font-medium text-slate-500">
                 Đăng nhập bằng tài khoản sinh viên được cấp bởi Nhà trường
               </p>
             </div>
 
-            {/* Error banner if any */}
             {errorMessage && (
-              <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-xs font-medium text-red-700">
+              <div className="mt-7 rounded-xl border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">
                 {errorMessage}
               </div>
             )}
 
-            {/* Login Form */}
-            <form onSubmit={handleLogin} className="space-y-4">
-              {/* Field 1: Mã sinh viên */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-700">
+            <form onSubmit={handleLogin} className="mt-9 space-y-6">
+              <div className="space-y-3">
+                <label className="block text-sm font-bold text-slate-700">
                   Mã sinh viên <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <User className="absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
                   <input
                     type="text"
                     value={studentId}
                     onChange={(e) => setStudentId(e.target.value)}
-                    placeholder="Ví dụ: 21010045"
+                    placeholder="Ví dụ: SV001"
                     required
-                    className="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
+                    className="h-14 w-full rounded-xl border border-slate-200 bg-white pl-14 pr-4 text-base font-semibold text-slate-900 shadow-inner shadow-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-100"
                   />
                 </div>
               </div>
 
-              {/* Field 2: Mật khẩu */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-700">
+              <div className="space-y-3">
+                <label className="block text-sm font-bold text-slate-700">
                   Mật khẩu <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <Lock className="absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Nhập mật khẩu"
                     required
-                    className="w-full pl-10 pr-10 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
+                    className="h-14 w-full rounded-xl border border-slate-200 bg-white pl-14 pr-14 text-base font-semibold text-slate-900 shadow-inner shadow-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-100"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                    className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-blue-600"
+                    aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                   >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
                 </div>
               </div>
 
-              {/* Checkbox & Forgot Link */}
-              <div className="flex items-center justify-between text-xs pt-1">
-                <label className="flex items-center gap-2 cursor-pointer select-none text-slate-600 font-medium">
+              <div className="flex items-center justify-between gap-4 text-sm">
+                <label className="flex cursor-pointer select-none items-center gap-2 font-bold text-slate-600">
                   <input
                     type="checkbox"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                    className="h-5 w-5 cursor-pointer rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                   />
                   <span>Ghi nhớ đăng nhập</span>
                 </label>
 
-                <div className="flex flex-col items-end relative">
+                <div className="relative flex flex-col items-end">
                   <a
                     href="#forgot"
                     onClick={(e) => {
@@ -200,27 +237,26 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                       setShowForgotMsg(true);
                       setTimeout(() => setShowForgotMsg(false), 5000);
                     }}
-                    className="font-semibold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
+                    className="font-bold text-blue-600 hover:text-blue-700 hover:underline"
                   >
                     Quên mật khẩu?
                   </a>
                   {showForgotMsg && (
-                    <div className="absolute top-full right-0 mt-2 w-64 p-3 bg-slate-800 text-white text-xs rounded-lg shadow-xl z-10 animate-in fade-in slide-in-from-top-2">
+                    <div className="absolute right-0 top-full z-10 mt-2 w-72 rounded-xl bg-slate-900 p-3 text-xs text-white shadow-xl animate-in fade-in slide-in-from-top-2">
                       Vui lòng liên hệ Phòng Đào tạo (Email: daotao@phenikaa-uni.edu.vn - Hotline: 024.6291.8118) để khôi phục mật khẩu.
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* Primary Login Button */}
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-sm rounded-xl shadow-md shadow-blue-600/20 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                className="flex h-14 w-full items-center justify-center gap-3 rounded-xl bg-blue-600 px-5 text-base font-extrabold text-white shadow-lg shadow-blue-600/25 transition-colors hover:bg-blue-700 active:bg-blue-800 disabled:opacity-60"
               >
                 {isLoading ? (
                   <>
-                    <svg className="animate-spin w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
+                    <svg className="h-5 w-5 animate-spin text-white" viewBox="0 0 24 24" fill="none">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                     </svg>
@@ -229,33 +265,33 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 ) : (
                   <>
                     <span>Đăng nhập</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className="h-5 w-5" />
                   </>
                 )}
               </button>
             </form>
 
-            {/* Account Quick Hint for Demo evaluation */}
-            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
-              <p className="text-[11px] text-slate-500">
-                <strong className="text-slate-700 font-semibold">Tài khoản demo:</strong> Mã SV: <code className="text-blue-700 font-mono bg-blue-50 px-1 py-0.5 rounded">21010045</code> / Mật khẩu: bất kỳ
+            <div className="mt-8 rounded-xl border border-slate-200 bg-slate-50/80 p-4 text-center">
+              <p className="text-sm text-slate-500">
+                <strong className="font-extrabold text-slate-800">Tài khoản demo:</strong> Mã SV:{' '}
+                <code className="rounded bg-blue-50 px-1.5 py-0.5 font-mono font-bold text-blue-700">SV001</code>
+                {' '}/ Mật khẩu: bất kỳ
               </p>
             </div>
 
-            {/* Version */}
-            <div className="text-center pt-2">
-              <span className="text-[11px] font-mono font-semibold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
+            <div className="pt-8 text-center">
+              <span className="rounded-full border border-slate-200 bg-slate-100 px-4 py-1.5 font-mono text-xs font-bold text-slate-400">
                 Version v1.0
               </span>
             </div>
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="mt-8 text-center text-xs text-slate-500">
+        <div className="relative z-10 mt-8 flex items-center justify-center gap-2 text-xs font-medium text-slate-500">
+          <ShieldCheck className="h-4 w-4 text-blue-600" />
           <p>© Đại học Phenikaa. Tất cả quyền được bảo lưu.</p>
         </div>
-      </div>
+      </section>
     </div>
   );
 };
