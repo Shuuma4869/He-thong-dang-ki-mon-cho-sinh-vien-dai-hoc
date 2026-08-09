@@ -70,8 +70,7 @@ export const Header: React.FC<HeaderProps> = ({
       (c) =>
         c.code.toLowerCase().includes(q) ||
         c.name.toLowerCase().includes(q) ||
-        c.lecturer.toLowerCase().includes(q) ||
-        c.faculty.toLowerCase().includes(q)
+        c.lecturer.toLowerCase().includes(q)
     ).slice(0, 6); // Top 6 matching items for smooth dropdown
   }, [searchQuery, courses]);
 
@@ -165,7 +164,7 @@ export const Header: React.FC<HeaderProps> = ({
                         <p className="text-[11px] text-slate-500 truncate flex items-center gap-2">
                           <span>{course.lecturer}</span>
                           <span>•</span>
-                          <span>{course.faculty}</span>
+                          <span>{course.lecturerId ?? 'Chua dong bo'}</span>
                         </p>
                       </div>
 

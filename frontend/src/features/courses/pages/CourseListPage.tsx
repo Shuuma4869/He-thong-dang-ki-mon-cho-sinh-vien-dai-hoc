@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import {
   Search,
   Filter,
@@ -12,37 +12,78 @@ import {
   BookOpen,
 } from 'lucide-react';
 import { Course, CourseFilterState } from '@/features/courses/types/course.types';
-import { FACULTIES } from '@/mocks/mockData';
+import { courseApi } from '@/features/courses/api/courseApi';
+import { getApiErrorMessage } from '@/shared/api/apiError';
 
 interface CourseListPageProps {
-  courses: Course[];
   registeredCourseIds: string[];
   onOpenCourseDetail: (course: Course) => void;
   onRequestRegister: (course: Course) => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
+  onCoursesLoaded: (courses: Course[]) => void;
 }
 
 export const CourseListPage: React.FC<CourseListPageProps> = ({
-  courses,
   registeredCourseIds,
   onOpenCourseDetail,
   onRequestRegister,
   searchQuery,
   onSearchChange,
+  onCoursesLoaded,
 }) => {
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
+  const requestSeqRef = useRef(0);
   const [filters, setFilters] = useState<CourseFilterState>({
     searchQuery: searchQuery,
-    faculty: 'Tất cả Khoa',
     dayOfWeek: 'Tất cả các ngày',
     status: 'Tất cả trạng thái',
     minCredits: 'Tất cả tín chỉ',
   });
 
-  // Sync external search query
-  React.useEffect(() => {
+  useEffect(() => {
     setFilters((prev) => ({ ...prev, searchQuery }));
   }, [searchQuery]);
+
+  const loadCourses = useCallback(async (keyword: string) => {
+    const requestId = requestSeqRef.current + 1;
+    requestSeqRef.current = requestId;
+    const normalizedKeyword = keyword.trim();
+
+    setIsLoading(true);
+    setErrorMessage('');
+
+    try {
+      const loadedCourses = normalizedKeyword
+        ? await courseApi.searchCourses(normalizedKeyword)
+        : await courseApi.getCourses();
+
+      if (requestSeqRef.current !== requestId) return;
+
+      setCourses(loadedCourses);
+      onCoursesLoaded(loadedCourses);
+    } catch (error) {
+      if (requestSeqRef.current !== requestId) return;
+
+      setCourses([]);
+      onCoursesLoaded([]);
+      setErrorMessage(getApiErrorMessage(error) || 'Khong the tai danh sach mon hoc. Vui long thu lai.');
+    } finally {
+      if (requestSeqRef.current === requestId) {
+        setIsLoading(false);
+      }
+    }
+  }, [onCoursesLoaded]);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      void loadCourses(filters.searchQuery);
+    }, 250);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [filters.searchQuery, loadCourses]);
 
   // Compute registered schedules to check schedule conflict dynamically
   const registeredCoursesList = useMemo(() => {
@@ -77,20 +118,6 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
   // Filtered course list
   const filteredCourses = useMemo(() => {
     return courses.filter((course) => {
-      // Search text filter
-      if (filters.searchQuery) {
-        const q = filters.searchQuery.toLowerCase();
-        const matchCode = course.code.toLowerCase().includes(q);
-        const matchName = course.name.toLowerCase().includes(q);
-        const matchLecturer = course.lecturer.toLowerCase().includes(q);
-        if (!matchCode && !matchName && !matchLecturer) return false;
-      }
-
-      // Faculty filter
-      if (filters.faculty !== 'Tất cả Khoa' && course.faculty !== filters.faculty) {
-        return false;
-      }
-
       // Day filter
       if (filters.dayOfWeek !== 'Tất cả các ngày') {
         const dayNum = parseInt(filters.dayOfWeek.replace('Thứ ', ''));
@@ -121,7 +148,6 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
   const handleResetFilters = () => {
     setFilters({
       searchQuery: '',
-      faculty: 'Tất cả Khoa',
       dayOfWeek: 'Tất cả các ngày',
       status: 'Tất cả trạng thái',
       minCredits: 'Tất cả tín chỉ',
@@ -159,7 +185,6 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
           </div>
 
           {(filters.searchQuery ||
-            filters.faculty !== 'Tất cả Khoa' ||
             filters.dayOfWeek !== 'Tất cả các ngày' ||
             filters.status !== 'Tất cả trạng thái' ||
             filters.minCredits !== 'Tất cả tín chỉ') && (
@@ -173,7 +198,7 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
           )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {/* Search Field */}
           <div className="space-y-1">
             <label className="block text-[11px] font-semibold text-slate-600">Tìm kiếm</label>
@@ -190,22 +215,6 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
                 className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all"
               />
             </div>
-          </div>
-
-          {/* Faculty Select */}
-          <div className="space-y-1">
-            <label className="block text-[11px] font-semibold text-slate-600">Khoa / Viện</label>
-            <select
-              value={filters.faculty}
-              onChange={(e) => setFilters({ ...filters, faculty: e.target.value })}
-              className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all cursor-pointer"
-            >
-              {FACULTIES.map((fac) => (
-                <option key={fac} value={fac}>
-                  {fac}
-                </option>
-              ))}
-            </select>
           </div>
 
           {/* Day of Week Filter */}
@@ -277,7 +286,28 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
-              {filteredCourses.length === 0 ? (
+              {isLoading ? (
+                <tr>
+                  <td colSpan={9} className="py-12 text-center text-slate-500">
+                    <div className="font-bold text-slate-700 text-sm">Dang tai danh sach mon hoc...</div>
+                  </td>
+                </tr>
+              ) : errorMessage ? (
+                <tr>
+                  <td colSpan={9} className="py-12 text-center text-slate-500">
+                    <div className="max-w-sm mx-auto space-y-3">
+                      <p className="font-bold text-red-700 text-sm">Khong the tai danh sach mon hoc.</p>
+                      <p className="text-xs text-slate-500">{errorMessage}</p>
+                      <button
+                        onClick={() => void loadCourses(filters.searchQuery)}
+                        className="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors cursor-pointer"
+                      >
+                        Thu lai
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ) : filteredCourses.length === 0 ? (
                 <tr>
                   <td colSpan={9} className="py-12 text-center text-slate-500">
                     <div className="max-w-xs mx-auto space-y-2">
@@ -287,7 +317,9 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
                         aria-hidden="true"
                         className="w-36 h-auto mx-auto"
                       />
-                      <p className="font-bold text-slate-700 text-sm">Không tìm thấy môn học phù hợp</p>
+                      <p className="font-bold text-slate-700 text-sm">
+                        {filters.searchQuery.trim() ? 'Khong tim thay mon hoc phu hop' : 'Chua co mon hoc mo'}
+                      </p>
                       <p className="text-xs text-slate-500">
                         Vui lòng kiểm tra lại từ khóa hoặc thử lại với bộ lọc khác.
                       </p>
@@ -306,15 +338,6 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
                   const isFull = course.enrolled >= course.capacity;
                   const hasConflict = checkHasScheduleConflict(course);
                   const schedule = course.schedules[0];
-
-                  const daysMap: Record<number, string> = {
-                    2: 'Thứ 2',
-                    3: 'Thứ 3',
-                    4: 'Thứ 4',
-                    5: 'Thứ 5',
-                    6: 'Thứ 6',
-                    7: 'Thứ 7',
-                  };
 
                   return (
                     <tr
@@ -337,7 +360,7 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
                           {course.name}
                         </button>
                         <span className="text-[10px] text-slate-500 block mt-0.5">
-                          {course.classGroup} • {course.faculty}
+                          Ma giang vien: {course.lecturerId ?? 'Chua dong bo'}
                         </span>
                       </td>
 
@@ -358,7 +381,7 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
                         <div className="flex items-center gap-1.5 text-slate-800">
                           <Clock className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                           <span className="font-semibold">
-                            {daysMap[schedule?.dayOfWeek || 2]}:
+                            {schedule?.dayLabel ?? `Thu ${schedule?.dayOfWeek ?? ''}`}:
                           </span>
                           <span>{schedule?.periods}</span>
                         </div>

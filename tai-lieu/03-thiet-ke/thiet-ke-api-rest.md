@@ -205,4 +205,28 @@ Luồng khôi phục phiên frontend:
 
 Frontend không lưu password, token, JWT hoặc thông tin xác thực production trong F10.
 
-Course, Registration và Timetable chưa chuyển sang API thật trong phase này.
+Registration và Timetable chưa chuyển sang API thật trong phase F10.
+
+## Frontend Course API contract sau F11
+
+Frontend Course runtime dùng các endpoint:
+
+- `GET /api/courses`
+- `GET /api/courses/{courseId}`
+- `GET /api/courses/search?keyword=...`
+
+`courseApi` đi qua shared `requestApi`; page/component không gọi `fetch` trực tiếp.
+
+Mapping frontend:
+
+- `courseId` -> `id`, `code`
+- `courseName` -> `name`
+- `lecturer.fullName` -> `lecturer`
+- `lecturerId` -> `lecturerId`
+- `currentCapacity` -> `enrolled`
+- `maxCapacity` -> `capacity`
+- `schedules[].dayOfWeek/startTime/endTime/room` -> schedule presentation model
+
+Hai field mock cũ `faculty` và `classGroup` không có nguồn dữ liệu thật trong Course domain hiện tại, nên Course runtime không hiển thị hoặc hard-code hai field này.
+
+Registration, Timetable, Dashboard real data và Notifications chưa được migrate trong F11.

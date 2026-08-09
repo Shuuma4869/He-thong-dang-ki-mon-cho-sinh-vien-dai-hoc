@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   X,
   BookOpen,
@@ -12,6 +12,8 @@ import {
   Award,
 } from 'lucide-react';
 import { Course } from '@/features/courses/types/course.types';
+import { courseApi } from '@/features/courses/api/courseApi';
+import { getApiErrorMessage } from '@/shared/api/apiError';
 
 interface CourseDetailModalProps {
   course: Course | null;
@@ -26,9 +28,39 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({
   isRegistered,
   onRequestRegister,
 }) => {
+  const [detailCourse, setDetailCourse] = useState<Course | null>(null);
+  const [isLoadingDetail, setIsLoadingDetail] = useState(false);
+  const [detailError, setDetailError] = useState('');
+
+  const loadCourseDetail = useCallback(async (courseId: string) => {
+    setIsLoadingDetail(true);
+    setDetailError('');
+
+    try {
+      const loadedCourse = await courseApi.getCourseById(courseId);
+      setDetailCourse(loadedCourse);
+    } catch (error) {
+      setDetailError(getApiErrorMessage(error) || 'Khong the tai chi tiet mon hoc.');
+    } finally {
+      setIsLoadingDetail(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!course) {
+      setDetailCourse(null);
+      setDetailError('');
+      return;
+    }
+
+    setDetailCourse(course);
+    void loadCourseDetail(course.id);
+  }, [course, loadCourseDetail]);
+
   if (!course) return null;
 
-  const remaining = course.capacity - course.enrolled;
+  const activeCourse = detailCourse ?? course;
+  const remaining = activeCourse.capacity - activeCourse.enrolled;
   const isFull = remaining <= 0;
 
   return (
@@ -44,7 +76,7 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({
               <span className="text-xs font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
                 {course.code}
               </span>
-              <h2 className="text-lg font-bold text-slate-900 mt-0.5">{course.name}</h2>
+              <h2 className="text-lg font-bold text-slate-900 mt-0.5">{activeCourse.name}</h2>
             </div>
           </div>
 
@@ -58,21 +90,40 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({
 
         {/* Content Body */}
         <div className="p-6 overflow-y-auto space-y-6 text-sm text-slate-700">
+          {isLoadingDetail && (
+            <div className="p-3.5 bg-blue-50 rounded-xl border border-blue-100 text-xs font-semibold text-blue-700">
+              Dang tai chi tiet mon hoc...
+            </div>
+          )}
+
+          {detailError && (
+            <div className="p-3.5 bg-red-50 rounded-xl border border-red-100 text-xs text-red-700 space-y-2">
+              <p className="font-bold">Khong the tai chi tiet mon hoc.</p>
+              <p>{detailError}</p>
+              <button
+                onClick={() => void loadCourseDetail(course.id)}
+                className="px-3 py-1.5 bg-white border border-red-200 rounded-lg font-semibold text-red-700 hover:bg-red-100 transition-colors cursor-pointer"
+              >
+                Thu lai
+              </button>
+            </div>
+          )}
+
           {/* Quick Metrics Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
               <span className="text-[11px] font-semibold text-slate-500 uppercase">Tín chỉ</span>
-              <p className="text-lg font-bold text-slate-900 mt-0.5">{course.credits} TC</p>
+              <p className="text-lg font-bold text-slate-900 mt-0.5">{activeCourse.credits} TC</p>
             </div>
 
             <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
               <span className="text-[11px] font-semibold text-slate-500 uppercase">Sĩ số tối đa</span>
-              <p className="text-lg font-bold text-slate-900 mt-0.5">{course.capacity} sinh viên</p>
+              <p className="text-lg font-bold text-slate-900 mt-0.5">{activeCourse.capacity} sinh viên</p>
             </div>
 
             <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
               <span className="text-[11px] font-semibold text-slate-500 uppercase">Đã đăng ký</span>
-              <p className="text-lg font-bold text-blue-600 mt-0.5">{course.enrolled} SV</p>
+              <p className="text-lg font-bold text-blue-600 mt-0.5">{activeCourse.enrolled} SV</p>
             </div>
 
             <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
@@ -88,13 +139,11 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({
             <div className="flex items-center gap-2 text-blue-900 font-bold">
               <User className="w-4 h-4 text-blue-600" />
               <span>Giảng viên Phụ trách:</span>
-              <span className="text-blue-700">{course.lecturer}</span>
+              <span className="text-blue-700">{activeCourse.lecturer}</span>
             </div>
             <div className="flex items-center gap-2 text-xs text-slate-600">
               <Award className="w-4 h-4 text-slate-400" />
-              <span>Khoa quản lý: <strong>{course.faculty}</strong></span>
-              <span className="mx-1">•</span>
-              <span>Lớp/Nhóm: <strong>{course.classGroup}</strong></span>
+              <span>Ma giang vien: <strong>{activeCourse.lecturerId ?? 'Chua dong bo'}</strong></span>
             </div>
           </div>
 
@@ -106,14 +155,14 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({
             </h3>
 
             <div className="space-y-2">
-              {course.schedules.map((sched, idx) => (
+              {activeCourse.schedules.map((sched) => (
                 <div
-                  key={idx}
+                  key={`${activeCourse.id}-${sched.dayOfWeek}-${sched.startTime ?? sched.periods}-${sched.endTime ?? sched.room}`}
                   className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
                 >
                   <div className="flex items-center gap-2">
                     <span className="px-2.5 py-1 text-xs font-bold bg-blue-600 text-white rounded-lg">
-                      Thứ {sched.dayOfWeek}
+                      {sched.dayLabel ?? `Thu ${sched.dayOfWeek}`}
                     </span>
                     <span className="font-semibold text-slate-900">{sched.periods}</span>
                     <span className="text-xs text-slate-500">({sched.shift})</span>
@@ -129,11 +178,11 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({
           </div>
 
           {/* Prerequisite Course */}
-          {course.prerequisite && (
+          {activeCourse.prerequisite && (
             <div className="p-3.5 bg-amber-50 rounded-xl border border-amber-200 flex items-start gap-2.5 text-xs text-amber-900">
               <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
               <div>
-                <strong className="font-bold">Môn học tiên quyết:</strong> {course.prerequisite}
+                <strong className="font-bold">Môn học tiên quyết:</strong> {activeCourse.prerequisite}
                 <p className="text-[11px] text-amber-700 mt-0.5">
                   Sinh viên cần đạt học phần tiên quyết này trước khi đăng ký chính thức.
                 </p>
@@ -142,14 +191,14 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({
           )}
 
           {/* Description */}
-          {course.description && (
+          {activeCourse.description && (
             <div className="space-y-1.5">
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
                 <FileText className="w-4 h-4 text-blue-600" />
                 <span>Mô Tả Nội Dung Học Phần</span>
               </h3>
               <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-                {course.description}
+                {activeCourse.description}
               </p>
             </div>
           )}
@@ -173,7 +222,7 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({
             <button
               onClick={() => {
                 onClose();
-                onRequestRegister(course);
+                onRequestRegister(activeCourse);
               }}
               disabled={isFull}
               className={`px-5 py-2.5 font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer ${

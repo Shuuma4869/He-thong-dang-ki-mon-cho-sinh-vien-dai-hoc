@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { LoginPage } from '@/features/auth/pages/LoginPage';
 import { Header } from '@/shared/components/layout/Header';
 import { Sidebar } from '@/shared/components/layout/Sidebar';
@@ -22,7 +22,6 @@ import { ToastMessage } from '@/shared/types/ui.types';
 import { APP_TITLE } from '@/shared/constants/app';
 import {
   SEMESTERS,
-  COURSES_MOCK,
   INITIAL_REGISTERED_IDS,
   NOTIFICATIONS_MOCK,
 } from '@/mocks/mockData';
@@ -58,7 +57,7 @@ export default function App() {
   const [currentSemester, setCurrentSemester] = useState<string>(SEMESTERS[0]);
 
   // Data State
-  const [courses, setCourses] = useState<Course[]>(COURSES_MOCK);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [registeredIds, setRegisteredIds] = useState<string[]>(INITIAL_REGISTERED_IDS);
   const [notifications, setNotifications] = useState<UniversityNotification[]>(NOTIFICATIONS_MOCK);
 
@@ -159,13 +158,6 @@ export default function App() {
     // Add to registered list
     setRegisteredIds((prev) => [...prev, registeredCourse.id]);
 
-    // Increment enrolled capacity count
-    setCourses((prevCourses) =>
-      prevCourses.map((c) =>
-        c.id === registeredCourse.id ? { ...c, enrolled: c.enrolled + 1 } : c
-      )
-    );
-
     addToast(
       'success',
       'Đăng ký môn học thành công!',
@@ -178,13 +170,6 @@ export default function App() {
     const targetCourse = courses.find((c) => c.id === courseId);
 
     setRegisteredIds((prev) => prev.filter((id) => id !== courseId));
-
-    // Decrement enrolled count
-    setCourses((prevCourses) =>
-      prevCourses.map((c) =>
-        c.id === courseId ? { ...c, enrolled: Math.max(0, c.enrolled - 1) } : c
-      )
-    );
 
     if (targetCourse) {
       addToast(
@@ -206,6 +191,10 @@ export default function App() {
     setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
     addToast('success', 'Đã cập nhật', 'Đã đánh dấu tất cả thông báo là đã đọc.');
   };
+
+  const handleCoursesLoaded = useCallback((loadedCourses: Course[]) => {
+    setCourses(loadedCourses);
+  }, []);
 
   if (isInitializing) {
     return (
@@ -293,12 +282,12 @@ export default function App() {
 
           {activeTab === 'courses' && (
             <CourseListPage
-              courses={courses}
               registeredCourseIds={registeredIds}
               onOpenCourseDetail={setSelectedCourseForDetail}
               onRequestRegister={setSelectedCourseForRegister}
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
+              onCoursesLoaded={handleCoursesLoaded}
             />
           )}
 
