@@ -340,3 +340,56 @@ Frontend dung:
 Tat ca deu di qua shared `requestApi`; page/component khong goi `fetch` truc tiep va khong doc `data/*.json`.
 
 Frontend hien thi loi bang message/errorCode backend tra ve. Cac rule duplicate, gioi han tin chi va trung lich do backend validator quyet dinh.
+
+## Timetable API contract sau F13A
+
+Endpoint:
+
+```text
+GET /api/students/{studentId}/timetable
+```
+
+Timetable khong co persistence rieng. Response duoc suy ra tu:
+
+```text
+Student
++ ACTIVE Registration
++ Course
++ Course.Schedule
++ Lecturer
+```
+
+Response thanh cong tra `ApiResponse<List<TimetableSlotResponse>>`.
+
+Moi schedule cua mot course tao mot entry rieng. Course co 2 schedule se xuat hien 2 dong trong `data`.
+
+Thu tu response duoc sort deterministic:
+
+```text
+DayOfWeek -> startTime -> courseId
+```
+
+Sinh vien chua co dang ky active se tra `data: []`, khong coi day la server error.
+
+JSON item:
+
+```json
+{
+  "courseId": "OOP101",
+  "courseName": "Lap trinh huong doi tuong",
+  "credits": 3,
+  "lecturerName": "Tran Thi B",
+  "dayOfWeek": "MONDAY",
+  "startTime": "07:30:00",
+  "endTime": "09:30:00",
+  "room": "A101"
+}
+```
+
+Backend giu `DayOfWeek` dang enum tieng Anh (`MONDAY`, `TUESDAY`, ...). Frontend chiu trach nhiem map sang text hien thi.
+
+Business/data errors co the gap:
+
+- `STUDENT_NOT_FOUND`
+- `COURSE_NOT_FOUND`
+- `LECTURER_NOT_FOUND`

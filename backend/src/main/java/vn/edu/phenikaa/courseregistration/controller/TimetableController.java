@@ -26,7 +26,7 @@ public class TimetableController {
     public ApiResponse<List<TimetableSlotResponse>> findByStudentId(@PathVariable String studentId) {
         return ApiResponse.success(
                 "Lay thoi khoa bieu thanh cong.",
-                timetableMapper.toResponses(timetableService.findRegisteredCourses(studentId))
+                timetableMapper.toEntryResponses(timetableService.findTimetableEntries(studentId))
         );
     }
 }

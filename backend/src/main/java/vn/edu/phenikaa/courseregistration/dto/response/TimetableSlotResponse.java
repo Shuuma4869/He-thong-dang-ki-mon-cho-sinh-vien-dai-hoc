@@ -7,6 +7,8 @@ import java.time.LocalTime;
 public class TimetableSlotResponse {
     private String courseId;
     private String courseName;
+    private int credits;
+    private String lecturerName;
     private DayOfWeek dayOfWeek;
     private LocalTime startTime;
     private LocalTime endTime;
@@ -18,6 +20,8 @@ public class TimetableSlotResponse {
     public TimetableSlotResponse(
             String courseId,
             String courseName,
+            int credits,
+            String lecturerName,
             DayOfWeek dayOfWeek,
             LocalTime startTime,
             LocalTime endTime,
@@ -25,6 +29,8 @@ public class TimetableSlotResponse {
     ) {
         this.courseId = courseId;
         this.courseName = courseName;
+        this.credits = credits;
+        this.lecturerName = lecturerName;
         this.dayOfWeek = dayOfWeek;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -45,6 +51,22 @@ public class TimetableSlotResponse {
 
     public void setCourseName(String courseName) {
         this.courseName = courseName;
+    }
+
+    public int getCredits() {
+        return credits;
+    }
+
+    public void setCredits(int credits) {
+        this.credits = credits;
+    }
+
+    public String getLecturerName() {
+        return lecturerName;
+    }
+
+    public void setLecturerName(String lecturerName) {
+        this.lecturerName = lecturerName;
     }
 
     public DayOfWeek getDayOfWeek() {

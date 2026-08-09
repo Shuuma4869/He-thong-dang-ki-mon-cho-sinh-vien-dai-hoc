@@ -88,3 +88,16 @@ Controller
 
 Frontend Registration sau F12 khong doc `data/*.json` va khong dung mock ids cho runtime. Moi thao tac dang ky, huy hoac lay danh sach da dang ky
 di qua REST API backend. `data/*.json` van co the rong cho den phase tao demo data F15.
+
+## Trang thai Timetable sau F13A
+
+Timetable la computed response, khong tao `data/timetable.json` va khong tao repository persistence rieng.
+
+`TimetableService` lay du lieu qua repository interface:
+
+- `StudentRepository` kiem tra sinh vien ton tai.
+- `RegistrationRepository` lay cac registration cua sinh vien va chi dung registration `ACTIVE`.
+- `CourseRepository.findAll()` tao map hoc phan de resolve `courseId`.
+- `LecturerRepository.findAll()` tao map giang vien de tra `lecturerName`.
+
+Moi `Course.Schedule` tao mot timetable entry. Response duoc sort theo `DayOfWeek`, `startTime`, `courseId`.
