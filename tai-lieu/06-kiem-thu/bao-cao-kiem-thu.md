@@ -1,5 +1,19 @@
 # Bao cao kiem thu
 
+## F17 - Browser end-to-end verification
+
+Da chay kiem thu end-to-end tren trinh duyet that voi backend `http://localhost:8080` va frontend `http://localhost:3000`.
+
+Ket qua tom tat:
+
+- Auth demo SV001, login loi SV999 va logout: PASS.
+- Dashboard, danh sach mon, search, mon da dang ky, thoi khoa bieu, ho so, thong bao demo/local: PASS.
+- Dang ky DBS202, restart backend de kiem persistence JSON, huy DBS202 va restore baseline data: PASS.
+- Negative API contract: `DUPLICATE_REGISTRATION`, `COURSE_FULL`, `STUDENT_NOT_FOUND` deu tra dung error response va khong mutate JSON.
+- Responsive desktop/mobile smoke: PASS.
+
+Bao cao chi tiet: `tai-lieu/06-kiem-thu/bao-cao-kiem-thu-e2e-f17.md`.
+
 Tai lieu nay ghi nhan trang thai test hardening sau F16 cho Full Solution LOCAL.
 Khong cong bo coverage % vi du an chua cau hinh cong cu do coverage.
 

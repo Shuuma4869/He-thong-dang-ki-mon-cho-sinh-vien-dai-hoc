@@ -1,17 +1,25 @@
 # Hệ thống đăng ký môn học
 
+## Cập nhật hiện tại sau F17
+
+- Frontend đã kết nối backend thật qua REST API mặc định `http://localhost:8080/api`.
+- Backend đã có API cho auth demo, student/profile, course, registration và timetable.
+- Data được lưu bằng JSON File IO trong `data/*.json`, không dùng database/JPA/Hibernate.
+- Tài khoản demo: mã sinh viên `SV001`, mật khẩu bất kỳ.
+- Để demo đầy đủ, chạy backend trước, sau đó chạy frontend.
+
 Đồ án cuối kỳ OOP nhóm 2 - Đại học Phenikaa.
 
-Đây là starter project cho hệ thống đăng ký môn học theo cấu trúc monorepo. Frontend đã có giao diện React chạy bằng mock data. Backend hiện là Spring Boot skeleton để nhóm tiếp tục phát triển model, service, validator, repository JSON File IO và REST API ở các phase sau.
+Đây là Full Solution local cho hệ thống đăng ký môn học theo cấu trúc monorepo. Frontend React đã kết nối backend Spring Boot qua REST API. Backend triển khai model, service, validator, repository JSON File IO và các API chính cho luồng demo sinh viên.
 
 Project chưa production-ready.
 
 ## Trạng thái hiện tại
 
 - Frontend: đã có UI đăng nhập demo, dashboard, danh sách môn học, môn đã đăng ký, thời khóa biểu, thông báo và hồ sơ sinh viên.
-- Backend: skeleton compile được, có Spring context test tối thiểu.
-- File IO: mới ở mức starter/skeleton, chưa triển khai đầy đủ.
-- REST API: chưa hoàn thiện và chưa kết nối frontend.
+- Backend: đã có REST API cho auth demo, student/profile, course, registration và timetable.
+- File IO: đã đọc/ghi JSON qua repository và `JsonFileUtils`.
+- REST API: đã kết nối với frontend cho các luồng chính.
 - Database/JPA/Hibernate/Spring Security/JWT: chưa sử dụng trong starter này.
 
 ## Công nghệ
@@ -30,7 +38,7 @@ Project chưa production-ready.
 - Java 21
 - Spring Boot 3.3.5
 - Maven Wrapper 3.3.4, tải Maven 3.9.9
-- JSON File IO định hướng cho phase sau
+- JSON File IO
 - JUnit 5
 - Mockito, thông qua `spring-boot-starter-test`
 
@@ -130,7 +138,7 @@ Backend dự kiến chạy tại:
 http://localhost:8080
 ```
 
-Root `/` có thể trả 404 trong starter vì API thật chưa được triển khai.
+Root `/` có thể trả 404. Dùng `http://localhost:8080/api/courses` để kiểm tra backend API.
 
 Nếu chạy trực tiếp `backend\mvnw.cmd spring-boot:run` trong một đường dẫn Windows có dấu tiếng Việt và gặp lỗi classpath, hãy dùng `scripts\chay-backend.bat`. Script này tự map project sang một drive-letter tạm thời rồi gỡ ra khi dừng server.
 
@@ -172,13 +180,13 @@ Script này chạy frontend typecheck, frontend build, backend test và backend 
 - `tai-lieu/07-van-hanh/huong-dan-chay-backend.md`
 - `tai-lieu/07-van-hanh/xu-ly-loi-thuong-gap.md`
 
-## Tính năng đã có trong frontend mock
+## Tính năng đã có
 
-- Đăng nhập demo bằng mã sinh viên.
+- Đăng nhập demo bằng mã sinh viên `SV001`.
 - Dashboard tổng quan.
 - Tìm kiếm và lọc môn học.
 - Xem chi tiết môn học.
-- Đăng ký/hủy đăng ký ở mock state.
+- Đăng ký/hủy đăng ký qua backend REST API và JSON File IO.
 - Xem môn học đã đăng ký.
 - Xem thời khóa biểu tuần.
 - Xem và đánh dấu thông báo.
@@ -186,11 +194,6 @@ Script này chạy frontend typecheck, frontend build, backend test và backend 
 
 ## Phần chưa triển khai
 
-- Business logic đăng ký môn học thật ở backend.
-- JSON File IO hoàn chỉnh.
-- REST API thật.
-- Kết nối frontend với backend.
-- Unit test nghiệp vụ.
 - Phân quyền/xác thực thật.
 - Trang quản trị/giảng viên.
 
