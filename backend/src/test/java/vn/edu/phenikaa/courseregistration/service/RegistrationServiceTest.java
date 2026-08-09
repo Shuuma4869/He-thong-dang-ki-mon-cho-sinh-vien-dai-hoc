@@ -133,6 +133,40 @@ class RegistrationServiceTest {
     }
 
     @Test
+    void registerFailsWithDuplicateWhenDuplicateAlsoExceedsCreditLimit() {
+        Course oop = course("OOP101", 3, 60, 20);
+        Course web = course("WEB201", 3, 60, 20);
+        Course dbs = course("DBS202", 3, 60, 20);
+        when(studentRepository.findById("SV001")).thenReturn(Optional.of(student(10)));
+        when(courseRepository.findById("OOP101")).thenReturn(Optional.of(oop));
+        when(courseRepository.findById("WEB201")).thenReturn(Optional.of(web));
+        when(courseRepository.findById("DBS202")).thenReturn(Optional.of(dbs));
+        when(registrationRepository.findByStudentId("SV001"))
+                .thenReturn(List.of(registration("REG001", "SV001", "OOP101", "WEB201", "DBS202")));
+
+        assertThatThrownBy(() -> service().registerCourse("SV001", "DBS202"))
+                .isInstanceOf(DuplicateRegistrationException.class)
+                .isNotInstanceOf(CreditLimitExceededException.class);
+        verify(registrationRepository, never()).save(any());
+        verify(courseRepository, never()).save(any());
+    }
+
+    @Test
+    void registerFailsWithDuplicateWhenDuplicateCourseIsFull() {
+        Course course = course("OOP101", 3, 60, 60);
+        when(studentRepository.findById("SV001")).thenReturn(Optional.of(student(20)));
+        when(courseRepository.findById("OOP101")).thenReturn(Optional.of(course));
+        when(registrationRepository.findByStudentId("SV001"))
+                .thenReturn(List.of(registration("REG001", "SV001", "OOP101")));
+
+        assertThatThrownBy(() -> service().registerCourse("SV001", "OOP101"))
+                .isInstanceOf(DuplicateRegistrationException.class)
+                .isNotInstanceOf(CourseFullException.class);
+        verify(registrationRepository, never()).save(any());
+        verify(courseRepository, never()).save(any());
+    }
+
+    @Test
     void registerFailsWhenCreditLimitExceeded() {
         Course requestedCourse = course("OOP101", 3, 60, 20);
         Course registeredCourse = course("MAT101", 8, 60, 20);
@@ -316,8 +350,8 @@ class RegistrationServiceTest {
     private List<CourseValidator> validators() {
         return List.of(
                 new CourseExistenceValidator(),
-                new CapacityValidator(),
                 new DuplicateCourseValidator(),
+                new CapacityValidator(),
                 new CreditLimitValidator(),
                 new ScheduleConflictValidator()
         );

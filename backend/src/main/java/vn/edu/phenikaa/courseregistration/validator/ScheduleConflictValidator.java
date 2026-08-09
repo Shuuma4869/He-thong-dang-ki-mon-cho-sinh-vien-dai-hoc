@@ -1,6 +1,7 @@
 package vn.edu.phenikaa.courseregistration.validator;
 
 import java.util.List;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import vn.edu.phenikaa.courseregistration.exception.ScheduleConflictException;
 import vn.edu.phenikaa.courseregistration.interfaces.CourseValidator;
@@ -9,6 +10,7 @@ import vn.edu.phenikaa.courseregistration.model.Schedule;
 import vn.edu.phenikaa.courseregistration.validator.context.RegistrationValidationContext;
 
 @Component
+@Order(50)
 public class ScheduleConflictValidator implements CourseValidator {
     @Override
     public void validate(RegistrationValidationContext context) {

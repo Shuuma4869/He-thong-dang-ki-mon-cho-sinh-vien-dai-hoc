@@ -38,10 +38,22 @@ Không dùng:
 ## Thứ tự validator dự kiến
 
 1. `CourseExistenceValidator`
-2. `CapacityValidator`
-3. `DuplicateCourseValidator`
+2. `DuplicateCourseValidator`
+3. `CapacityValidator`
 4. `CreditLimitValidator`
 5. `ScheduleConflictValidator`
+
+Thu tu nay la contract bat buoc va duoc khoa bang `@Order` tren tung Spring bean validator:
+
+- `CourseExistenceValidator`: `@Order(10)`
+- `DuplicateCourseValidator`: `@Order(20)`
+- `CapacityValidator`: `@Order(30)`
+- `CreditLimitValidator`: `@Order(40)`
+- `ScheduleConflictValidator`: `@Order(50)`
+
+Khong duoc dua vao thu tu ten class, thu tu file, reflection order hoac thu tu component scan ngam dinh.
+Neu mot request vua duplicate vua vi pham rule khac, loi duplicate phai duoc tra ve truoc vi day la loi truc tiep nhat cua request.
+Vi du: SV001 da co DBS202 va tong tin chi hien tai la 9/10, dang ky lai DBS202 phai tra `DUPLICATE_REGISTRATION`, khong tra `CREDIT_LIMIT_EXCEEDED`.
 
 Từng validator không được phụ thuộc nguy hiểm vào thứ tự. Những validator cần học phần mới có thể gọi `context.requireRequestedCourse()` để an toàn nếu thứ tự bị thay đổi.
 
