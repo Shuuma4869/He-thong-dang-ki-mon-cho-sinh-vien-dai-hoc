@@ -353,6 +353,10 @@ export default function App() {
             <DashboardPage
               student={student}
               registeredCourses={registeredCoursesList}
+              totalCredits={currentTotalCredits}
+              isRegistrationLoading={isRegistrationLoading}
+              registrationErrorMessage={registrationErrorMessage}
+              onRefreshRegistrations={loadRegistrations}
               notifications={notifications}
               onNavigate={setActiveTab}
               currentSemester={currentSemester}

@@ -86,3 +86,22 @@ Frontend da noi API that cho man Thoi khoa bieu:
 - Schedule backend dang enum `DayOfWeek` tieng Anh va duoc map sang presentation model bang mapper dung chung voi Course.
 
 Dashboard va Notifications van chua migrate thanh API runtime rieng trong F13.
+
+## Trang thai tich hop frontend F14
+
+Dashboard sau F14 la presentation/composition layer tren frontend, khong tao backend Dashboard API rieng.
+
+Nguon du lieu runtime:
+
+- Student identity: `currentStudent` da xac thuc qua Auth/Profile API.
+- Tong tin chi: `RegistrationResponse.totalCredits`.
+- So mon da dang ky: `RegistrationResponse.courses.length`.
+- So mon dang mo: `GET /api/courses`.
+- Gioi han tin chi: `Student.maxCredits`.
+- Tien do tin chi: tinh presentation bang `totalCredits / maxCredits`, co xu ly `maxCredits <= 0`.
+- Lich hoc preview: `GET /api/students/{studentId}/timetable`.
+
+Dashboard khong doc `data/*.json`, khong dung mock course/registration/timetable va khong hard-code `SV001`.
+
+Notifications duoc giu o pham vi frontend demo/local state. Khong co backend Notification model, repository, service, controller hoac
+`data/notifications.json` trong F14. Tinh nang nay chi bo tro giao dien va khong co server persistence.

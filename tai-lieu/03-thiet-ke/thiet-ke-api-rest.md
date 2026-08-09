@@ -413,3 +413,29 @@ Mapping frontend:
 - `dayOfWeek/startTime/endTime/room` -> schedule presentation model dung chung voi Course mapper
 
 Response `data: []` hien thi trang thai chua co lich hoc, khong fallback sang mock data.
+
+## Frontend Dashboard composition sau F14
+
+Khong tao endpoint `GET /api/dashboard/{studentId}` trong F14. Dashboard gom du lieu tu cac API da co:
+
+- `currentStudent` tu Auth/Profile API cho thong tin sinh vien.
+- `registrationApi.getRegistrations(studentId)` do `App` load de lay `totalCredits` va danh sach mon da dang ky.
+- `courseApi.getCourses()` de dem so mon dang mo theo contract Course hien tai.
+- `timetableApi.getTimetable(studentId)` de hien thi preview lich hoc.
+
+Dashboard chi tinh metric presentation nhu `registeredCount` va `creditPercent`. Cac rule nghiep vu nhu gioi han tin chi, trung lich,
+duplicate registration va capacity van thuoc backend validators/services.
+
+Feature Dashboard khong goi `fetch` truc tiep, khong doc `data/*.json`, khong fallback sang mock course/registration/timetable va khong hard-code `SV001`.
+
+## Notifications scope sau F14
+
+Notifications khong thuoc persistence/business core trong phien ban do an hien tai. F14 khong tao:
+
+- Notification model backend
+- Notification repository
+- Notification service
+- Notification controller
+- `data/notifications.json`
+
+Notifications duoc giu la frontend demo/local state. Unread count, mark read va mark all read chi cap nhat state frontend, khong dong bo backend.

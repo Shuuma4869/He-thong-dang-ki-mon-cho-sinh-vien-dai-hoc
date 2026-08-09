@@ -1,20 +1,20 @@
 import React from 'react';
 import {
-  BookCheck,
-  Award,
-  CalendarCheck2,
-  Bell,
-  ArrowRight,
-  Clock,
-  MapPin,
-  User,
-  GraduationCap,
-  Sparkles,
-  Download,
-  CheckCircle2,
   AlertCircle,
+  ArrowRight,
+  Bell,
+  BookCheck,
+  CalendarCheck2,
+  Clock,
+  GraduationCap,
+  Loader2,
+  MapPin,
+  RefreshCw,
+  Sparkles,
+  User,
 } from 'lucide-react';
-import { Course } from '@/features/courses/types/course.types';
+import { Course, ClassSchedule } from '@/features/courses/types/course.types';
+import { useDashboardData } from '@/features/dashboard/hooks/useDashboardData';
 import { UniversityNotification } from '@/features/notifications/types/notification.types';
 import { Student } from '@/features/profile/types/profile.types';
 import { NavigationTab } from '@/shared/types/navigation.types';
@@ -22,38 +22,55 @@ import { NavigationTab } from '@/shared/types/navigation.types';
 interface DashboardPageProps {
   student: Student;
   registeredCourses: Course[];
+  totalCredits: number;
+  isRegistrationLoading: boolean;
+  registrationErrorMessage: string;
+  onRefreshRegistrations: () => Promise<void>;
   notifications: UniversityNotification[];
   onNavigate: (tab: NavigationTab) => void;
   currentSemester: string;
 }
 
+interface SchedulePreview {
+  course: Course;
+  schedule: ClassSchedule;
+}
+
 export const DashboardPage: React.FC<DashboardPageProps> = ({
   student,
   registeredCourses,
+  totalCredits,
+  isRegistrationLoading,
+  registrationErrorMessage,
+  onRefreshRegistrations,
   notifications,
   onNavigate,
   currentSemester,
 }) => {
-  const totalCredits = registeredCourses.reduce((sum, c) => sum + c.credits, 0);
+  const {
+    openCourses,
+    timetableCourses,
+    isLoading: isDashboardLoading,
+    errorMessage: dashboardErrorMessage,
+    refresh: refreshDashboardData,
+  } = useDashboardData(student.id);
+
   const maxCredits = student.maxCredits;
-  const minCredits = 12;
-  const studentFaculty = student.faculty ?? 'Chua dong bo khoa';
-  const cpaText = typeof student.cpa === 'number' ? student.cpa.toFixed(2) : 'Chua dong bo';
-  const creditsProgressText =
-    typeof student.creditsPassed === 'number' && typeof student.totalCreditsRequired === 'number'
-      ? `${student.creditsPassed}/${student.totalCreditsRequired} Tin chi`
-      : 'Chua dong bo';
+  const creditPercent = getCreditPercent(totalCredits, maxCredits);
+  const unreadNotifs = notifications.filter((notification) => !notification.isRead);
+  const schedulePreview = getSchedulePreview(timetableCourses);
+  const isLoading = isDashboardLoading || isRegistrationLoading;
+  const errorMessage = dashboardErrorMessage || registrationErrorMessage;
 
-  // Find today's classes (Assume today is Monday / Thứ 2 for realistic demo)
-  const todaysClasses = registeredCourses.filter((course) =>
-    course.schedules.some((s) => s.dayOfWeek === 2)
-  );
-
-  const unreadNotifs = notifications.filter((n) => !n.isRead);
+  const handleRetry = async () => {
+    await Promise.all([
+      refreshDashboardData(),
+      onRefreshRegistrations().catch(() => undefined),
+    ]);
+  };
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
-      {/* Top Banner Greeting */}
       <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 rounded-2xl p-6 lg:p-8 text-white shadow-md relative overflow-hidden">
         <img
           src="/assets/images/dashboard-banner.svg"
@@ -61,9 +78,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
           aria-hidden="true"
           className="absolute right-0 top-0 h-full w-1/2 object-cover opacity-20 pointer-events-none"
         />
-        {/* Subtle decorative geometric overlay */}
         <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-white/5 skew-x-12 pointer-events-none" />
-        <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-blue-500/20 rounded-full blur-2xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
@@ -72,303 +87,314 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
               <span>{currentSemester}</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-              Xin chào, {student.name}!
+              Xin chao, {student.name}!
             </h1>
             <p className="text-blue-100 text-xs sm:text-sm font-medium opacity-90 max-w-2xl">
-              Lớp <strong className="text-white">{student.className}</strong> • Ngành <strong className="text-white">{student.major}</strong> • {studentFaculty}
+              Lop <strong className="text-white">{student.className}</strong> - Nganh{' '}
+              <strong className="text-white">{student.major}</strong>
             </p>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
-            <button
-              onClick={() => onNavigate('courses')}
-              className="px-5 py-2.5 bg-white text-blue-700 hover:bg-blue-50 active:bg-blue-100 font-bold text-xs sm:text-sm rounded-xl shadow-sm transition-all flex items-center gap-2 cursor-pointer"
-            >
-              <span>Đăng ký Môn học ngay</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
+          <button
+            onClick={() => onNavigate('courses')}
+            className="px-5 py-2.5 bg-white text-blue-700 hover:bg-blue-50 active:bg-blue-100 font-bold text-xs sm:text-sm rounded-xl shadow-sm transition-all flex items-center gap-2 cursor-pointer shrink-0"
+          >
+            <span>Dang ky mon hoc</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
         </div>
       </div>
 
-      {/* 4 Statistics Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Card 1: Registered Credits */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Tín Chỉ Đã Đăng Ký</span>
-            <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600">
-              <BookCheck className="w-5 h-5" />
-            </div>
-          </div>
-          <div>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-2xl font-bold text-slate-900">{totalCredits}</span>
-              <span className="text-xs text-slate-500 font-medium">/ {maxCredits} Tín chỉ tối đa</span>
-            </div>
-            {/* Progress bar */}
-            <div className="w-full h-2 bg-slate-100 rounded-full mt-2.5 overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all duration-500 ${
-                  totalCredits >= minCredits ? 'bg-emerald-500' : 'bg-amber-500'
-                }`}
-                style={{ width: `${Math.min(100, (totalCredits / maxCredits) * 100)}%` }}
-              />
-            </div>
-            <p className="text-[11px] text-slate-500 mt-1.5 flex items-center justify-between">
-              <span>Số TC tối thiểu: {minCredits} TC</span>
-              <span className={totalCredits >= minCredits ? 'text-emerald-600 font-semibold' : 'text-amber-600 font-semibold'}>
-                {totalCredits >= minCredits ? 'Đạt yêu cầu' : 'Chưa đạt'}
-              </span>
-            </p>
-          </div>
+      {isLoading && (
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs p-8 flex items-center justify-center gap-3 text-sm font-semibold text-slate-600">
+          <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
+          Dang tai du lieu tong quan...
         </div>
+      )}
 
-        {/* Card 2: Registered Courses Count */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Số Môn Đã Đăng Ký</span>
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600">
-              <CalendarCheck2 className="w-5 h-5" />
+      {!isLoading && errorMessage && (
+        <div className="bg-white rounded-2xl border border-red-200 shadow-2xs p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
+            <div>
+              <h2 className="text-sm font-bold text-red-700">Khong tai duoc du lieu tong quan</h2>
+              <p className="text-xs text-slate-600 mt-1">{errorMessage}</p>
             </div>
           </div>
-          <div>
-            <span className="text-2xl font-bold text-slate-900">{registeredCourses.length}</span>
-            <span className="text-xs text-slate-500 font-medium ml-1">học phần</span>
-            <p className="text-[11px] text-slate-500 mt-2">
-              Lớp học phần đã xác nhận trên hệ thống
-            </p>
-          </div>
+          <button
+            onClick={handleRetry}
+            className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-700 font-semibold text-xs rounded-xl border border-red-200 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Thu lai
+          </button>
         </div>
+      )}
 
-        {/* Card 3: Academic CPA */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Điểm CPA Tích Lũy</span>
-            <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
-              <Award className="w-5 h-5" />
-            </div>
-          </div>
-          <div>
-            <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-slate-900">{cpaText}</span>
-              {typeof student.cpa === 'number' && (
-                <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
-                  Xếp loại: Giỏi
-                </span>
-              )}
-            </div>
-            <p className="text-[11px] text-slate-500 mt-2">
-              Tích lũy: {creditsProgressText}
-            </p>
-          </div>
-        </div>
-
-        {/* Card 4: New Notifications */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Thông Báo Mới</span>
-            <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600">
-              <Bell className="w-5 h-5" />
-            </div>
-          </div>
-          <div>
-            <span className="text-2xl font-bold text-slate-900">{unreadNotifs.length}</span>
-            <span className="text-xs text-slate-500 font-medium ml-1">chưa đọc</span>
-            <button
-              onClick={() => onNavigate('notifications')}
-              className="text-[11px] font-semibold text-blue-600 hover:underline mt-2 block cursor-pointer"
+      {!isLoading && !errorMessage && (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <MetricCard
+              label="Tin chi da dang ky"
+              icon={<BookCheck className="w-5 h-5" />}
+              tone="blue"
             >
-              Xem tất cả thông báo →
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Grid Section: Left 2/3 (Today's Schedule & Quick Actions) - Right 1/3 (Important Milestones & Student Summary) */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left 2 Cols */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Today's Classes Card */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-blue-600" />
-                <h2 className="text-base font-bold text-slate-900">Lịch Học Hôm Nay (Thứ Hai)</h2>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-2xl font-bold text-slate-900">{totalCredits}</span>
+                <span className="text-xs text-slate-500 font-medium">/ {maxCredits} tin chi toi da</span>
               </div>
-              <button
-                onClick={() => onNavigate('timetable')}
-                className="text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
-              >
-                Xem thời khóa biểu tuần →
-              </button>
-            </div>
-
-            {todaysClasses.length === 0 ? (
-              <div className="p-8 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                <p className="text-xs text-slate-500">Hôm nay sinh viên không có lịch học. Hãy dùng thời gian ôn tập bài!</p>
+              <div className="w-full h-2 bg-slate-100 rounded-full mt-2.5 overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-blue-600 transition-all duration-500"
+                  style={{ width: `${creditPercent}%` }}
+                />
               </div>
-            ) : (
-              <div className="space-y-3">
-                {todaysClasses.map((course) => {
-                  const schedule = course.schedules.find((s) => s.dayOfWeek === 2);
-                  return (
-                    <div
-                      key={course.id}
-                      className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-white hover:shadow-sm transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-                    >
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="px-2 py-0.5 text-[10px] font-bold bg-blue-100 text-blue-700 rounded">
-                            {course.code}
-                          </span>
-                          <span className="text-xs font-bold text-slate-900">{course.name}</span>
-                        </div>
-                        <p className="text-xs text-slate-600 flex items-center gap-2">
-                          <User className="w-3.5 h-3.5 text-slate-400" />
-                          <span>{course.lecturer}</span>
-                        </p>
-                      </div>
+              <p className="text-[11px] text-slate-500 mt-1.5">Nguon: Registration API + Student API.</p>
+            </MetricCard>
 
-                      <div className="flex items-center gap-4 text-xs shrink-0">
-                        <div className="flex items-center gap-1.5 text-slate-700 font-medium bg-white px-2.5 py-1 rounded-lg border border-slate-200">
-                          <Clock className="w-3.5 h-3.5 text-blue-600" />
-                          <span>{schedule?.periods}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 text-slate-700 font-medium bg-white px-2.5 py-1 rounded-lg border border-slate-200">
-                          <MapPin className="w-3.5 h-3.5 text-emerald-600" />
-                          <span>{schedule?.room}</span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+            <MetricCard
+              label="So mon da dang ky"
+              icon={<CalendarCheck2 className="w-5 h-5" />}
+              tone="emerald"
+            >
+              <span className="text-2xl font-bold text-slate-900">{registeredCourses.length}</span>
+              <span className="text-xs text-slate-500 font-medium ml-1">hoc phan</span>
+              <p className="text-[11px] text-slate-500 mt-2">Nguon: RegistrationResponse.courses.</p>
+            </MetricCard>
 
-          {/* Quick Actions Shortcuts */}
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-            <h2 className="text-base font-bold text-slate-900">Thao Tác Nhanh</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <button
-                onClick={() => onNavigate('courses')}
-                className="p-4 rounded-lg bg-white border border-slate-200 hover:border-slate-300 hover:shadow-sm text-slate-700 transition-all text-left space-y-3 cursor-pointer group"
-              >
-                <div className="w-8 h-8 rounded bg-slate-100 text-slate-700 flex items-center justify-center group-hover:bg-blue-50 group-hover:text-blue-700 transition-colors">
-                  <BookCheck className="w-4 h-4" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-slate-900 group-hover:text-blue-700 transition-colors">Đăng ký Môn</p>
-                  <p className="text-[10px] text-slate-500 mt-0.5">Tra cứu & đăng ký HP</p>
-                </div>
-              </button>
+            <MetricCard
+              label="Mon dang mo"
+              icon={<GraduationCap className="w-5 h-5" />}
+              tone="indigo"
+            >
+              <span className="text-2xl font-bold text-slate-900">{openCourses.length}</span>
+              <span className="text-xs text-slate-500 font-medium ml-1">hoc phan</span>
+              <p className="text-[11px] text-slate-500 mt-2">Nguon: Course API hien tai.</p>
+            </MetricCard>
 
-              <button
-                onClick={() => onNavigate('timetable')}
-                className="p-4 rounded-lg bg-white border border-slate-200 hover:border-slate-300 hover:shadow-sm text-slate-700 transition-all text-left space-y-3 cursor-pointer group"
-              >
-                <div className="w-8 h-8 rounded bg-slate-100 text-slate-700 flex items-center justify-center group-hover:bg-blue-50 group-hover:text-blue-700 transition-colors">
-                  <CalendarCheck2 className="w-4 h-4" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-slate-900 group-hover:text-blue-700 transition-colors">Thời khóa biểu</p>
-                  <p className="text-[10px] text-slate-500 mt-0.5">Xem lịch theo tuần</p>
-                </div>
-              </button>
-
-              <button
-                onClick={() => onNavigate('registered')}
-                className="p-4 rounded-lg bg-white border border-slate-200 hover:border-slate-300 hover:shadow-sm text-slate-700 transition-all text-left space-y-3 cursor-pointer group"
-              >
-                <div className="w-8 h-8 rounded bg-slate-100 text-slate-700 flex items-center justify-center group-hover:bg-blue-50 group-hover:text-blue-700 transition-colors">
-                  <GraduationCap className="w-4 h-4" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-slate-900 group-hover:text-blue-700 transition-colors">Đã đăng ký</p>
-                  <p className="text-[10px] text-slate-500 mt-0.5">Quản lý các môn học</p>
-                </div>
-              </button>
-
-              <button
-                onClick={() => onNavigate('profile')}
-                className="p-4 rounded-lg bg-white border border-slate-200 hover:border-slate-300 hover:shadow-sm text-slate-700 transition-all text-left space-y-3 cursor-pointer group"
-              >
-                <div className="w-8 h-8 rounded bg-slate-100 text-slate-700 flex items-center justify-center group-hover:bg-blue-50 group-hover:text-blue-700 transition-colors">
-                  <User className="w-4 h-4" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-slate-900 group-hover:text-blue-700 transition-colors">Hồ sơ cá nhân</p>
-                  <p className="text-[10px] text-slate-500 mt-0.5">Thông tin sinh viên</p>
-                </div>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Right 1 Col */}
-        <div className="space-y-6">
-          {/* Academic Milestone Box */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-            <h2 className="text-base font-bold text-slate-900">Mốc Thời Gian Đăng Ký</h2>
-            <div className="space-y-3">
-              <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 space-y-1">
-                <div className="flex items-center gap-2 text-xs font-bold text-emerald-800">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>Mở hệ thống đăng ký học phần</span>
-                </div>
-                <p className="text-[11px] text-emerald-700">08:00 - Ngày 05/08/2026</p>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-blue-50 border border-blue-200 space-y-1">
-                <div className="flex items-center gap-2 text-xs font-bold text-blue-800">
-                  <Clock className="w-4 h-4 text-blue-600 shrink-0" />
-                  <span>Hạn cuối điều chỉnh học phần</span>
-                </div>
-                <p className="text-[11px] text-blue-700">17:00 - Ngày 15/08/2026</p>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 space-y-1">
-                <div className="flex items-center gap-2 text-xs font-bold text-amber-800">
-                  <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
-                  <span>Hạn hoàn thành nộp học phí</span>
-                </div>
-                <p className="text-[11px] text-amber-700">17:00 - Ngày 25/08/2026</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Recent Announcements List */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-base font-bold text-slate-900">Thông Báo Từ Trường</h2>
+            <MetricCard
+              label="Thong bao demo"
+              icon={<Bell className="w-5 h-5" />}
+              tone="amber"
+            >
+              <span className="text-2xl font-bold text-slate-900">{unreadNotifs.length}</span>
+              <span className="text-xs text-slate-500 font-medium ml-1">chua doc</span>
               <button
                 onClick={() => onNavigate('notifications')}
-                className="text-xs font-semibold text-blue-600 hover:underline cursor-pointer"
+                className="text-[11px] font-semibold text-blue-600 hover:underline mt-2 block cursor-pointer"
               >
-                Tất cả
+                Xem thong bao demo/local
               </button>
+            </MetricCard>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-6">
+              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-blue-600" />
+                    <h2 className="text-base font-bold text-slate-900">Lich hoc cua ban</h2>
+                  </div>
+                  <button
+                    onClick={() => onNavigate('timetable')}
+                    className="text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
+                  >
+                    Xem thoi khoa bieu
+                  </button>
+                </div>
+
+                {schedulePreview.length === 0 ? (
+                  <div className="p-8 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                    <p className="text-xs text-slate-500">
+                      Ban chua co lich hoc tu cac mon dang ky active.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {schedulePreview.map(({ course, schedule }) => (
+                      <div
+                        key={`${course.id}-${schedule.dayOfWeek}-${schedule.startTime ?? schedule.periods}`}
+                        className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-white hover:shadow-sm transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                      >
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <span className="px-2 py-0.5 text-[10px] font-bold bg-blue-100 text-blue-700 rounded">
+                              {course.code}
+                            </span>
+                            <span className="text-xs font-bold text-slate-900">{course.name}</span>
+                          </div>
+                          <p className="text-xs text-slate-600 flex items-center gap-2">
+                            <User className="w-3.5 h-3.5 text-slate-400" />
+                            <span>{course.lecturer}</span>
+                          </p>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-3 text-xs shrink-0">
+                          <div className="flex items-center gap-1.5 text-slate-700 font-medium bg-white px-2.5 py-1 rounded-lg border border-slate-200">
+                            <Clock className="w-3.5 h-3.5 text-blue-600" />
+                            <span>{schedule.dayLabel ?? `Thu ${schedule.dayOfWeek}`}, {schedule.periods}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 text-slate-700 font-medium bg-white px-2.5 py-1 rounded-lg border border-slate-200">
+                            <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+                            <span>{schedule.room}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <h2 className="text-base font-bold text-slate-900">Thao tac nhanh</h2>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <QuickAction label="Dang ky mon" description="Tra cuu hoc phan" icon={<BookCheck className="w-4 h-4" />} onClick={() => onNavigate('courses')} />
+                  <QuickAction label="Thoi khoa bieu" description="Xem lich tuan" icon={<CalendarCheck2 className="w-4 h-4" />} onClick={() => onNavigate('timetable')} />
+                  <QuickAction label="Da dang ky" description="Quan ly hoc phan" icon={<GraduationCap className="w-4 h-4" />} onClick={() => onNavigate('registered')} />
+                  <QuickAction label="Ho so" description="Thong tin sinh vien" icon={<User className="w-4 h-4" />} onClick={() => onNavigate('profile')} />
+                </div>
+              </div>
             </div>
 
-            <div className="divide-y divide-slate-100">
-              {notifications.slice(0, 3).map((notif) => (
-                <div key={notif.id} className="py-3 first:pt-0 last:pb-0 space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="px-2 py-0.5 text-[9px] font-bold bg-slate-100 text-slate-600 rounded">
-                      {notif.category}
-                    </span>
-                    <span className="text-[10px] text-slate-400">{notif.createdAt}</span>
+            <div className="space-y-6">
+              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                <h2 className="text-base font-bold text-slate-900">Tong quan dang ky</h2>
+                {registeredCourses.length === 0 ? (
+                  <div className="p-5 rounded-xl bg-slate-50 border border-dashed border-slate-200">
+                    <p className="text-xs text-slate-500">Ban chua dang ky mon hoc nao.</p>
                   </div>
-                  <h3 className="text-xs font-semibold text-slate-900 hover:text-blue-600 transition-colors line-clamp-1 cursor-pointer">
-                    {notif.title}
-                  </h3>
-                  <p className="text-[11px] text-slate-500 line-clamp-2">{notif.summary}</p>
+                ) : (
+                  <div className="space-y-3">
+                    {registeredCourses.slice(0, 4).map((course) => (
+                      <div key={course.id} className="flex items-center justify-between gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+                        <div>
+                          <p className="text-xs font-bold text-slate-900">{course.code}</p>
+                          <p className="text-[11px] text-slate-500 line-clamp-1">{course.name}</p>
+                        </div>
+                        <span className="text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded border border-blue-100">
+                          {course.credits} TC
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-base font-bold text-slate-900">Thong bao demo/local</h2>
+                    <p className="text-[11px] text-slate-500 mt-1">Khong dong bo tu backend.</p>
+                  </div>
+                  <button
+                    onClick={() => onNavigate('notifications')}
+                    className="text-xs font-semibold text-blue-600 hover:underline cursor-pointer"
+                  >
+                    Tat ca
+                  </button>
                 </div>
-              ))}
+
+                <div className="divide-y divide-slate-100">
+                  {notifications.slice(0, 3).map((notification) => (
+                    <div key={notification.id} className="py-3 first:pt-0 last:pb-0 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="px-2 py-0.5 text-[9px] font-bold bg-slate-100 text-slate-600 rounded">
+                          {notification.category}
+                        </span>
+                        <span className="text-[10px] text-slate-400">{notification.createdAt}</span>
+                      </div>
+                      <h3 className="text-xs font-semibold text-slate-900 line-clamp-1">
+                        {notification.title}
+                      </h3>
+                      <p className="text-[11px] text-slate-500 line-clamp-2">{notification.summary}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 };
+
+function MetricCard({
+  label,
+  icon,
+  tone,
+  children,
+}: {
+  label: string;
+  icon: React.ReactNode;
+  tone: 'blue' | 'emerald' | 'indigo' | 'amber';
+  children: React.ReactNode;
+}) {
+  const toneClasses = {
+    blue: 'bg-blue-50 border-blue-100 text-blue-600',
+    emerald: 'bg-emerald-50 border-emerald-100 text-emerald-600',
+    indigo: 'bg-indigo-50 border-indigo-100 text-indigo-600',
+    amber: 'bg-amber-50 border-amber-100 text-amber-600',
+  };
+
+  return (
+    <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{label}</span>
+        <div className={`w-10 h-10 rounded-xl border flex items-center justify-center ${toneClasses[tone]}`}>
+          {icon}
+        </div>
+      </div>
+      <div>{children}</div>
+    </div>
+  );
+}
+
+function QuickAction({
+  label,
+  description,
+  icon,
+  onClick,
+}: {
+  label: string;
+  description: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="p-4 rounded-lg bg-white border border-slate-200 hover:border-slate-300 hover:shadow-sm text-slate-700 transition-all text-left space-y-3 cursor-pointer group"
+    >
+      <div className="w-8 h-8 rounded bg-slate-100 text-slate-700 flex items-center justify-center group-hover:bg-blue-50 group-hover:text-blue-700 transition-colors">
+        {icon}
+      </div>
+      <div>
+        <p className="text-xs font-bold text-slate-900 group-hover:text-blue-700 transition-colors">{label}</p>
+        <p className="text-[10px] text-slate-500 mt-0.5">{description}</p>
+      </div>
+    </button>
+  );
+}
+
+function getCreditPercent(totalCredits: number, maxCredits: number): number {
+  if (maxCredits <= 0) {
+    return 0;
+  }
+
+  return Math.max(0, Math.min(100, (totalCredits / maxCredits) * 100));
+}
+
+function getSchedulePreview(courses: Course[]): SchedulePreview[] {
+  return courses
+    .flatMap((course) => course.schedules.map((schedule) => ({ course, schedule })))
+    .sort((left, right) => {
+      if (left.schedule.dayOfWeek !== right.schedule.dayOfWeek) {
+        return left.schedule.dayOfWeek - right.schedule.dayOfWeek;
+      }
+
+      return (left.schedule.startTime ?? '').localeCompare(right.schedule.startTime ?? '');
+    })
+    .slice(0, 4);
+}
