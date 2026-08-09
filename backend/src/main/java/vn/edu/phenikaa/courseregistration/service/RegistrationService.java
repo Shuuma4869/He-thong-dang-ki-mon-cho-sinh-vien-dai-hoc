@@ -4,20 +4,29 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.edu.phenikaa.courseregistration.exception.CourseNotFoundException;
+import vn.edu.phenikaa.courseregistration.exception.LecturerNotFoundException;
 import vn.edu.phenikaa.courseregistration.exception.RegistrationNotFoundException;
 import vn.edu.phenikaa.courseregistration.exception.StudentNotFoundException;
 import vn.edu.phenikaa.courseregistration.interfaces.CourseValidator;
 import vn.edu.phenikaa.courseregistration.interfaces.Registrable;
 import vn.edu.phenikaa.courseregistration.model.Course;
+import vn.edu.phenikaa.courseregistration.model.CourseWithLecturer;
+import vn.edu.phenikaa.courseregistration.model.Lecturer;
 import vn.edu.phenikaa.courseregistration.model.Registration;
 import vn.edu.phenikaa.courseregistration.model.RegistrationDetail;
+import vn.edu.phenikaa.courseregistration.model.RegistrationSummary;
 import vn.edu.phenikaa.courseregistration.model.Student;
 import vn.edu.phenikaa.courseregistration.model.enums.RegistrationStatus;
 import vn.edu.phenikaa.courseregistration.repository.CourseRepository;
+import vn.edu.phenikaa.courseregistration.repository.LecturerRepository;
 import vn.edu.phenikaa.courseregistration.repository.RegistrationRepository;
 import vn.edu.phenikaa.courseregistration.repository.StudentRepository;
 import vn.edu.phenikaa.courseregistration.validator.context.RegistrationValidationContext;
@@ -27,6 +36,7 @@ import vn.edu.phenikaa.courseregistration.validator.context.RegistrationValidati
 public class RegistrationService implements Registrable {
     private final StudentRepository studentRepository;
     private final CourseRepository courseRepository;
+    private final LecturerRepository lecturerRepository;
     private final RegistrationRepository registrationRepository;
     private final List<CourseValidator> validators;
     private final Clock clock;
@@ -35,21 +45,31 @@ public class RegistrationService implements Registrable {
     public RegistrationService(
             StudentRepository studentRepository,
             CourseRepository courseRepository,
+            LecturerRepository lecturerRepository,
             RegistrationRepository registrationRepository,
             List<CourseValidator> validators
     ) {
-        this(studentRepository, courseRepository, registrationRepository, validators, Clock.systemDefaultZone());
+        this(
+                studentRepository,
+                courseRepository,
+                lecturerRepository,
+                registrationRepository,
+                validators,
+                Clock.systemDefaultZone()
+        );
     }
 
     RegistrationService(
             StudentRepository studentRepository,
             CourseRepository courseRepository,
+            LecturerRepository lecturerRepository,
             RegistrationRepository registrationRepository,
             List<CourseValidator> validators,
             Clock clock
     ) {
         this.studentRepository = studentRepository;
         this.courseRepository = courseRepository;
+        this.lecturerRepository = lecturerRepository;
         this.registrationRepository = registrationRepository;
         this.validators = List.copyOf(validators);
         this.clock = clock;
@@ -91,6 +111,10 @@ public class RegistrationService implements Registrable {
         return registration;
     }
 
+    public RegistrationSummary registerCourseSummary(String studentId, String courseId) {
+        return toSummary(registerCourse(studentId, courseId));
+    }
+
     public Registration cancelCourse(String studentId, String courseId) {
         studentRepository.findById(studentId)
                 .orElseThrow(() -> new StudentNotFoundException(studentId));
@@ -120,6 +144,10 @@ public class RegistrationService implements Registrable {
         return registration;
     }
 
+    public RegistrationSummary cancelCourseSummary(String studentId, String courseId) {
+        return toSummary(cancelCourse(studentId, courseId));
+    }
+
     public List<Registration> findActiveRegistrationsByStudent(String studentId) {
         studentRepository.findById(studentId)
                 .orElseThrow(() -> new StudentNotFoundException(studentId));
@@ -127,6 +155,15 @@ public class RegistrationService implements Registrable {
         return registrationRepository.findByStudentId(studentId).stream()
                 .filter(registration -> RegistrationStatus.ACTIVE == registration.getStatus())
                 .toList();
+    }
+
+    public RegistrationSummary findActiveRegistrationSummary(String studentId) {
+        studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException(studentId));
+
+        return findActiveRegistration(studentId)
+                .map(this::toSummary)
+                .orElseGet(() -> emptySummary(studentId));
     }
 
     public int calculateTotalCredits(String studentId) {
@@ -157,12 +194,69 @@ public class RegistrationService implements Registrable {
         );
     }
 
+    private RegistrationSummary emptySummary(String studentId) {
+        Registration registration = new Registration(
+                null,
+                studentId,
+                RegistrationStatus.ACTIVE,
+                null,
+                new ArrayList<>()
+        );
+        return new RegistrationSummary(registration, List.of());
+    }
+
+    private RegistrationSummary toSummary(Registration registration) {
+        return new RegistrationSummary(registration, resolveRegisteredCoursesWithLecturers(registration));
+    }
+
     private List<Course> resolveRegisteredCourses(Registration registration) {
         return safeDetails(registration).stream()
                 .map(RegistrationDetail::getCourseId)
                 .map(courseRepository::findById)
                 .flatMap(Optional::stream)
                 .toList();
+    }
+
+    private List<CourseWithLecturer> resolveRegisteredCoursesWithLecturers(Registration registration) {
+        Map<String, Course> coursesById = courseRepository.findAll().stream()
+                .collect(Collectors.toMap(
+                        course -> normalizeId(course.getCourseId()),
+                        Function.identity(),
+                        (first, ignored) -> first
+                ));
+
+        Map<String, Lecturer> lecturersById = lecturerRepository.findAll().stream()
+                .collect(Collectors.toMap(
+                        lecturer -> normalizeId(lecturer.getId()),
+                        Function.identity(),
+                        (first, ignored) -> first
+                ));
+
+        return safeDetails(registration).stream()
+                .map(RegistrationDetail::getCourseId)
+                .map(courseId -> findCourseForRegistration(courseId, coursesById))
+                .map(course -> new CourseWithLecturer(course, findLecturerFor(course, lecturersById)))
+                .toList();
+    }
+
+    private Course findCourseForRegistration(String courseId, Map<String, Course> coursesById) {
+        Course course = coursesById.get(normalizeId(courseId));
+        if (course == null) {
+            throw new CourseNotFoundException(courseId);
+        }
+        return course;
+    }
+
+    private Lecturer findLecturerFor(Course course, Map<String, Lecturer> lecturersById) {
+        Lecturer lecturer = lecturersById.get(normalizeId(course.getLecturerId()));
+        if (lecturer == null) {
+            throw new LecturerNotFoundException(course.getLecturerId(), course.getCourseId());
+        }
+        return lecturer;
+    }
+
+    private String normalizeId(String id) {
+        return id == null ? "" : id.trim().toLowerCase(Locale.ROOT);
     }
 
     private List<RegistrationDetail> safeDetails(Registration registration) {

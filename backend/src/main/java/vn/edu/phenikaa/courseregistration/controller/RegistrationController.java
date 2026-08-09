@@ -1,6 +1,5 @@
 package vn.edu.phenikaa.courseregistration.controller;
 
-import java.util.List;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,10 +26,10 @@ public class RegistrationController {
     }
 
     @GetMapping
-    public ApiResponse<List<RegistrationResponse>> findByStudentId(@PathVariable String studentId) {
+    public ApiResponse<RegistrationResponse> findByStudentId(@PathVariable String studentId) {
         return ApiResponse.success(
                 "Lay danh sach dang ky hoc phan thanh cong.",
-                registrationMapper.toResponses(registrationService.findActiveRegistrationsByStudent(studentId))
+                registrationMapper.toResponse(registrationService.findActiveRegistrationSummary(studentId))
         );
     }
 
@@ -41,7 +40,7 @@ public class RegistrationController {
     ) {
         return ApiResponse.success(
                 "Dang ky hoc phan thanh cong.",
-                registrationMapper.toResponse(registrationService.registerCourse(studentId, request.getCourseId()))
+                registrationMapper.toResponse(registrationService.registerCourseSummary(studentId, request.getCourseId()))
         );
     }
 
@@ -52,7 +51,7 @@ public class RegistrationController {
     ) {
         return ApiResponse.success(
                 "Huy dang ky hoc phan thanh cong.",
-                registrationMapper.toResponse(registrationService.cancelCourse(studentId, courseId))
+                registrationMapper.toResponse(registrationService.cancelCourseSummary(studentId, courseId))
         );
     }
 }

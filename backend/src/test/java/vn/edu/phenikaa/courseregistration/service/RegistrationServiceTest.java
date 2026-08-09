@@ -30,12 +30,15 @@ import vn.edu.phenikaa.courseregistration.exception.ScheduleConflictException;
 import vn.edu.phenikaa.courseregistration.exception.StudentNotFoundException;
 import vn.edu.phenikaa.courseregistration.interfaces.CourseValidator;
 import vn.edu.phenikaa.courseregistration.model.Course;
+import vn.edu.phenikaa.courseregistration.model.Lecturer;
 import vn.edu.phenikaa.courseregistration.model.Registration;
 import vn.edu.phenikaa.courseregistration.model.RegistrationDetail;
+import vn.edu.phenikaa.courseregistration.model.RegistrationSummary;
 import vn.edu.phenikaa.courseregistration.model.Schedule;
 import vn.edu.phenikaa.courseregistration.model.Student;
 import vn.edu.phenikaa.courseregistration.model.enums.RegistrationStatus;
 import vn.edu.phenikaa.courseregistration.repository.CourseRepository;
+import vn.edu.phenikaa.courseregistration.repository.LecturerRepository;
 import vn.edu.phenikaa.courseregistration.repository.RegistrationRepository;
 import vn.edu.phenikaa.courseregistration.repository.StudentRepository;
 import vn.edu.phenikaa.courseregistration.validator.CapacityValidator;
@@ -56,6 +59,9 @@ class RegistrationServiceTest {
 
     @Mock
     private CourseRepository courseRepository;
+
+    @Mock
+    private LecturerRepository lecturerRepository;
 
     @Mock
     private RegistrationRepository registrationRepository;
@@ -227,10 +233,80 @@ class RegistrationServiceTest {
         assertThat(service().calculateTotalCredits("SV001")).isEqualTo(7);
     }
 
+    @Test
+    void findActiveRegistrationSummaryReturnsEmptyCoursesWhenStudentHasNoActiveRegistration() {
+        when(studentRepository.findById("SV001")).thenReturn(Optional.of(student(20)));
+        when(registrationRepository.findByStudentId("SV001")).thenReturn(List.of());
+
+        RegistrationSummary summary = service().findActiveRegistrationSummary("SV001");
+
+        assertThat(summary.registration().getStudentId()).isEqualTo("SV001");
+        assertThat(summary.registration().getRegistrationId()).isNull();
+        assertThat(summary.courses()).isEmpty();
+    }
+
+    @Test
+    void findActiveRegistrationSummaryResolvesCoursesLecturersSchedulesAndCredits() {
+        Course oop = course("OOP101", 3, 60, 20, schedule(DayOfWeek.MONDAY, 7, 9));
+        Course math = course("MAT101", 4, 60, 20, schedule(DayOfWeek.TUESDAY, 9, 11));
+        when(studentRepository.findById("SV001")).thenReturn(Optional.of(student(20)));
+        when(registrationRepository.findByStudentId("SV001"))
+                .thenReturn(List.of(registration("REG001", "SV001", "OOP101", "MAT101")));
+        when(courseRepository.findAll()).thenReturn(List.of(oop, math));
+        when(lecturerRepository.findAll()).thenReturn(List.of(lecturer("GV001")));
+
+        RegistrationSummary summary = service().findActiveRegistrationSummary("SV001");
+
+        assertThat(summary.courses()).hasSize(2);
+        assertThat(summary.courses()).extracting(item -> item.course().getCourseId())
+                .containsExactly("OOP101", "MAT101");
+        assertThat(summary.courses()).extracting(item -> item.lecturer().getFullName())
+                .containsExactly("Giang vien GV001", "Giang vien GV001");
+        assertThat(summary.courses().stream().mapToInt(item -> item.course().getCredits()).sum()).isEqualTo(7);
+        assertThat(summary.courses().getFirst().course().getSchedules()).hasSize(1);
+    }
+
+    @Test
+    void registerCourseSummaryReturnsUpdatedRegistrationSummary() {
+        Course course = course("OOP101", 3, 60, 20, schedule(DayOfWeek.MONDAY, 7, 9));
+        when(studentRepository.findById("SV001")).thenReturn(Optional.of(student(20)));
+        when(courseRepository.findById("OOP101")).thenReturn(Optional.of(course));
+        when(registrationRepository.findByStudentId("SV001")).thenReturn(List.of());
+        when(courseRepository.findAll()).thenReturn(List.of(course));
+        when(lecturerRepository.findAll()).thenReturn(List.of(lecturer("GV001")));
+
+        RegistrationSummary summary = service().registerCourseSummary("SV001", "OOP101");
+
+        assertThat(summary.registration().getDetails()).extracting(RegistrationDetail::getCourseId)
+                .containsExactly("OOP101");
+        assertThat(summary.courses()).hasSize(1);
+        assertThat(summary.courses().getFirst().course().getCurrentCapacity()).isEqualTo(21);
+    }
+
+    @Test
+    void cancelCourseSummaryReturnsRemainingCourses() {
+        Course oop = course("OOP101", 3, 60, 2);
+        Course math = course("MAT101", 4, 60, 20);
+        Registration registration = registration("REG001", "SV001", "OOP101", "MAT101");
+        when(studentRepository.findById("SV001")).thenReturn(Optional.of(student(20)));
+        when(courseRepository.findById("OOP101")).thenReturn(Optional.of(oop));
+        when(registrationRepository.findByStudentId("SV001")).thenReturn(List.of(registration));
+        when(courseRepository.findAll()).thenReturn(List.of(math));
+        when(lecturerRepository.findAll()).thenReturn(List.of(lecturer("GV001")));
+
+        RegistrationSummary summary = service().cancelCourseSummary("SV001", "OOP101");
+
+        assertThat(summary.registration().getDetails()).extracting(RegistrationDetail::getCourseId)
+                .containsExactly("MAT101");
+        assertThat(summary.courses()).extracting(item -> item.course().getCourseId())
+                .containsExactly("MAT101");
+    }
+
     private RegistrationService service() {
         return new RegistrationService(
                 studentRepository,
                 courseRepository,
+                lecturerRepository,
                 registrationRepository,
                 validators(),
                 CLOCK
@@ -249,6 +325,10 @@ class RegistrationServiceTest {
 
     private Student student(int maxCredits) {
         return new Student("SV001", "Nguyen Van A", "K16-CNTT", "CNTT", maxCredits);
+    }
+
+    private Lecturer lecturer(String lecturerId) {
+        return new Lecturer(lecturerId, "Giang vien " + lecturerId, "CNTT");
     }
 
     private Registration registration(String registrationId, String studentId, String... courseIds) {

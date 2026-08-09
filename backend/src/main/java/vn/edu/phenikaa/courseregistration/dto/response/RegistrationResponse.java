@@ -11,6 +11,8 @@ public class RegistrationResponse {
     private String status;
     private LocalDateTime registeredAt;
     private List<RegistrationDetailResponse> details = new ArrayList<>();
+    private List<RegisteredCourseResponse> courses = new ArrayList<>();
+    private int totalCredits;
 
     public RegistrationResponse() {
     }
@@ -20,13 +22,17 @@ public class RegistrationResponse {
             String studentId,
             String status,
             LocalDateTime registeredAt,
-            List<RegistrationDetailResponse> details
+            List<RegistrationDetailResponse> details,
+            List<RegisteredCourseResponse> courses,
+            int totalCredits
     ) {
         this.registrationId = registrationId;
         this.studentId = studentId;
         this.status = status;
         this.registeredAt = registeredAt;
         this.details = details == null ? new ArrayList<>() : details;
+        this.courses = courses == null ? new ArrayList<>() : courses;
+        this.totalCredits = totalCredits;
     }
 
     public String getRegistrationId() {
@@ -67,5 +73,21 @@ public class RegistrationResponse {
 
     public void setDetails(List<RegistrationDetailResponse> details) {
         this.details = details;
+    }
+
+    public List<RegisteredCourseResponse> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(List<RegisteredCourseResponse> courses) {
+        this.courses = courses;
+    }
+
+    public int getTotalCredits() {
+        return totalCredits;
+    }
+
+    public void setTotalCredits(int totalCredits) {
+        this.totalCredits = totalCredits;
     }
 }
