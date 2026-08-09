@@ -109,3 +109,25 @@ GET /api/students/{studentId}/timetable
 ```
 
 Khong tao `data/timetable.json`, khong cho frontend doc truc tiep `data/*.json` va khong hard-code du lieu lich hoc trong page.
+
+## Demo data sau F15
+
+F15 seed truc tiep bon file:
+
+- `data/students.json`
+- `data/lecturers.json`
+- `data/courses.json`
+- `data/registrations.json`
+
+Khong tao file persistence moi. Khong dung du lieu ca nhan that.
+
+`Course.currentCapacity` duoc hieu la si so aggregate da ghi nhan cua lop hoc phan trong demo, khong bat buoc bang so dong registration trong dataset nho.
+Khi API dang ky/huy chay, backend tang/giam field nay truc tiep trong `courses.json`.
+
+Quy tac toan ven du lieu F15:
+
+- Moi `Course.lecturerId` phai resolve duoc sang `Lecturer.id`.
+- Moi `RegistrationDetail.courseId` phai resolve duoc sang `Course.courseId`.
+- Moi `Registration.studentId` phai resolve duoc sang `Student.id`.
+- Khong course nao co `currentCapacity > maxCapacity`.
+- Timetable van la computed response tu registration ACTIVE va course schedules, khong co `data/timetable.json`.

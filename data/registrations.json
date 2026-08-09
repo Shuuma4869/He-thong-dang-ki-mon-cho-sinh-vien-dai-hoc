@@ -1,1 +1,27 @@
-[]
+[
+  {
+    "registrationId": "REG-SV001-DEMO",
+    "studentId": "SV001",
+    "status": "ACTIVE",
+    "registeredAt": "2026-08-05T08:15:00",
+    "details": [
+      {
+        "courseId": "OOP101"
+      },
+      {
+        "courseId": "WEB201"
+      }
+    ]
+  },
+  {
+    "registrationId": "REG-SV003-DEMO",
+    "studentId": "SV003",
+    "status": "ACTIVE",
+    "registeredAt": "2026-08-05T09:00:00",
+    "details": [
+      {
+        "courseId": "MATH110"
+      }
+    ]
+  }
+]

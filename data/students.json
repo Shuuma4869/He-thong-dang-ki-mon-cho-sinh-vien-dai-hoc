@@ -1,1 +1,23 @@
-[]
+[
+  {
+    "id": "SV001",
+    "fullName": "Nguyễn Minh An",
+    "className": "CNTT-K16A",
+    "major": "Công nghệ thông tin",
+    "maxCredits": 10
+  },
+  {
+    "id": "SV002",
+    "fullName": "Trần Hoàng Nam",
+    "className": "CNTT-K16B",
+    "major": "Khoa học máy tính",
+    "maxCredits": 18
+  },
+  {
+    "id": "SV003",
+    "fullName": "Lê Thu Hà",
+    "className": "KTPM-K17A",
+    "major": "Kỹ thuật phần mềm",
+    "maxCredits": 9
+  }
+]

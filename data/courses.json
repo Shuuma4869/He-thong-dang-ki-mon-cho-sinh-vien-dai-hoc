@@ -1,1 +1,168 @@
-[]
+[
+  {
+    "courseId": "OOP101",
+    "courseName": "Lập trình hướng đối tượng",
+    "credits": 3,
+    "lecturerId": "GV001",
+    "maxCapacity": 60,
+    "currentCapacity": 42,
+    "schedules": [
+      {
+        "dayOfWeek": "MONDAY",
+        "startTime": "07:30:00",
+        "endTime": "09:30:00",
+        "room": "A2-301"
+      }
+    ]
+  },
+  {
+    "courseId": "WEB201",
+    "courseName": "Lập trình Web",
+    "credits": 3,
+    "lecturerId": "GV002",
+    "maxCapacity": 55,
+    "currentCapacity": 37,
+    "schedules": [
+      {
+        "dayOfWeek": "TUESDAY",
+        "startTime": "07:30:00",
+        "endTime": "09:30:00",
+        "room": "A2-302"
+      }
+    ]
+  },
+  {
+    "courseId": "DBS202",
+    "courseName": "Cơ sở dữ liệu",
+    "credits": 3,
+    "lecturerId": "GV002",
+    "maxCapacity": 50,
+    "currentCapacity": 28,
+    "schedules": [
+      {
+        "dayOfWeek": "WEDNESDAY",
+        "startTime": "09:45:00",
+        "endTime": "11:45:00",
+        "room": "A1-405"
+      }
+    ]
+  },
+  {
+    "courseId": "NET203",
+    "courseName": "Mạng máy tính",
+    "credits": 2,
+    "lecturerId": "GV004",
+    "maxCapacity": 45,
+    "currentCapacity": 31,
+    "schedules": [
+      {
+        "dayOfWeek": "MONDAY",
+        "startTime": "08:30:00",
+        "endTime": "10:30:00",
+        "room": "A2-304"
+      }
+    ]
+  },
+  {
+    "courseId": "AI301",
+    "courseName": "Trí tuệ nhân tạo",
+    "credits": 2,
+    "lecturerId": "GV004",
+    "maxCapacity": 40,
+    "currentCapacity": 40,
+    "schedules": [
+      {
+        "dayOfWeek": "THURSDAY",
+        "startTime": "13:00:00",
+        "endTime": "15:00:00",
+        "room": "A2-501"
+      }
+    ]
+  },
+  {
+    "courseId": "CLOUD301",
+    "courseName": "Điện toán đám mây",
+    "credits": 5,
+    "lecturerId": "GV001",
+    "maxCapacity": 45,
+    "currentCapacity": 20,
+    "schedules": [
+      {
+        "dayOfWeek": "FRIDAY",
+        "startTime": "13:00:00",
+        "endTime": "16:00:00",
+        "room": "LAB-301"
+      }
+    ]
+  },
+  {
+    "courseId": "DSA102",
+    "courseName": "Cấu trúc dữ liệu và giải thuật",
+    "credits": 4,
+    "lecturerId": "GV003",
+    "maxCapacity": 70,
+    "currentCapacity": 52,
+    "schedules": [
+      {
+        "dayOfWeek": "SATURDAY",
+        "startTime": "07:30:00",
+        "endTime": "10:30:00",
+        "room": "A1-201"
+      }
+    ]
+  },
+  {
+    "courseId": "SE204",
+    "courseName": "Công nghệ phần mềm",
+    "credits": 3,
+    "lecturerId": "GV001",
+    "maxCapacity": 50,
+    "currentCapacity": 33,
+    "schedules": [
+      {
+        "dayOfWeek": "THURSDAY",
+        "startTime": "07:30:00",
+        "endTime": "09:30:00",
+        "room": "A2-203"
+      },
+      {
+        "dayOfWeek": "FRIDAY",
+        "startTime": "09:45:00",
+        "endTime": "11:45:00",
+        "room": "LAB-203"
+      }
+    ]
+  },
+  {
+    "courseId": "MATH110",
+    "courseName": "Toán rời rạc",
+    "credits": 2,
+    "lecturerId": "GV003",
+    "maxCapacity": 80,
+    "currentCapacity": 45,
+    "schedules": [
+      {
+        "dayOfWeek": "WEDNESDAY",
+        "startTime": "13:00:00",
+        "endTime": "15:00:00",
+        "room": "A1-101"
+      }
+    ]
+  },
+  {
+    "courseId": "UX205",
+    "courseName": "Thiết kế giao diện người dùng",
+    "credits": 2,
+    "lecturerId": "GV002",
+    "maxCapacity": 35,
+    "currentCapacity": 18,
+    "schedules": [
+      {
+        "dayOfWeek": "SUNDAY",
+        "startTime": "08:00:00",
+        "endTime": "10:00:00",
+        "room": "A2-105"
+      }
+    ]
+  }
+]

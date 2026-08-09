@@ -1,1 +1,22 @@
-[]
+[
+  {
+    "id": "GV001",
+    "fullName": "TS. Phạm Quốc Bảo",
+    "faculty": "Khoa Công nghệ thông tin"
+  },
+  {
+    "id": "GV002",
+    "fullName": "ThS. Nguyễn Thùy Linh",
+    "faculty": "Khoa Công nghệ thông tin"
+  },
+  {
+    "id": "GV003",
+    "fullName": "TS. Đặng Minh Khoa",
+    "faculty": "Khoa Khoa học cơ bản"
+  },
+  {
+    "id": "GV004",
+    "fullName": "PGS. TS. Lê Hải Yến",
+    "faculty": "Khoa Công nghệ thông tin"
+  }
+]
