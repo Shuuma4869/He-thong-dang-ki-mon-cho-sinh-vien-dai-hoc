@@ -46,7 +46,7 @@ export function mapCourseResponse(response: CourseResponse): Course {
   };
 }
 
-function mapScheduleResponse(response: CourseScheduleResponse): ClassSchedule {
+export function mapScheduleResponse(response: CourseScheduleResponse): ClassSchedule {
   const startTime = formatTime(response.startTime);
   const endTime = formatTime(response.endTime);
   const periodNumbers = getPeriodNumbers(startTime, endTime);

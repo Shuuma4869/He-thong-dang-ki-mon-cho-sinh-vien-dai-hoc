@@ -101,3 +101,11 @@ Timetable la computed response, khong tao `data/timetable.json` va khong tao rep
 - `LecturerRepository.findAll()` tao map giang vien de tra `lecturerName`.
 
 Moi `Course.Schedule` tao mot timetable entry. Response duoc sort theo `DayOfWeek`, `startTime`, `courseId`.
+
+Frontend sau F13 chi lay timetable qua REST API:
+
+```text
+GET /api/students/{studentId}/timetable
+```
+
+Khong tao `data/timetable.json`, khong cho frontend doc truc tiep `data/*.json` va khong hard-code du lieu lich hoc trong page.

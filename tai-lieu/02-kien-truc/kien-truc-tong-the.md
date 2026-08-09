@@ -74,3 +74,15 @@ cho cac man chua migrate hoac muc dich doi chieu, nhung luong Register, Cancel, 
 
 Dashboard va Timetable hien nhan danh sach da dang ky tu state chung cua frontend, nhung chua duoc tach thanh API runtime rieng trong F12.
 Notifications van dung mock.
+
+## Trang thai tich hop frontend F13
+
+Frontend da noi API that cho man Thoi khoa bieu:
+
+- `TimetableWeeklyPage` nhan `studentId` tu sinh vien dang dang nhap trong `App`.
+- `timetableApi.getTimetable(studentId)` goi `GET /api/students/{studentId}/timetable` qua shared `requestApi`.
+- Feature timetable khong doc `data/*.json`, khong goi `fetch` truc tiep va khong dung mock timetable runtime.
+- Response rong `data: []` duoc xem la thanh cong va hien thi trang thai chua co lich hoc.
+- Schedule backend dang enum `DayOfWeek` tieng Anh va duoc map sang presentation model bang mapper dung chung voi Course.
+
+Dashboard va Notifications van chua migrate thanh API runtime rieng trong F13.

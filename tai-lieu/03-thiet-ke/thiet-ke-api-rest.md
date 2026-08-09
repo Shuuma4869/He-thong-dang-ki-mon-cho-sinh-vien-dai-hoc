@@ -393,3 +393,23 @@ Business/data errors co the gap:
 - `STUDENT_NOT_FOUND`
 - `COURSE_NOT_FOUND`
 - `LECTURER_NOT_FOUND`
+
+### Frontend Timetable API sau F13
+
+Frontend dung:
+
+- `API_ENDPOINTS.TIMETABLE(studentId)`
+- `timetableApi.getTimetable(studentId)`
+- `TimetableWeeklyPage` nhan `studentId` tu `App`
+
+Tat ca request di qua shared `requestApi`; page/component khong goi `fetch` truc tiep va khong doc `data/*.json`.
+
+Mapping frontend:
+
+- `courseId` -> `id`, `code`
+- `courseName` -> `name`
+- `credits` -> `credits`
+- `lecturerName` -> `lecturer`
+- `dayOfWeek/startTime/endTime/room` -> schedule presentation model dung chung voi Course mapper
+
+Response `data: []` hien thi trang thai chua co lich hoc, khong fallback sang mock data.

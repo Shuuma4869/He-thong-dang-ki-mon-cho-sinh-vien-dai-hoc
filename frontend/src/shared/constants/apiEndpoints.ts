@@ -10,6 +10,7 @@ export const API_ENDPOINTS = {
   REGISTER_COURSE: (studentId: string) => `/students/${encodeURIComponent(studentId)}/registrations`,
   CANCEL_REGISTRATION: (studentId: string, courseId: string) =>
     `/students/${encodeURIComponent(studentId)}/registrations/${encodeURIComponent(courseId)}`,
+  TIMETABLE: (studentId: string) => `/students/${encodeURIComponent(studentId)}/timetable`,
   auth: '/auth',
   courses: '/courses',
   registrations: '/registrations',

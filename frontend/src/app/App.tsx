@@ -385,7 +385,7 @@ export default function App() {
 
           {activeTab === 'timetable' && (
             <TimetableWeeklyPage
-              registeredCourses={registeredCoursesList}
+              studentId={student.id}
               currentSemester={currentSemester}
             />
           )}
