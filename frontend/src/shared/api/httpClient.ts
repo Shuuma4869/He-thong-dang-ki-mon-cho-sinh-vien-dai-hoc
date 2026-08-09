@@ -1,7 +1,7 @@
 import { ApiError } from '@/shared/api/apiError';
-import { API_BASE_PATH } from '@/shared/constants/apiEndpoints';
+import { API_BASE_URL } from '@/shared/constants/app';
 
-const DEFAULT_API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? API_BASE_PATH;
+const DEFAULT_API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? API_BASE_URL;
 
 export interface HttpRequestOptions extends RequestInit {
   baseUrl?: string;

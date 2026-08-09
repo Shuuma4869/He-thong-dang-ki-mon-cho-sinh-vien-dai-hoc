@@ -3,7 +3,7 @@ import { UniversityNotification } from '@/features/notifications/types/notificat
 import { Student } from '@/features/profile/types/profile.types';
 
 export const INITIAL_STUDENT: Student = {
-  id: '21010045',
+  id: 'SV001',
   name: 'Nguyễn Văn A',
   avatarUrl: '',
   className: 'CNTT-K16',
@@ -11,7 +11,7 @@ export const INITIAL_STUDENT: Student = {
   maxCredits: 24,
   faculty: 'Khoa Công nghệ Thông tin',
   cohort: '2021 - 2025',
-  email: '21010045@st.phenikaa-uni.edu.vn',
+  email: 'SV001@st.phenikaa-uni.edu.vn',
   phone: '0987 654 321',
   dob: '15/08/2003',
   gender: 'Nam',

@@ -10,7 +10,7 @@ interface LoginPageProps {
 }
 
 export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
-  const [studentId, setStudentId] = useState('21010045');
+  const [studentId, setStudentId] = useState('SV001');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -159,7 +159,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                     type="text"
                     value={studentId}
                     onChange={(e) => setStudentId(e.target.value)}
-                    placeholder="Ví dụ: 21010045"
+                    placeholder="Ví dụ: SV001"
                     required
                     className="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
                   />
@@ -249,7 +249,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             {/* Account Quick Hint for Demo evaluation */}
             <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
               <p className="text-[11px] text-slate-500">
-                <strong className="text-slate-700 font-semibold">Tài khoản demo:</strong> Mã SV: <code className="text-blue-700 font-mono bg-blue-50 px-1 py-0.5 rounded">21010045</code> / Mật khẩu: bất kỳ
+                <strong className="text-slate-700 font-semibold">Tài khoản demo:</strong> Mã SV: <code className="text-blue-700 font-mono bg-blue-50 px-1 py-0.5 rounded">SV001</code> / Mật khẩu: bất kỳ
               </p>
             </div>
 

@@ -44,7 +44,7 @@ export const DesignSystemModal: React.FC<DesignSystemModalProps> = ({ isOpen, on
     { level: 'Section Title', size: '20px / 1.25rem', weight: '600 SemiBold', sample: 'Danh Sách Học Phần Mở Đăng Ký', class: 'text-lg font-semibold' },
     { level: 'Card Title', size: '18px / 1.125rem', weight: '600 SemiBold', sample: 'Lập trình Web nâng cao', class: 'text-base font-semibold' },
     { level: 'Body', size: '16px / 1rem', weight: '400 Regular', sample: 'Nền tảng hỗ trợ sinh viên đăng ký học phần nhanh chóng.', class: 'text-sm font-normal' },
-    { level: 'Small', size: '14px / 0.875rem', weight: '400 Regular', sample: 'Mã SV: 21010045 • Lớp CNTT-K16', class: 'text-xs font-normal' },
+    { level: 'Small', size: '14px / 0.875rem', weight: '400 Regular', sample: 'Mã SV: SV001 • Lớp CNTT-K16', class: 'text-xs font-normal' },
     { level: 'Caption', size: '12px / 0.75rem', weight: '400 Regular', sample: '© Đại học Phenikaa. Tất cả quyền được bảo lưu.', class: 'text-[11px] font-normal' },
   ];
 
