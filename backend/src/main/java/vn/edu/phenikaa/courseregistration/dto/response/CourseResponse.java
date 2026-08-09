@@ -11,6 +11,7 @@ public class CourseResponse {
     private String courseName;
     private int credits;
     private String lecturerId;
+    private LecturerResponse lecturer;
     private int maxCapacity;
     private int currentCapacity;
     private List<ScheduleResponse> schedules = new ArrayList<>();
@@ -23,6 +24,7 @@ public class CourseResponse {
             String courseName,
             int credits,
             String lecturerId,
+            LecturerResponse lecturer,
             int maxCapacity,
             int currentCapacity,
             List<ScheduleResponse> schedules
@@ -31,6 +33,7 @@ public class CourseResponse {
         this.courseName = courseName;
         this.credits = credits;
         this.lecturerId = lecturerId;
+        this.lecturer = lecturer;
         this.maxCapacity = maxCapacity;
         this.currentCapacity = currentCapacity;
         this.schedules = schedules == null ? new ArrayList<>() : schedules;
@@ -66,6 +69,14 @@ public class CourseResponse {
 
     public void setLecturerId(String lecturerId) {
         this.lecturerId = lecturerId;
+    }
+
+    public LecturerResponse getLecturer() {
+        return lecturer;
+    }
+
+    public void setLecturer(LecturerResponse lecturer) {
+        this.lecturer = lecturer;
     }
 
     public int getMaxCapacity() {

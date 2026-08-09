@@ -15,8 +15,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import vn.edu.phenikaa.courseregistration.exception.CourseNotFoundException;
+import vn.edu.phenikaa.courseregistration.exception.LecturerNotFoundException;
 import vn.edu.phenikaa.courseregistration.mapper.CourseMapper;
 import vn.edu.phenikaa.courseregistration.model.Course;
+import vn.edu.phenikaa.courseregistration.model.CourseWithLecturer;
+import vn.edu.phenikaa.courseregistration.model.Lecturer;
 import vn.edu.phenikaa.courseregistration.model.Schedule;
 import vn.edu.phenikaa.courseregistration.service.CourseService;
 
@@ -37,6 +40,8 @@ class CourseControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data[0].courseId").value("OOP101"))
+                .andExpect(jsonPath("$.data[0].lecturerId").value("GV001"))
+                .andExpect(jsonPath("$.data[0].lecturer.fullName").value("Tran Thi B"))
                 .andExpect(jsonPath("$.data[0].schedules[0].dayOfWeek").value("MONDAY"));
     }
 
@@ -46,7 +51,9 @@ class CourseControllerTest {
 
         mockMvc.perform(get("/api/courses/OOP101"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.courseName").value("Lap trinh huong doi tuong"));
+                .andExpect(jsonPath("$.data.courseName").value("Lap trinh huong doi tuong"))
+                .andExpect(jsonPath("$.data.lecturerId").value("GV001"))
+                .andExpect(jsonPath("$.data.lecturer.fullName").value("Tran Thi B"));
     }
 
     @Test
@@ -55,7 +62,9 @@ class CourseControllerTest {
 
         mockMvc.perform(get("/api/courses/search").param("keyword", "oop"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data[0].courseId").value("OOP101"));
+                .andExpect(jsonPath("$.data[0].courseId").value("OOP101"))
+                .andExpect(jsonPath("$.data[0].lecturerId").value("GV001"))
+                .andExpect(jsonPath("$.data[0].lecturer.fullName").value("Tran Thi B"));
     }
 
     @Test
@@ -67,8 +76,17 @@ class CourseControllerTest {
                 .andExpect(jsonPath("$.errorCode").value("COURSE_NOT_FOUND"));
     }
 
-    private Course oopCourse() {
-        return new Course(
+    @Test
+    void findByIdReturnsErrorWhenLecturerNotFound() throws Exception {
+        when(courseService.findById("OOP101")).thenThrow(new LecturerNotFoundException("GV001", "OOP101"));
+
+        mockMvc.perform(get("/api/courses/OOP101"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value("LECTURER_NOT_FOUND"));
+    }
+
+    private CourseWithLecturer oopCourse() {
+        Course course = new Course(
                 "OOP101",
                 "Lap trinh huong doi tuong",
                 3,
@@ -77,5 +95,6 @@ class CourseControllerTest {
                 20,
                 List.of(new Schedule(DayOfWeek.MONDAY, LocalTime.of(7, 30), LocalTime.of(9, 30), "A101"))
         );
+        return new CourseWithLecturer(course, new Lecturer("GV001", "Tran Thi B", "Khoa Cong nghe thong tin"));
     }
 }

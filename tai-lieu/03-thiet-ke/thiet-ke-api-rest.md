@@ -122,6 +122,11 @@ Response `data` dùng `CourseResponse`:
   "courseName": "Lap trinh huong doi tuong",
   "credits": 3,
   "lecturerId": "GV001",
+  "lecturer": {
+    "lecturerId": "GV001",
+    "fullName": "Tran Thi B",
+    "faculty": "Khoa Cong nghe thong tin"
+  },
   "maxCapacity": 60,
   "currentCapacity": 20,
   "schedules": [

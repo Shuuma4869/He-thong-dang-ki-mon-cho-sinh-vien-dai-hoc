@@ -3,8 +3,11 @@ package vn.edu.phenikaa.courseregistration.mapper;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import vn.edu.phenikaa.courseregistration.dto.response.CourseResponse;
+import vn.edu.phenikaa.courseregistration.dto.response.LecturerResponse;
 import vn.edu.phenikaa.courseregistration.dto.response.ScheduleResponse;
 import vn.edu.phenikaa.courseregistration.model.Course;
+import vn.edu.phenikaa.courseregistration.model.CourseWithLecturer;
+import vn.edu.phenikaa.courseregistration.model.Lecturer;
 import vn.edu.phenikaa.courseregistration.model.Schedule;
 
 /**
@@ -12,22 +15,32 @@ import vn.edu.phenikaa.courseregistration.model.Schedule;
  */
 @Component
 public class CourseMapper {
-    public CourseResponse toResponse(Course course) {
+    public CourseResponse toResponse(CourseWithLecturer courseWithLecturer) {
+        Course course = courseWithLecturer.course();
         return new CourseResponse(
                 course.getCourseId(),
                 course.getCourseName(),
                 course.getCredits(),
                 course.getLecturerId(),
+                toLecturerResponse(courseWithLecturer.lecturer()),
                 course.getMaxCapacity(),
                 course.getCurrentCapacity(),
                 toScheduleResponses(course.getSchedules())
         );
     }
 
-    public List<CourseResponse> toResponses(List<Course> courses) {
+    public List<CourseResponse> toResponses(List<CourseWithLecturer> courses) {
         return courses.stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    public LecturerResponse toLecturerResponse(Lecturer lecturer) {
+        return new LecturerResponse(
+                lecturer.getId(),
+                lecturer.getFullName(),
+                lecturer.getFaculty()
+        );
     }
 
     public ScheduleResponse toScheduleResponse(Schedule schedule) {
