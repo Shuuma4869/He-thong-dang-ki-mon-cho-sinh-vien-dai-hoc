@@ -1,6 +1,22 @@
 # Cấu trúc thư mục và package
 
-Frontend được chia theo hướng feature-first:
+## Root
+
+```text
+.
++-- frontend/
++-- backend/
++-- data/
++-- tai-lieu/
++-- thiet-ke/
++-- ho-so-nop-bai/
++-- scripts/
++-- .github/
+```
+
+## Frontend
+
+Frontend chia theo hướng feature-first:
 
 - `src/app`
 - `src/features`
@@ -9,25 +25,50 @@ Frontend được chia theo hướng feature-first:
 - `src/dev`
 - `src/styles`
 
-Backend dùng package gốc:
+Feature runtime API thật:
+
+- `auth`
+- `profile`
+- `courses`
+- `registration`
+- `timetable`
+- `dashboard` dưới dạng composition frontend
+
+Feature demo/local:
+
+- `notifications`
+
+## Backend
+
+Package gốc:
 
 ```text
 vn.edu.phenikaa.courseregistration
 ```
 
-Các package starter:
+Các package:
 
-- `config`
-- `controller`
-- `dto.request`
-- `dto.response`
-- `exception`
-- `interfaces`
-- `mapper`
-- `model`
-- `model.enums`
-- `repository`
-- `repository.file`
-- `service`
-- `validator`
-- `utils`
+- `config`: CORS, Jackson.
+- `controller`: REST controllers.
+- `dto.request`: request DTO.
+- `dto.response`: response DTO và envelope.
+- `exception`: business exception và global handler.
+- `interfaces`: contract OOP như `Registrable`, `CourseValidator`.
+- `mapper`: map domain/composition sang DTO.
+- `model`: domain model và composition record.
+- `model.enums`: enum domain.
+- `repository`: repository interfaces.
+- `repository.file`: JSON repository implementations.
+- `service`: nghiệp vụ.
+- `utils`: `JsonFileUtils`.
+- `validator`: validator đăng ký.
+- `validator.context`: context truyền vào validator chain.
+
+## Data
+
+- `students.json`
+- `lecturers.json`
+- `courses.json`
+- `registrations.json`
+
+Không có JSON riêng cho timetable hoặc notifications.

@@ -4,22 +4,21 @@ Validator kiểm tra các rule đăng ký học phần bằng `RegistrationValid
 
 ## Validation chain
 
-Luồng bắt buộc:
-
 ```text
 RegistrationService
 -> tạo RegistrationValidationContext
 -> chạy List<CourseValidator>
+-> nếu hợp lệ mới ghi Registration và Course capacity
 ```
 
-`RegistrationValidationContext` chỉ mang dữ liệu validation:
+`RegistrationValidationContext` mang dữ liệu:
 
 - `Student student`
 - `String requestedCourseId`
 - `Optional<Course> requestedCourse`
 - `List<Course> registeredCourses`
 
-Context không đọc repository, không đọc JSON, không chứa ObjectMapper, không chứa persistence logic và không là Spring bean.
+Context không đọc repository, không đọc JSON và không là Spring bean.
 
 ## CourseValidator contract
 
@@ -27,87 +26,72 @@ Context không đọc repository, không đọc JSON, không chứa ObjectMapper
 void validate(RegistrationValidationContext context);
 ```
 
-Nếu không hợp lệ, validator ném `BusinessException` phù hợp. Nếu hợp lệ, validator return bình thường.
+Nếu không hợp lệ, validator ném `BusinessException` hoặc subclass. Nếu hợp lệ, method return bình thường.
 
-Không dùng:
+## Thứ tự validator
 
-- boolean return.
-- String error return.
-- Một method chứa toàn bộ rule thay cho validator chain.
+Thứ tự là contract bắt buộc:
 
-## Thứ tự validator dự kiến
+| Thứ tự | Validator | Annotation | ErrorCode |
+|---:|---|---|---|
+| 1 | `CourseExistenceValidator` | `@Order(10)` | `COURSE_NOT_FOUND` |
+| 2 | `DuplicateCourseValidator` | `@Order(20)` | `DUPLICATE_REGISTRATION` |
+| 3 | `CapacityValidator` | `@Order(30)` | `COURSE_FULL` |
+| 4 | `CreditLimitValidator` | `@Order(40)` | `CREDIT_LIMIT_EXCEEDED` |
+| 5 | `ScheduleConflictValidator` | `@Order(50)` | `SCHEDULE_CONFLICT` |
 
-1. `CourseExistenceValidator`
-2. `DuplicateCourseValidator`
-3. `CapacityValidator`
-4. `CreditLimitValidator`
-5. `ScheduleConflictValidator`
+Không dựa vào tên class, thứ tự file, reflection order hoặc thứ tự component scan ngầm định.
 
-Thu tu nay la contract bat buoc va duoc khoa bang `@Order` tren tung Spring bean validator:
+## Vì sao deterministic ordering quan trọng
 
-- `CourseExistenceValidator`: `@Order(10)`
-- `DuplicateCourseValidator`: `@Order(20)`
-- `CapacityValidator`: `@Order(30)`
-- `CreditLimitValidator`: `@Order(40)`
-- `ScheduleConflictValidator`: `@Order(50)`
+Bug F15C: khi một request vừa duplicate vừa làm vượt số tín chỉ, hệ thống từng trả `CREDIT_LIMIT_EXCEEDED` thay vì `DUPLICATE_REGISTRATION`.
 
-Khong duoc dua vao thu tu ten class, thu tu file, reflection order hoac thu tu component scan ngam dinh.
-Neu mot request vua duplicate vua vi pham rule khac, loi duplicate phai duoc tra ve truoc vi day la loi truc tiep nhat cua request.
-Vi du: SV001 da co DBS202 va tong tin chi hien tai la 9/10, dang ky lai DBS202 phai tra `DUPLICATE_REGISTRATION`, khong tra `CREDIT_LIMIT_EXCEEDED`.
+Expected contract hiện tại:
 
-Từng validator không được phụ thuộc nguy hiểm vào thứ tự. Những validator cần học phần mới có thể gọi `context.requireRequestedCourse()` để an toàn nếu thứ tự bị thay đổi.
+- Nếu course đã đăng ký, trả `DUPLICATE_REGISTRATION` trước.
+- Không chạy các rule phía sau theo cách làm thay đổi error ưu tiên.
+- Không mutate JSON khi validator fail.
 
-## Rule cụ thể
+`RegistrationValidatorOrderTest` khóa thứ tự Spring inject `List<CourseValidator>`.
 
-`CourseExistenceValidator`:
+## Business rules
 
-- Kiểm tra `context.getRequestedCourse().isPresent()`.
-- Nếu rỗng, ném `CourseNotFoundException`.
+| Rule | Validator/service | ErrorCode |
+|---|---|---|
+| Course tồn tại | `CourseExistenceValidator` | `COURSE_NOT_FOUND` |
+| Không đăng ký trùng course active | `DuplicateCourseValidator` | `DUPLICATE_REGISTRATION` |
+| Course chưa đầy sĩ số | `CapacityValidator` | `COURSE_FULL` |
+| Tổng tín chỉ không vượt `Student.maxCredits` | `CreditLimitValidator` | `CREDIT_LIMIT_EXCEEDED` |
+| Lịch học không trùng | `ScheduleConflictValidator` | `SCHEDULE_CONFLICT` |
+| Hủy course chưa đăng ký | `RegistrationService.cancelCourse` | `REGISTRATION_NOT_FOUND` |
+| Student không tồn tại | `AuthService`, `StudentService`, `RegistrationService`, `TimetableService` | `STUDENT_NOT_FOUND` |
+| Lecturer reference không tồn tại | `CourseService`, `RegistrationService`, `TimetableService` | `LECTURER_NOT_FOUND` |
 
-`CapacityValidator`:
+## Rule trùng lịch
 
-- Lấy course qua `context.requireRequestedCourse()`.
-- Nếu `currentCapacity >= maxCapacity`, ném `CourseFullException`.
-
-`DuplicateCourseValidator`:
-
-- So `context.getRequestedCourseId()` với `courseId` của `context.getRegisteredCourses()`.
-- Nếu đã có, ném `DuplicateRegistrationException`.
-
-`CreditLimitValidator`:
-
-- Tính tổng tín chỉ từ `registeredCourses`.
-- Cộng tín chỉ của course mới.
-- So với `student.maxCredits`.
-- Nếu vượt, ném `CreditLimitExceededException`.
-
-`ScheduleConflictValidator`:
-
-- So lịch course mới với lịch của các course đã đăng ký.
-- Trùng lịch khi cùng `DayOfWeek` và `newStart < existingEnd` và `newEnd > existingStart`.
-- So sánh bằng `LocalTime.isBefore`, không convert sang String.
-
-## Trạng thái F12
-
-F12 chỉ tích hợp frontend Registration với backend API hiện có.
-
-Không thay đổi validator, không thêm rule đăng ký mới và không thay đổi business logic Student, Course hoặc Registration trong phase này.
-
-## Trang thai F12
-
-F12 khong them rule validator moi va khong thay doi business logic dang ky.
-
-Frontend Registration sau F12 chi hien thi canh bao UI neu co thong tin ve trung lich hoac vuot tin chi, nhung khong duoc coi do la validation
-co tham quyen. Quyet dinh thanh cong/that bai luon den tu backend validator chain trong `RegistrationService`.
-
-Register flow bat buoc:
+Hai lịch học conflict khi:
 
 ```text
-RegistrationService
--> tao RegistrationValidationContext
--> chay List<CourseValidator>
--> neu hop le moi save Registration va Course capacity
--> tra RegistrationResponse da cap nhat cho frontend
+same day
+AND newStart < existingEnd
+AND newEnd > existingStart
 ```
 
-Cancel flow khong chay `CourseValidator`, nhung van phai kiem tra sinh vien, hoc phan va registration ton tai trong service.
+Boundary không conflict:
+
+```text
+existingEnd == newStart
+newEnd == existingStart
+```
+
+Code dùng `LocalTime.isBefore` và `LocalTime.isAfter`, không so sánh chuỗi.
+
+## Register và cancel
+
+Register chạy validator chain trước khi ghi dữ liệu. Nếu validator fail, không gọi `registrationRepository.save()` hoặc `courseRepository.save()`.
+
+Cancel không chạy `CourseValidator`, nhưng vẫn kiểm tra:
+
+- sinh viên tồn tại
+- học phần tồn tại
+- active registration có course cần hủy

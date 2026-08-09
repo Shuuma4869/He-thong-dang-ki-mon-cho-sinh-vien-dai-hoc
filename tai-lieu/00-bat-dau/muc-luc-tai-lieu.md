@@ -6,8 +6,8 @@
 
 ## Kiến trúc
 
-- `../02-kien-truc/kien-truc-tong-the.md`
 - `../02-kien-truc/cau-truc-thu-muc-va-package.md`
+- `../02-kien-truc/kien-truc-tong-the.md`
 - `../02-kien-truc/kien-truc-frontend.md`
 - `../02-kien-truc/kien-truc-backend.md`
 - `../02-kien-truc/kien-truc-du-lieu-va-file-io.md`
@@ -26,8 +26,19 @@
 - `../04-quy-trinh-nhom/quy-uoc-commit.md`
 - `../04-quy-trinh-nhom/quy-trinh-pull-request.md`
 
+## Kiểm thử
+
+- `../06-kiem-thu/bao-cao-kiem-thu.md`
+- `../06-kiem-thu/bao-cao-kiem-thu-e2e-f17.md`
+
 ## Vận hành
 
 - `../07-van-hanh/huong-dan-chay-frontend.md`
 - `../07-van-hanh/huong-dan-chay-backend.md`
 - `../07-van-hanh/xu-ly-loi-thuong-gap.md`
+
+## Báo cáo và demo
+
+- `../08-bao-cao-va-demo/kich-ban-du-lieu-demo.md`
+- `../08-bao-cao-va-demo/kich-ban-demo-he-thong.md`
+- `../08-bao-cao-va-demo/cau-hoi-bao-ve.md`

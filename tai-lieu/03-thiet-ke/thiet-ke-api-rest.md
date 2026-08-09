@@ -1,51 +1,54 @@
 # Thiết kế API REST
 
-REST API hiện đã có contract và implementation cho Auth demo, Student/Profile, Course và Registration.
-Các phần quản trị, giảng viên, notification runtime và timetable API đầy đủ chưa triển khai hoàn chỉnh.
-
-## Prefix API
-
-Các endpoint backend đi dưới prefix:
+API base:
 
 ```text
-/api
+http://localhost:8080/api
 ```
 
-Frontend shared constants hiện khóa `API_BASE_PATH = '/api'`. Auth/Profile, Course và Registration đã chuyển sang gọi API thật;
-các phần chưa migrate vẫn có thể dùng mock data.
+Frontend mặc định dùng `VITE_API_BASE_URL` nếu có, nếu không dùng `http://localhost:8080/api`.
 
-## Auth API
+## Response envelope
 
-Endpoint đã triển khai trong Full Solution local:
+Response thành công dùng `ApiResponse<T>`:
 
-```text
-POST /api/auth/login
+```json
+{
+  "success": true,
+  "message": "Thong bao thanh cong.",
+  "data": {}
+}
 ```
 
-Đây là demo authentication cho đồ án OOP, không phải cơ chế authentication production-ready.
+Response lỗi dùng `ApiErrorResponse`:
 
-Backend chỉ xác định sinh viên bằng `studentId` và kiểm tra sinh viên có tồn tại qua `StudentRepository`.
-Trường `password` có thể xuất hiện trong request để tương thích giao diện hiện tại, nhưng không được lưu,
-không được mã hóa, không được xác thực giả và không tạo token.
+```json
+{
+  "success": false,
+  "message": "Thong bao loi.",
+  "errorCode": "ERROR_CODE",
+  "timestamp": "2026-08-10T00:00:00Z"
+}
+```
 
-Không sử dụng:
+`BusinessException` chứa `errorCode`. `GlobalExceptionHandler` map `BusinessException` thành HTTP 400, validation request thành `VALIDATION_ERROR`, lỗi không lường trước thành `INTERNAL_SERVER_ERROR`.
 
-- JWT
-- Spring Security
-- OAuth
-- Database account
-- Access token / refresh token
+## Auth demo
+
+### POST `/api/auth/login`
 
 Request:
 
 ```json
 {
   "studentId": "SV001",
-  "password": "anything"
+  "password": "demo"
 }
 ```
 
-Response thành công dùng `StudentResponse` trong envelope `ApiResponse`:
+Backend chỉ dùng `studentId` để kiểm tra sinh viên tồn tại. `password` được giữ để tương thích giao diện demo, không lưu và không xác thực như mật khẩu thật.
+
+Response:
 
 ```json
 {
@@ -53,70 +56,60 @@ Response thành công dùng `StudentResponse` trong envelope `ApiResponse`:
   "message": "Dang nhap thanh cong.",
   "data": {
     "studentId": "SV001",
-    "fullName": "Nguyen Van A",
-    "className": "CNTT1",
+    "fullName": "Nguyen Minh An",
+    "className": "CNTT-K16A",
     "major": "Cong nghe thong tin",
-    "maxCredits": 18
+    "maxCredits": 10
   }
 }
 ```
 
-Nếu sinh viên không tồn tại, API trả lỗi với `errorCode = STUDENT_NOT_FOUND`.
-Nếu request thiếu `studentId`, API trả lỗi với `errorCode = VALIDATION_ERROR`.
+Error codes chính:
 
-## Student API
+- `VALIDATION_ERROR` nếu thiếu `studentId`.
+- `STUDENT_NOT_FOUND` nếu sinh viên không tồn tại.
 
-Endpoint đã triển khai trong Full Solution local:
+Không có JWT, Spring Security, token persistence hoặc lưu password ở frontend.
 
-```text
-GET /api/students/{studentId}
-```
+## Student/Profile
 
-Mục đích:
+### GET `/api/students/{studentId}`
 
-- Trả thông tin sinh viên theo mã sinh viên.
-- Không thực hiện đăng nhập.
-- Không trả dữ liệu đăng ký môn học.
-
-Profile frontend sử dụng chính endpoint này:
-
-```text
-GET /api/students/{studentId}
-```
-
-Không tạo `ProfileController` riêng nếu chỉ trả về cùng dữ liệu sinh viên. Nếu cần tổng số tín chỉ đã đăng
-ký trong các phase sau, frontend nên lấy từ Registration API hoặc response composition riêng, không lưu
-duplicated field vào `Student`.
-
-Response `data` dùng `StudentResponse`:
+Response:
 
 ```json
 {
-  "studentId": "SV001",
-  "fullName": "Nguyen Van A",
-  "className": "CNTT1",
-  "major": "Cong nghe thong tin",
-  "maxCredits": 18
+  "success": true,
+  "message": "Lay thong tin sinh vien thanh cong.",
+  "data": {
+    "studentId": "SV001",
+    "fullName": "Nguyen Minh An",
+    "className": "CNTT-K16A",
+    "major": "Cong nghe thong tin",
+    "maxCredits": 10
+  }
 }
 ```
 
-## Course API
+Error code chính:
 
-Endpoints đã triển khai trong Full Solution local:
+- `STUDENT_NOT_FOUND`
 
-```text
-GET /api/courses
-GET /api/courses/{courseId}
-GET /api/courses/search?keyword=...
-```
+## Courses
 
-Mục đích:
+### GET `/api/courses`
 
-- Trả danh sách học phần.
-- Trả chi tiết một học phần.
-- Tìm kiếm học phần theo mã hoặc tên.
+Trả danh sách `CourseResponse`.
 
-Response `data` dùng `CourseResponse`:
+### GET `/api/courses/{courseId}`
+
+Trả chi tiết một course.
+
+### GET `/api/courses/search?keyword=...`
+
+Tìm theo `courseId` hoặc `courseName` bằng lowercase contains. Không cam kết accent folding.
+
+Course item:
 
 ```json
 {
@@ -126,138 +119,46 @@ Response `data` dùng `CourseResponse`:
   "lecturerId": "GV001",
   "lecturer": {
     "lecturerId": "GV001",
-    "fullName": "Tran Thi B",
+    "fullName": "TS. Pham Quoc Bao",
     "faculty": "Khoa Cong nghe thong tin"
   },
   "maxCapacity": 60,
-  "currentCapacity": 20,
+  "currentCapacity": 42,
   "schedules": [
     {
       "dayOfWeek": "MONDAY",
       "startTime": "07:30:00",
       "endTime": "09:30:00",
-      "room": "A101"
+      "room": "A2-301"
     }
   ]
 }
 ```
 
-## Response thành công
+Error codes chính:
 
-Mọi API thành công phải trả envelope:
+- `COURSE_NOT_FOUND`
+- `LECTURER_NOT_FOUND`
 
-```json
-{
-  "success": true,
-  "message": "Thông báo kết quả",
-  "data": {}
-}
-```
+Course domain không có field `faculty` hoặc `classGroup` trực tiếp. Faculty nằm trong `lecturer.faculty`.
 
-DTO backend tương ứng: `ApiResponse<T>`.
+## Registrations
 
-## Response lỗi
+### GET `/api/students/{studentId}/registrations`
 
-Mọi API lỗi phải trả envelope:
+Trả active registration summary. Nếu sinh viên chưa có đăng ký active, API vẫn success với `courses: []` và `totalCredits: 0`.
 
-```json
-{
-  "success": false,
-  "message": "Thông báo lỗi",
-  "errorCode": "ERROR_CODE",
-  "timestamp": "2026-08-08T00:00:00Z"
-}
-```
-
-DTO backend tương ứng: `ApiErrorResponse`.
-
-`BusinessException` phải có `errorCode`. `GlobalExceptionHandler` chịu trách nhiệm chuyển exception thành response lỗi chuẩn.
-
-## Luồng xử lý API bắt buộc
-
-```text
-Controller
--> Service
--> Validator nếu có
--> Repository Interface
--> Json Repository
--> JsonFileUtils
--> data/*.json
-```
-
-Controller không được đọc file hoặc chứa rule nghiệp vụ chi tiết.
-
-## Frontend API contract sau F10
-
-Frontend đã nối API thật cho Auth và Profile:
-
-- `AUTH_LOGIN = /auth/login`
-- `STUDENT_BY_ID(studentId) = /students/{studentId}`
-
-Feature API bắt buộc đi qua shared `requestApi`, không gọi `fetch` trực tiếp trong page.
-
-`requestApi<T>` nhận envelope `ApiResponse<T>` từ backend và trả trực tiếp `data`. Vì vậy `authApi` và `profileApi` không unwrap response lần thứ hai.
-
-Luồng khôi phục phiên frontend:
-
-1. Đọc `studentId` từ `localStorage` hoặc `sessionStorage`.
-2. Gọi `GET /api/students/{studentId}` để xác thực lại sinh viên còn tồn tại.
-3. Nếu thành công, set `currentStudent`.
-4. Nếu thất bại, xóa storage và hiển thị màn đăng nhập.
-
-Frontend không lưu password, token, JWT hoặc thông tin xác thực production trong F10.
-
-Registration và Timetable chưa chuyển sang API thật trong phase F10.
-
-## Frontend Course API contract sau F11
-
-Frontend Course runtime dùng các endpoint:
-
-- `GET /api/courses`
-- `GET /api/courses/{courseId}`
-- `GET /api/courses/search?keyword=...`
-
-`courseApi` đi qua shared `requestApi`; page/component không gọi `fetch` trực tiếp.
-
-Mapping frontend:
-
-- `courseId` -> `id`, `code`
-- `courseName` -> `name`
-- `lecturer.fullName` -> `lecturer`
-- `lecturerId` -> `lecturerId`
-- `currentCapacity` -> `enrolled`
-- `maxCapacity` -> `capacity`
-- `schedules[].dayOfWeek/startTime/endTime/room` -> schedule presentation model
-
-Hai field mock cũ `faculty` và `classGroup` không có nguồn dữ liệu thật trong Course domain hiện tại, nên Course runtime không hiển thị hoặc hard-code hai field này.
-
-Registration được migrate ở F12. Timetable, Dashboard real data và Notifications chưa được migrate thành API runtime riêng trong F12.
-
-## Registration API contract sau F12
-
-Endpoints da khoa cho frontend Registration runtime:
-
-```text
-GET /api/students/{studentId}/registrations
-POST /api/students/{studentId}/registrations
-DELETE /api/students/{studentId}/registrations/{courseId}
-```
-
-`studentId` nam tren path va phai lay tu sinh vien dang dang nhap. Frontend khong hard-code `SV001`.
-
-### GET registrations
-
-Tra phieu dang ky active cua sinh vien. Neu sinh vien chua co mon active, API van tra success voi `courses: []` va `totalCredits: 0`.
+Response:
 
 ```json
 {
   "success": true,
   "message": "Lay danh sach dang ky hoc phan thanh cong.",
   "data": {
-    "registrationId": "REG-SV001-123456789",
+    "registrationId": "REG-SV001-DEMO",
     "studentId": "SV001",
     "status": "ACTIVE",
-    "registeredAt": "2026-08-09T18:00:00",
+    "registeredAt": "2026-08-05T08:15:00",
     "details": [
       {
         "courseId": "OOP101"
@@ -271,17 +172,17 @@ Tra phieu dang ky active cua sinh vien. Neu sinh vien chua co mon active, API va
         "lecturerId": "GV001",
         "lecturer": {
           "lecturerId": "GV001",
-          "fullName": "Tran Thi B",
+          "fullName": "TS. Pham Quoc Bao",
           "faculty": "Khoa Cong nghe thong tin"
         },
         "maxCapacity": 60,
-        "currentCapacity": 21,
+        "currentCapacity": 42,
         "schedules": [
           {
             "dayOfWeek": "MONDAY",
             "startTime": "07:30:00",
             "endTime": "09:30:00",
-            "room": "A101"
+            "room": "A2-301"
           }
         ]
       }
@@ -291,151 +192,106 @@ Tra phieu dang ky active cua sinh vien. Neu sinh vien chua co mon active, API va
 }
 ```
 
-### POST registration
+### POST `/api/students/{studentId}/registrations`
 
 Request:
 
 ```json
 {
-  "courseId": "OOP101"
+  "courseId": "DBS202"
 }
 ```
 
-Response thanh cong tra `RegistrationResponse` da cap nhat, cung shape voi GET.
+`studentId` trong path là nguồn sự thật. Field `studentId` trong `RegistrationRequest` không được dùng cho quyết định đăng ký hiện tại.
 
-Business error co the gap:
+Response thành công trả `RegistrationResponse` đã cập nhật, gồm `courses` và `totalCredits`.
 
+Error codes chính:
+
+- `VALIDATION_ERROR`
 - `STUDENT_NOT_FOUND`
 - `COURSE_NOT_FOUND`
-- `COURSE_FULL`
 - `DUPLICATE_REGISTRATION`
+- `COURSE_FULL`
 - `CREDIT_LIMIT_EXCEEDED`
 - `SCHEDULE_CONFLICT`
+- `LECTURER_NOT_FOUND`
 
-### DELETE registration
+### DELETE `/api/students/{studentId}/registrations/{courseId}`
 
-Endpoint:
+Response thành công trả `RegistrationResponse` sau khi hủy. Nếu hủy course cuối cùng, `courses: []`, `totalCredits: 0` và status có thể là `CANCELLED`.
 
-```text
-DELETE /api/students/{studentId}/registrations/{courseId}
-```
-
-Response thanh cong tra `RegistrationResponse` da cap nhat. Neu huy mon cuoi cung, response co `courses: []`, `totalCredits: 0`
-va registration status co the la `CANCELLED`.
-
-Business error co the gap:
+Error codes chính:
 
 - `STUDENT_NOT_FOUND`
 - `COURSE_NOT_FOUND`
 - `REGISTRATION_NOT_FOUND`
 
-### Frontend Registration API
+## Timetable
 
-Frontend dung:
+### GET `/api/students/{studentId}/timetable`
 
-- `registrationApi.getRegistrations(studentId)`
-- `registrationApi.registerCourse(studentId, courseId)`
-- `registrationApi.cancelCourse(studentId, courseId)`
-
-Tat ca deu di qua shared `requestApi`; page/component khong goi `fetch` truc tiep va khong doc `data/*.json`.
-
-Frontend hien thi loi bang message/errorCode backend tra ve. Cac rule duplicate, gioi han tin chi va trung lich do backend validator quyet dinh.
-
-## Timetable API contract sau F13A
-
-Endpoint:
+Timetable không có persistence riêng. Response tính từ:
 
 ```text
-GET /api/students/{studentId}/timetable
+ACTIVE Registration
+-> Course
+-> Schedule
+-> Lecturer
 ```
 
-Timetable khong co persistence rieng. Response duoc suy ra tu:
+Một course có nhiều schedule tạo nhiều item.
 
-```text
-Student
-+ ACTIVE Registration
-+ Course
-+ Course.Schedule
-+ Lecturer
-```
-
-Response thanh cong tra `ApiResponse<List<TimetableSlotResponse>>`.
-
-Moi schedule cua mot course tao mot entry rieng. Course co 2 schedule se xuat hien 2 dong trong `data`.
-
-Thu tu response duoc sort deterministic:
-
-```text
-DayOfWeek -> startTime -> courseId
-```
-
-Sinh vien chua co dang ky active se tra `data: []`, khong coi day la server error.
-
-JSON item:
+Item:
 
 ```json
 {
   "courseId": "OOP101",
   "courseName": "Lap trinh huong doi tuong",
   "credits": 3,
-  "lecturerName": "Tran Thi B",
+  "lecturerName": "TS. Pham Quoc Bao",
   "dayOfWeek": "MONDAY",
   "startTime": "07:30:00",
   "endTime": "09:30:00",
-  "room": "A101"
+  "room": "A2-301"
 }
 ```
 
-Backend giu `DayOfWeek` dang enum tieng Anh (`MONDAY`, `TUESDAY`, ...). Frontend chiu trach nhiem map sang text hien thi.
+Response empty hợp lệ:
 
-Business/data errors co the gap:
+```json
+{
+  "success": true,
+  "message": "Lay thoi khoa bieu thanh cong.",
+  "data": []
+}
+```
+
+Error codes chính:
 
 - `STUDENT_NOT_FOUND`
 - `COURSE_NOT_FOUND`
 - `LECTURER_NOT_FOUND`
 
-### Frontend Timetable API sau F13
+## Dashboard
 
-Frontend dung:
+Không có endpoint dashboard riêng.
 
-- `API_ENDPOINTS.TIMETABLE(studentId)`
-- `timetableApi.getTimetable(studentId)`
-- `TimetableWeeklyPage` nhan `studentId` tu `App`
+Frontend dashboard tổng hợp từ:
 
-Tat ca request di qua shared `requestApi`; page/component khong goi `fetch` truc tiep va khong doc `data/*.json`.
+- `currentStudent` từ Auth/Profile API.
+- Registration API để lấy `totalCredits` và số môn đã đăng ký.
+- Course API để đếm số môn đang mở.
+- Timetable API để hiển thị preview lịch học.
 
-Mapping frontend:
+## Notifications
 
-- `courseId` -> `id`, `code`
-- `courseName` -> `name`
-- `credits` -> `credits`
-- `lecturerName` -> `lecturer`
-- `dayOfWeek/startTime/endTime/room` -> schedule presentation model dung chung voi Course mapper
+Không có Notification backend API trong phiên bản hiện tại.
 
-Response `data: []` hien thi trang thai chua co lich hoc, khong fallback sang mock data.
+Notifications là state local ở frontend:
 
-## Frontend Dashboard composition sau F14
+- unread
+- mark read
+- mark all read
 
-Khong tao endpoint `GET /api/dashboard/{studentId}` trong F14. Dashboard gom du lieu tu cac API da co:
-
-- `currentStudent` tu Auth/Profile API cho thong tin sinh vien.
-- `registrationApi.getRegistrations(studentId)` do `App` load de lay `totalCredits` va danh sach mon da dang ky.
-- `courseApi.getCourses()` de dem so mon dang mo theo contract Course hien tai.
-- `timetableApi.getTimetable(studentId)` de hien thi preview lich hoc.
-
-Dashboard chi tinh metric presentation nhu `registeredCount` va `creditPercent`. Cac rule nghiep vu nhu gioi han tin chi, trung lich,
-duplicate registration va capacity van thuoc backend validators/services.
-
-Feature Dashboard khong goi `fetch` truc tiep, khong doc `data/*.json`, khong fallback sang mock course/registration/timetable va khong hard-code `SV001`.
-
-## Notifications scope sau F14
-
-Notifications khong thuoc persistence/business core trong phien ban do an hien tai. F14 khong tao:
-
-- Notification model backend
-- Notification repository
-- Notification service
-- Notification controller
-- `data/notifications.json`
-
-Notifications duoc giu la frontend demo/local state. Unread count, mark read va mark all read chi cap nhat state frontend, khong dong bo backend.
+Không có backend persistence, realtime hoặc WebSocket.

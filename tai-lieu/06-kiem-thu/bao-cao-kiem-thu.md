@@ -1,90 +1,56 @@
-# Bao cao kiem thu
+# Báo cáo kiểm thử
 
-## F17 - Browser end-to-end verification
+Tài liệu này ghi nhận trạng thái kiểm thử của Full Solution local sau F17.
 
-Da chay kiem thu end-to-end tren trinh duyet that voi backend `http://localhost:8080` va frontend `http://localhost:3000`.
+Không công bố coverage phần trăm vì dự án chưa cấu hình công cụ đo coverage.
 
-Ket qua tom tat:
-
-- Auth demo SV001, login loi SV999 va logout: PASS.
-- Dashboard, danh sach mon, search, mon da dang ky, thoi khoa bieu, ho so, thong bao demo/local: PASS.
-- Dang ky DBS202, restart backend de kiem persistence JSON, huy DBS202 va restore baseline data: PASS.
-- Negative API contract: `DUPLICATE_REGISTRATION`, `COURSE_FULL`, `STUDENT_NOT_FOUND` deu tra dung error response va khong mutate JSON.
-- Responsive desktop/mobile smoke: PASS.
-
-Bao cao chi tiet: `tai-lieu/06-kiem-thu/bao-cao-kiem-thu-e2e-f17.md`.
-
-Tai lieu nay ghi nhan trang thai test hardening sau F16 cho Full Solution LOCAL.
-Khong cong bo coverage % vi du an chua cau hinh cong cu do coverage.
-
-## Framework
+## Công cụ
 
 - Backend: JUnit 5, AssertJ, Mockito, Spring Boot Test, MockMvc.
-- File IO tests: `@TempDir`, khong dung hoac mutate root `data/*.json`.
-- Frontend: TypeScript typecheck va Vite production build.
+- Repository/File IO: `@TempDir`, không mutate root `data/*.json`.
+- Frontend: TypeScript typecheck và Vite production build.
+- Browser E2E: kiểm tra luồng người dùng thật trên frontend + backend local.
 
-## Tong quan test suite
+## Kết quả regression
 
-| Module | Success tests | Failure tests | Boundary tests | Controller tests | Repository/File IO tests |
-|---|---:|---:|---:|---:|---:|
-| Auth | co | co | blank/trim studentId | co | n/a |
-| Student | co | co | maxCredits serialization qua response/repository | co | co |
-| Course | co | co | search blank, capacity data qua model | co | co |
-| Registration | co | co | validator priority, capacity increment/decrement | co | co |
-| Validator | co | co | capacity, credit, schedule overlap | n/a | n/a |
-| Timetable | co | co | multi-schedule, cancelled excluded, ordering | co | n/a |
-| JSON File IO | co | co | missing file, empty array, null list, UTF-8, malformed JSON, path traversal | n/a | co |
+Backend:
 
-## Scenario quan trong
+```text
+Tests run: 98, Failures: 0, Errors: 0, Skipped: 0
+BUILD SUCCESS
+```
 
-- Login thanh cong voi studentId hop le.
-- Login unknown studentId tra `STUDENT_NOT_FOUND`.
-- Login blank studentId tra `VALIDATION_ERROR` va khong goi repository.
-- Course list, find by ID, search by ID/name, missing lecturer.
-- Registration success tao/cap nhat registration va tang capacity dung 1.
-- Registration fail khong goi `registrationRepository.save()` hoac `courseRepository.save()`.
-- Cancel success xoa course khoi registration va giam capacity dung 1.
-- Cancel khong lam capacity am.
-- Timetable bo qua registration `CANCELLED`.
-- Timetable tao entry cho moi schedule cua course.
+Backend package:
 
-## Validator boundaries
+```text
+BUILD SUCCESS
+```
 
-- Course existence: present pass, missing fail.
-- Duplicate: not registered pass, registered fail.
-- Capacity: `current < max` pass, `current == max` fail, `current > max` fail.
-- Credit: `newTotal < max` pass, `newTotal == max` pass, `newTotal > max` fail.
-- Schedule: different day pass, adjacent intervals pass, partial overlap fail, same interval fail, new contains existing fail, new inside existing fail, conflict with any registered course fail.
+Frontend:
 
-## F15 runtime verification
+```text
+npm run typecheck PASS
+npm run build PASS
+```
 
-F15 da chay API-level verification voi demo data:
+Ghi chú môi trường: trong sandbox, Vite/esbuild có thể lỗi `spawn EPERM`. Khi chạy ngoài sandbox, build pass; lỗi này là đặc thù môi trường, không phải source-code failure.
 
-- Login/Profile/Course/Search/Registration/Timetable PASS.
-- Register DBS202 PASS.
-- Cancel DBS202 PASS.
-- COURSE_FULL, DUPLICATE_REGISTRATION baseline, CREDIT_LIMIT_EXCEEDED, SCHEDULE_CONFLICT PASS.
-- Persistence qua backend restart PASS.
-- Sau mutation verification, root `data/*.json` da restore ve baseline.
+## Nhóm test
 
-## F15C regression
-
-Bug F15:
-
-- Expected: dang ky lai DBS202 sau khi da dang ky thanh cong phai tra `DUPLICATE_REGISTRATION`.
-- Actual truoc fix: tra `CREDIT_LIMIT_EXCEEDED`.
-
-Sau F15C:
-
-- Validator order duoc khoa bang `@Order`.
-- `RegistrationValidatorOrderTest` xac nhan Spring inject `List<CourseValidator>` dung thu tu.
-- Service regression test duplicate + credit exceeded tra `DuplicateRegistrationException`.
-- Service regression test duplicate + course full tra `DuplicateRegistrationException`.
-- Runtime retest: DBS202 lan thu hai tra `DUPLICATE_REGISTRATION` va khong mutate file JSON.
+| Module | Nội dung |
+|---|---|
+| Auth | login thành công, student không tồn tại, studentId blank/trim |
+| Student | đọc profile, lỗi `STUDENT_NOT_FOUND`, serialization |
+| Course | list, detail, search, missing course, lecturer integrity |
+| Registration | register, cancel, total credits, capacity mutation, failure không ghi file |
+| Validator | existence, duplicate, capacity, credit, schedule conflict, deterministic order |
+| Timetable | empty state, active registration, multi-schedule, cancelled excluded, ordering |
+| Repository/File IO | read/write JSON, missing file, malformed JSON, UTF-8, path traversal |
+| Controller | response envelope và error envelope qua MockMvc |
 
 ## Error-code contract
 
-Da co test cho cac error code chinh:
+Đã có test cho:
 
 - `STUDENT_NOT_FOUND`
 - `COURSE_NOT_FOUND`
@@ -96,33 +62,36 @@ Da co test cho cac error code chinh:
 - `REGISTRATION_NOT_FOUND`
 - `VALIDATION_ERROR`
 
+## Validator boundaries
+
+- Capacity: `current < max` pass, `current == max` fail, `current > max` fail.
+- Credit: `newTotal < max` pass, `newTotal == max` pass, `newTotal > max` fail.
+- Schedule: different day pass, adjacent intervals pass, partial overlap fail, same interval fail, new contains existing fail, new inside existing fail.
+
+Rule schedule conflict:
+
+```text
+same day
+AND newStart < existingEnd
+AND newEnd > existingStart
+```
+
+## Regression quan trọng
+
+Validator priority bug:
+
+- Expected: request duplicate trả `DUPLICATE_REGISTRATION`.
+- Bug cũ: trong trường hợp duplicate đồng thời vi phạm rule khác, error ưu tiên có thể sai.
+- Fix hiện tại: 5 validator khóa thứ tự bằng `@Order(10/20/30/40/50)` và có `RegistrationValidatorOrderTest`.
+
+Request courseId validation:
+
+- `RegistrationRequest.courseId` có `@NotBlank`.
+- Request thiếu/blank courseId trả `VALIDATION_ERROR`.
+
 ## Test isolation
 
-- Repository va JsonFileUtils tests dung `@TempDir`.
-- Unit tests khong phu thuoc `D:\OOP\...` hoac root demo data.
-- Runtime verification co backup tam ngoai repo va restore baseline sau test.
-- Sau test suite, `git diff -- data/` phai rong.
-
-## Ket qua F16
-
-Lenh da chay:
-
-```text
-backend\mvnw.cmd clean test
-backend\mvnw.cmd clean package
-cd frontend
-npm run typecheck
-npm run build
-cd ..
-scripts\kiem-tra-du-an.bat
-```
-
-Ket qua sau hardening:
-
-```text
-Tests run: 98, Failures: 0, Errors: 0, Skipped: 0
-BUILD SUCCESS
-```
-
-Ghi chu moi truong: `npm run build` va `scripts\kiem-tra-du-an.bat` fail khi chay trong sandbox do Vite/esbuild bi chan `spawn EPERM`.
-Khi rerun ngoai sandbox, ca hai PASS.
+- Unit/repository tests không phụ thuộc đường dẫn `D:\OOP\...`.
+- Repository tests dùng thư mục tạm.
+- Runtime verification có backup/restore baseline data.
+- Sau kiểm thử, `git diff -- data/` phải rỗng.

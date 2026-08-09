@@ -1,6 +1,6 @@
 # Schema JSON
 
-Tài liệu này khóa schema dữ liệu cho Full Solution local. Các file dữ liệu có thể tiếp tục là mảng rỗng `[]` cho tới phase demo data.
+Tài liệu này mô tả schema của 4 file dữ liệu trong `data/`.
 
 ## `data/students.json`
 
@@ -10,15 +10,15 @@ Root là array.
 [
   {
     "id": "SV001",
-    "fullName": "Nguyen Van A",
-    "className": "CNTT1",
+    "fullName": "Nguyen Minh An",
+    "className": "CNTT-K16A",
     "major": "Cong nghe thong tin",
-    "maxCredits": 18
+    "maxCredits": 10
   }
 ]
 ```
 
-Field bắt buộc:
+Field:
 
 - `id`: mã sinh viên.
 - `fullName`: họ tên sinh viên.
@@ -26,31 +26,27 @@ Field bắt buộc:
 - `major`: ngành học.
 - `maxCredits`: số tín chỉ tối đa được đăng ký trong kỳ.
 
-Không lưu `totalRegisteredCredits` trong `Student`; giá trị này phải tính từ `Registration` và `Course`.
+Không lưu `totalRegisteredCredits` trong `Student`; giá trị này tính từ `Registration` và `Course`.
 
 ## `data/lecturers.json`
-
-Root là array.
 
 ```json
 [
   {
     "id": "GV001",
-    "fullName": "Tran Thi B",
+    "fullName": "TS. Pham Quoc Bao",
     "faculty": "Khoa Cong nghe thong tin"
   }
 ]
 ```
 
-Field bắt buộc:
+Field:
 
 - `id`: mã giảng viên.
 - `fullName`: họ tên giảng viên.
 - `faculty`: khoa hoặc đơn vị chuyên môn.
 
 ## `data/courses.json`
-
-Root là array.
 
 ```json
 [
@@ -60,44 +56,42 @@ Root là array.
     "credits": 3,
     "lecturerId": "GV001",
     "maxCapacity": 60,
-    "currentCapacity": 20,
+    "currentCapacity": 42,
     "schedules": [
       {
         "dayOfWeek": "MONDAY",
         "startTime": "07:30:00",
         "endTime": "09:30:00",
-        "room": "A101"
+        "room": "A2-301"
       }
     ]
   }
 ]
 ```
 
-Field bắt buộc:
+Field:
 
 - `courseId`: mã học phần/lớp học phần.
 - `courseName`: tên học phần.
 - `credits`: số tín chỉ.
 - `lecturerId`: mã giảng viên phụ trách.
 - `maxCapacity`: sức chứa tối đa.
-- `currentCapacity`: số lượng đã đăng ký hiện tại.
+- `currentCapacity`: sĩ số hiện tại.
 - `schedules`: danh sách lịch học.
 
 `dayOfWeek` dùng enum Java `DayOfWeek`: `MONDAY`, `TUESDAY`, `WEDNESDAY`, `THURSDAY`, `FRIDAY`, `SATURDAY`, `SUNDAY`.
 
-`startTime` và `endTime` dùng định dạng ISO time: `HH:mm:ss`.
+`startTime` và `endTime` dùng ISO time `HH:mm:ss`.
 
 ## `data/registrations.json`
-
-Root là array.
 
 ```json
 [
   {
-    "registrationId": "REG001",
+    "registrationId": "REG-SV001-DEMO",
     "studentId": "SV001",
     "status": "ACTIVE",
-    "registeredAt": "2026-08-08T19:30:00",
+    "registeredAt": "2026-08-05T08:15:00",
     "details": [
       {
         "courseId": "OOP101"
@@ -107,16 +101,20 @@ Root là array.
 ]
 ```
 
-Field bắt buộc:
+Field:
 
 - `registrationId`: mã phiếu đăng ký.
 - `studentId`: mã sinh viên.
 - `status`: trạng thái đăng ký.
-- `registeredAt`: thời điểm tạo/cập nhật phiếu.
-- `details`: danh sách học phần đã đăng ký.
+- `registeredAt`: thời điểm tạo phiếu.
+- `details`: danh sách course đã đăng ký.
 
-`RegistrationStatus` chỉ gồm:
+`RegistrationStatus`:
 
 - `ACTIVE`
 - `CANCELLED`
 
+## File không tồn tại theo thiết kế
+
+- Không có `timetable.json`: thời khóa biểu được tính từ registration active.
+- Không có `notifications.json`: notifications chỉ là demo/local state ở frontend.

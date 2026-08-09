@@ -1,133 +1,84 @@
 # Kiến trúc dữ liệu và File IO
 
-Dự án định hướng lưu dữ liệu bằng JSON File IO trong giai đoạn OOP.
+Dữ liệu demo được lưu bằng JSON File IO để phù hợp phạm vi đồ án OOP.
 
-Các file dữ liệu hiện có:
+## File persistence
+
+Hệ thống hiện có đúng 4 file persistence:
 
 - `data/students.json`
 - `data/lecturers.json`
 - `data/courses.json`
 - `data/registrations.json`
 
-Hiện tại các file này là mảng rỗng `[]`. Chưa có dữ liệu nghiệp vụ thật.
+Không có:
 
-## Contract đọc/ghi JSON
+- `data/timetable.json`
+- `data/notifications.json`
+
+Timetable là response được tính. Notifications là demo/local state ở frontend.
+
+## JsonFileUtils
 
 `backend/src/main/java/vn/edu/phenikaa/courseregistration/utils/JsonFileUtils.java` là cơ chế đọc/ghi JSON duy nhất cho tầng repository/file.
 
-Utility này phải đảm bảo:
+Contract:
 
-- Dùng Jackson.
+- Dùng Jackson `ObjectMapper`.
 - Đọc/ghi UTF-8.
-- Đọc được `List<T>` theo kiểu generic.
-- Ghi được `List<T>` theo kiểu generic.
-- File chưa tồn tại khi đọc thì trả về danh sách rỗng.
-- Tạo thư mục cha khi ghi nếu cần.
-- Không hard-code đường dẫn máy cá nhân.
+- Đọc `List<T>` bằng generic `readList(String fileName, Class<T> elementType)`.
+- Ghi `List<T>` bằng `writeList(String fileName, List<T> items)`.
+- File chưa tồn tại khi đọc thì trả danh sách rỗng.
+- Ghi file thì tạo thư mục cha nếu cần.
+- Đường dẫn data lấy từ `app.data-dir`, mặc định `../data`.
+- Chặn tên file rỗng và path traversal bằng `normalize()` và kiểm tra `startsWith(dataDirectory)`.
 - Không chứa business logic.
 
-## Cấu hình đường dẫn data
+## Repository JSON
 
-Đường dẫn data được cấu hình bằng property:
+- `JsonStudentRepository` dùng `students.json`.
+- `JsonLecturerRepository` dùng `lecturers.json`.
+- `JsonCourseRepository` dùng `courses.json`.
+- `JsonRegistrationRepository` dùng `registrations.json`.
 
-```properties
-app.data-dir=../data
-```
+Controller, service, model và frontend không đọc file trực tiếp.
 
-Thành viên có thể override property này theo môi trường chạy, nhưng không được hard-code đường dẫn như `D:\...` trong source.
+## Integrity baseline
 
-## Repository JSON phase sau
+Quy tắc dữ liệu:
 
-Các repository JSON triển khai sau này như `JsonStudentRepository`, `JsonCourseRepository`, `JsonRegistrationRepository` đều phải gọi `JsonFileUtils`.
+- Mỗi `Course.lecturerId` phải resolve được sang `Lecturer.id`.
+- Mỗi `Registration.studentId` phải resolve được sang `Student.id`.
+- Mỗi `RegistrationDetail.courseId` phải resolve được sang `Course.courseId`.
+- `Course.currentCapacity <= Course.maxCapacity`.
+- `Registration.status` chỉ dùng `ACTIVE` hoặc `CANCELLED`.
 
-Không được:
+`Course.currentCapacity` là sĩ số aggregate persisted của lớp học phần trong demo. Khi đăng ký/hủy, backend tăng/giảm giá trị này trong `courses.json`.
 
-- Controller đọc file.
-- Service đọc file.
-- Model đọc file.
-- Frontend đọc file `data/*.json`.
+## Timetable computed
 
-## Schema dữ liệu
-
-Schema JSON chi tiết được khóa trong `tai-lieu/02-kien-truc/schema-json.md`.
-
-Trong phase khóa domain, các file `data/*.json` có thể giữ `[]` để tránh thêm dữ liệu demo trước khi repository/service/test hoàn chỉnh.
-
-## Ranh giới frontend sau F10
-
-Frontend không đọc trực tiếp thư mục `data/`.
-
-Auth/Profile lấy dữ liệu qua REST API:
-
-- `POST /api/auth/login`
-- `GET /api/students/{studentId}`
-
-Sau F12, Course và Registration đã chuyển sang backend. Timetable, Dashboard và Notifications chưa được migrate thành API runtime riêng,
-vì vậy các phần đó vẫn có thể dùng mock hoặc state frontend hiện có cho mục đích demo giao diện.
-## Trang thai File IO sau F12
-
-Registration API van tuan thu luong:
+`TimetableService` tính timetable theo luồng:
 
 ```text
-Controller
--> RegistrationService
--> CourseValidator neu dang ky
--> Repository Interface
--> Json Repository
--> JsonFileUtils
--> data/*.json
+StudentRepository
+-> RegistrationRepository ACTIVE
+-> CourseRepository
+-> LecturerRepository
+-> TimetableEntry
+-> TimetableSlotResponse
 ```
 
-`RegistrationService` khong doc file truc tiep. Khi can tra response cho frontend, service resolve du lieu dang ky bang repository:
+Mỗi `Course.Schedule` tạo một entry. Response sort theo `DayOfWeek`, `startTime`, `courseId`.
 
-- `RegistrationRepository` lay phieu dang ky.
-- `CourseRepository.findAll()` tao map hoc phan de resolve cac `courseId` trong registration.
-- `LecturerRepository.findAll()` tao map giang vien de gan thong tin lecturer cho tung hoc phan.
+## Registration mutation
 
-`RegistrationMapper` chi map composition da co san sang DTO, khong goi repository va khong doc JSON.
-
-Frontend Registration sau F12 khong doc `data/*.json` va khong dung mock ids cho runtime. Moi thao tac dang ky, huy hoac lay danh sach da dang ky
-di qua REST API backend. `data/*.json` van co the rong cho den phase tao demo data F15.
-
-## Trang thai Timetable sau F13A
-
-Timetable la computed response, khong tao `data/timetable.json` va khong tao repository persistence rieng.
-
-`TimetableService` lay du lieu qua repository interface:
-
-- `StudentRepository` kiem tra sinh vien ton tai.
-- `RegistrationRepository` lay cac registration cua sinh vien va chi dung registration `ACTIVE`.
-- `CourseRepository.findAll()` tao map hoc phan de resolve `courseId`.
-- `LecturerRepository.findAll()` tao map giang vien de tra `lecturerName`.
-
-Moi `Course.Schedule` tao mot timetable entry. Response duoc sort theo `DayOfWeek`, `startTime`, `courseId`.
-
-Frontend sau F13 chi lay timetable qua REST API:
+Register flow:
 
 ```text
-GET /api/students/{studentId}/timetable
+RegistrationService
+-> CourseValidator chain
+-> RegistrationRepository.save
+-> CourseRepository.save
 ```
 
-Khong tao `data/timetable.json`, khong cho frontend doc truc tiep `data/*.json` va khong hard-code du lieu lich hoc trong page.
-
-## Demo data sau F15
-
-F15 seed truc tiep bon file:
-
-- `data/students.json`
-- `data/lecturers.json`
-- `data/courses.json`
-- `data/registrations.json`
-
-Khong tao file persistence moi. Khong dung du lieu ca nhan that.
-
-`Course.currentCapacity` duoc hieu la si so aggregate da ghi nhan cua lop hoc phan trong demo, khong bat buoc bang so dong registration trong dataset nho.
-Khi API dang ky/huy chay, backend tang/giam field nay truc tiep trong `courses.json`.
-
-Quy tac toan ven du lieu F15:
-
-- Moi `Course.lecturerId` phai resolve duoc sang `Lecturer.id`.
-- Moi `RegistrationDetail.courseId` phai resolve duoc sang `Course.courseId`.
-- Moi `Registration.studentId` phai resolve duoc sang `Student.id`.
-- Khong course nao co `currentCapacity > maxCapacity`.
-- Timetable van la computed response tu registration ACTIVE va course schedules, khong co `data/timetable.json`.
+Nếu validator ném lỗi, không ghi `registrations.json` và không cập nhật `courses.json`.

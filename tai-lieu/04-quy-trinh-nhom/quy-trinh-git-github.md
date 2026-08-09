@@ -6,7 +6,7 @@ Không code trực tiếp trên `main`.
 
 ```powershell
 cd D:\Projects
-git clone https://github.com/Shuuma4869/He-thong-dang-ki-mon-.git he-thong-dang-ky-mon-hoc
+git clone https://github.com/Shuuma4869/He-thong-dang-ki-mon-cho-sinh-vien-dai-hoc.git he-thong-dang-ky-mon-hoc
 cd he-thong-dang-ky-mon-hoc
 git switch develop
 git pull origin develop
@@ -17,8 +17,8 @@ Nên clone vào đường dẫn không dấu tiếng Việt, ví dụ `D:\Projec
 Luồng đề xuất:
 
 ```powershell
-git switch main
-git pull
+git switch develop
+git pull origin develop
 git switch -c feature/<ten-module>
 ```
 
@@ -32,3 +32,5 @@ git push -u origin feature/<ten-module>
 ```
 
 Tạo Pull Request về `main` và chờ review.
+
+Không push `reference/full-solution` vì đây là branch tham chiếu local của trưởng nhóm.

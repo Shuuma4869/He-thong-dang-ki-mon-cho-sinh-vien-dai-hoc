@@ -1,29 +1,64 @@
 # Hướng dẫn chạy backend
 
-## Cập nhật F17
+Backend là Spring Boot Java 21, chạy REST API tại port `8080` và đọc/ghi dữ liệu trong `data/*.json`.
 
-Backend hiện đã có REST API thật cho auth demo, student/profile, course, registration và timetable.
-Dữ liệu được đọc/ghi từ `data/*.json` thông qua repository JSON File IO.
-Không dùng database, JPA, Hibernate, JWT hoặc Spring Security.
-
-Yêu cầu:
+## Yêu cầu
 
 - JDK 21.
-- Không bắt buộc cài Maven hệ thống vì project đã có Maven Wrapper.
+- Không cần cài Maven hệ thống vì project có Maven Wrapper.
 
-Chạy backend từ root repository:
+Kiểm tra:
+
+```powershell
+java -version
+javac -version
+```
+
+## Chạy backend
+
+Từ root repository:
 
 ```powershell
 scripts\chay-backend.bat
 ```
 
-Kiểm tra backend:
+Script này xử lý tốt hơn khi project nằm trong đường dẫn Windows có dấu tiếng Việt bằng cách map sang drive-letter tạm.
+
+Backend chạy tại:
+
+```text
+http://localhost:8080
+```
+
+API base:
+
+```text
+http://localhost:8080/api
+```
+
+Root `/` có thể trả 404. Kiểm tra API bằng:
+
+```text
+http://localhost:8080/api/courses
+```
+
+## Kiểm tra backend
 
 ```powershell
 backend\mvnw.cmd clean test
 backend\mvnw.cmd clean package
 ```
 
-Root `/` có thể trả 404. Kiểm tra API bằng `http://localhost:8080/api/courses` hoặc đăng nhập frontend bằng `SV001`.
+Kết quả regression gần nhất: 98 tests pass.
 
-Nếu chạy trực tiếp `backend\mvnw.cmd spring-boot:run` trong đường dẫn Windows có dấu tiếng Việt và gặp lỗi classpath, dùng script trên để chạy qua drive-letter tạm.
+## Cấu hình
+
+`backend/src/main/resources/application.properties`:
+
+```properties
+server.port=8080
+app.data-dir=../data
+app.cors.allowed-origins=http://localhost:3000,http://127.0.0.1:3000
+```
+
+Không cần PostgreSQL, Docker, Redis, JPA, Hibernate, JWT hoặc Spring Security.

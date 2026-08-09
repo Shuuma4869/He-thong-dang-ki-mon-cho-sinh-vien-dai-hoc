@@ -1,107 +1,83 @@
 # Kiến trúc tổng thể
 
-Dự án dùng cấu trúc monorepo:
+Dự án là monorepo gồm frontend React, backend Spring Boot, data JSON và tài liệu.
 
-- `frontend/`: giao diện React/TypeScript/Vite, hiện vẫn chạy bằng mock data.
-- `backend/`: Spring Boot skeleton, đã khóa shared technical foundation.
-- `data/`: JSON data starter, hiện là các mảng rỗng.
-- `tai-lieu/`: tài liệu phân tích, kiến trúc, thiết kế, quy trình và vận hành.
+## Trạng thái hiện tại sau F17
 
-## Trạng thái hiện tại
+- Frontend đã kết nối REST API thật cho auth demo, profile, courses, registration, timetable và dashboard composition.
+- Backend đã có controller, service, validator, repository JSON File IO, DTO, mapper và exception handler cho các flow core.
+- Data baseline nằm trong `data/students.json`, `data/lecturers.json`, `data/courses.json`, `data/registrations.json`.
+- Notifications chỉ là demo/local state ở frontend.
+- Không dùng database, JPA, Hibernate, JWT hoặc Spring Security.
 
-Starter đã có nền kỹ thuật dùng chung cho backend và frontend, nhưng chưa hoàn thành nghiệp vụ Student, Course và Registration.
-
-Frontend đã chuyển các luồng Auth, Profile, Course và Registration sang gọi backend thật qua shared API client.
-Dashboard, Timetable và Notifications chưa được tách thành API runtime riêng trong F12.
-
-Backend chưa dùng database, JPA, Hibernate, JWT hoặc Spring Security. Dữ liệu phase sau được định hướng lưu trong JSON file.
-
-## Luồng backend bắt buộc
-
-Mọi nghiệp vụ backend phải đi theo thứ tự:
+## Luồng tổng thể
 
 ```text
-Controller
+Browser React
+-> Feature API
+-> Shared requestApi/httpClient
+-> REST Controller
 -> Service
--> Validator nếu có
+-> Validator nếu là đăng ký
 -> Repository Interface
 -> Json Repository
 -> JsonFileUtils
 -> data/*.json
 ```
 
-Không được phá vỡ luồng này.
-
 ## Ranh giới trách nhiệm
 
-- Controller chỉ nhận request, gọi service và trả response DTO.
-- Service chứa điều phối nghiệp vụ, không tự mở file.
-- Validator chứa rule kiểm tra, không tự mở file.
+- Page/component frontend không gọi `fetch` trực tiếp cho flow đã có feature API.
+- Frontend không đọc `data/*.json`.
+- Controller chỉ nhận request, gọi service, trả `ApiResponse` hoặc để exception handler xử lý lỗi.
+- Service điều phối nghiệp vụ, không tự mở file.
+- Validator kiểm tra rule đăng ký, không đọc file và không tạo DTO.
 - Repository interface định nghĩa thao tác dữ liệu.
-- Json repository triển khai repository bằng JSON file.
-- `JsonFileUtils` là điểm duy nhất đọc/ghi file JSON.
-- Model chỉ biểu diễn dữ liệu, không đọc JSON.
-- Frontend không đọc trực tiếp `data/*.json`.
+- Json repository gọi `JsonFileUtils` để đọc/ghi JSON.
+- `JsonFileUtils` là điểm đọc/ghi file JSON duy nhất.
+- Model chỉ biểu diễn dữ liệu domain.
 
-## Trạng thái tích hợp frontend F10
+## Core
 
-Frontend đã chuyển riêng luồng Auth và Profile sang gọi backend thật qua shared API client.
+Student:
 
-Các điểm đã khóa:
+- `User` là abstract class dùng chung.
+- `Student extends User`, có `className`, `major`, `maxCredits`.
+- `StudentService` đọc sinh viên qua `StudentRepository`.
 
-- `POST /api/auth/login` được gọi từ `authApi.login`.
-- `GET /api/students/{studentId}` được gọi từ `profileApi.getStudentById`.
-- `requestApi` là lớp unwrap `ApiResponse.data` dùng chung.
-- `LoginPage` không đăng nhập giả bằng timeout và không báo thành công trước khi backend trả kết quả.
-- `App` quản lý `currentStudent`, trạng thái khởi tạo phiên và storage `studentId`.
-- `rememberMe = true` lưu `studentId` trong `localStorage`; `rememberMe = false` lưu trong `sessionStorage`.
-- Password chỉ gửi trong request đăng nhập, không lưu vào storage.
+Course:
 
-Course và Registration trên frontend đã dùng API thật. Timetable, Dashboard và Notifications chưa được migrate thành API runtime riêng trong phase F12.
+- `Course` có `courseId`, `courseName`, `credits`, `lecturerId`, `maxCapacity`, `currentCapacity`, `schedules`.
+- `CourseService` resolve `Lecturer` qua `LecturerRepository`.
+- Course API trả `CourseResponse` có nested `LecturerResponse`.
 
-## Trang thai tich hop frontend F12
+Registration:
 
-Frontend da noi API that cho cac luong dang ky hoc phan chinh:
+- `RegistrationService` triển khai `Registrable`.
+- Đăng ký chạy `List<CourseValidator>` theo thứ tự `@Order`.
+- Nếu hợp lệ mới ghi `registrations.json` và cập nhật `courses.json`.
+- Nếu validation fail, không mutation persistence.
 
-- Lay danh sach hoc phan da dang ky cua sinh vien qua `GET /api/students/{studentId}/registrations`.
-- Dang ky hoc phan qua `POST /api/students/{studentId}/registrations`.
-- Huy dang ky hoc phan qua `DELETE /api/students/{studentId}/registrations/{courseId}`.
+Timetable:
 
-`studentId` luon lay tu sinh vien dang dang nhap trong `App`, khong hard-code `SV001`.
+- Không có `data/timetable.json`.
+- `TimetableService` tính từ registration `ACTIVE`, course, schedule và lecturer.
+- Một course có nhiều schedule tạo nhiều entry.
 
-Registration runtime khong con dung `INITIAL_REGISTERED_IDS` de tao danh sach da dang ky. Mock data van duoc giu trong `frontend/src/mocks`
-cho cac man chua migrate hoac muc dich doi chieu, nhung luong Register, Cancel, Registered Courses va Total Credits lay tu backend.
+## Support
 
-Dashboard va Timetable hien nhan danh sach da dang ky tu state chung cua frontend, nhung chua duoc tach thanh API runtime rieng trong F12.
-Notifications van dung mock.
+Auth demo:
 
-## Trang thai tich hop frontend F13
+- `POST /api/auth/login` chỉ kiểm tra `studentId` tồn tại.
+- `password` không được lưu và không được xác thực như mật khẩu thật.
+- Remember me ở frontend chỉ lưu `studentId`.
 
-Frontend da noi API that cho man Thoi khoa bieu:
+Dashboard:
 
-- `TimetableWeeklyPage` nhan `studentId` tu sinh vien dang dang nhap trong `App`.
-- `timetableApi.getTimetable(studentId)` goi `GET /api/students/{studentId}/timetable` qua shared `requestApi`.
-- Feature timetable khong doc `data/*.json`, khong goi `fetch` truc tiep va khong dung mock timetable runtime.
-- Response rong `data: []` duoc xem la thanh cong va hien thi trang thai chua co lich hoc.
-- Schedule backend dang enum `DayOfWeek` tieng Anh va duoc map sang presentation model bang mapper dung chung voi Course.
+- Không có backend dashboard API.
+- Frontend tổng hợp từ `currentStudent`, Registration API, Course API và Timetable API.
 
-Dashboard va Notifications van chua migrate thanh API runtime rieng trong F13.
+Notifications:
 
-## Trang thai tich hop frontend F14
-
-Dashboard sau F14 la presentation/composition layer tren frontend, khong tao backend Dashboard API rieng.
-
-Nguon du lieu runtime:
-
-- Student identity: `currentStudent` da xac thuc qua Auth/Profile API.
-- Tong tin chi: `RegistrationResponse.totalCredits`.
-- So mon da dang ky: `RegistrationResponse.courses.length`.
-- So mon dang mo: `GET /api/courses`.
-- Gioi han tin chi: `Student.maxCredits`.
-- Tien do tin chi: tinh presentation bang `totalCredits / maxCredits`, co xu ly `maxCredits <= 0`.
-- Lich hoc preview: `GET /api/students/{studentId}/timetable`.
-
-Dashboard khong doc `data/*.json`, khong dung mock course/registration/timetable va khong hard-code `SV001`.
-
-Notifications duoc giu o pham vi frontend demo/local state. Khong co backend Notification model, repository, service, controller hoac
-`data/notifications.json` trong F14. Tinh nang nay chi bo tro giao dien va khong co server persistence.
+- Chỉ là demo/local state ở frontend.
+- Không có Notification model, repository, service, controller hoặc `data/notifications.json`.

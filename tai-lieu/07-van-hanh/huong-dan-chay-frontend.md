@@ -1,21 +1,22 @@
 # Hướng dẫn chạy frontend
 
-## Cập nhật F17
+Frontend là React + TypeScript + Vite, chạy mặc định tại port `3000`.
 
-Frontend hiện gọi backend REST API thật qua `http://localhost:8080/api` nếu không override `VITE_API_BASE_URL`.
-Cần chạy backend trước khi demo các màn hình đăng nhập, dashboard, danh sách môn, đăng ký/hủy đăng ký và thời khóa biểu.
-
-Tài khoản demo:
-
-- Mã sinh viên: `SV001`
-- Mật khẩu: bất kỳ
-
-Yêu cầu:
+## Yêu cầu
 
 - Node.js 20 trở lên.
 - npm 10 trở lên.
 
-Chạy frontend:
+Kiểm tra:
+
+```powershell
+node -v
+npm -v
+```
+
+## Chạy frontend
+
+Nên chạy backend trước để các flow core hoạt động đầy đủ.
 
 ```powershell
 cd frontend
@@ -23,7 +24,40 @@ npm install
 npm run dev
 ```
 
-Kiểm tra frontend:
+Frontend:
+
+```text
+http://localhost:3000
+```
+
+API runtime mặc định:
+
+```text
+http://localhost:8080/api
+```
+
+Nếu cần override:
+
+```powershell
+copy .env.example .env.local
+```
+
+Sau đó sửa:
+
+```text
+VITE_API_BASE_URL=http://localhost:8080/api
+```
+
+Không commit `.env.local`.
+
+## Demo account
+
+- Mã sinh viên: `SV001`
+- Mật khẩu: bất kỳ chuỗi không rỗng
+
+Backend chỉ định danh sinh viên bằng `studentId`, không xác thực mật khẩu thật.
+
+## Kiểm tra frontend
 
 ```powershell
 cd frontend
@@ -31,4 +65,10 @@ npm run typecheck
 npm run build
 ```
 
-Notifications vẫn là demo/local state ở frontend. Các màn hình course, registration, timetable và profile cần backend để lấy dữ liệu thật.
+Nếu `npm run build` gặp `spawn EPERM` trong sandbox, chạy lại ngoài sandbox. Đây là lỗi môi trường chặn Vite/esbuild, không phải lỗi source code nếu build ngoài sandbox pass.
+
+## Phạm vi dữ liệu
+
+- Auth, profile, courses, registration và timetable cần backend.
+- Dashboard tổng hợp dữ liệu từ API/state frontend.
+- Notifications là demo/local state ở frontend.

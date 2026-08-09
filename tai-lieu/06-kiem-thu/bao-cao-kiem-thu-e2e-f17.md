@@ -1,103 +1,103 @@
-# Bao cao kiem thu E2E F17
+# Báo cáo kiểm thử E2E F17
 
-## Pham vi
+## Phạm vi
 
-F17 kiem thu end-to-end tren trinh duyet that cho Full Solution local cua he thong dang ky mon hoc.
+Kiểm thử end-to-end trên trình duyệt thật cho Full Solution local của “Hệ thống đăng ký môn học”.
 
-Branch kiem thu: `reference/full-solution`.
+Branch kiểm thử: `reference/full-solution`.
 
-Khong push branch reference trong phase nay.
+Branch reference là local only trong phase này, không push.
 
-## Moi truong
+## Môi trường
 
 Backend:
 
 - URL: `http://localhost:8080`
 - API base: `http://localhost:8080/api`
 - Data source: `data/*.json`
-- Khong dung database, JPA, Hibernate, JWT hoac Spring Security.
+- Không dùng database, JPA, Hibernate, JWT hoặc Spring Security.
 
 Frontend:
 
 - URL: `http://localhost:3000`
 - React + TypeScript + Vite
-- API runtime mac dinh: `http://localhost:8080/api`
+- API runtime mặc định: `http://localhost:8080/api`
 
-## Bao ve du lieu
+## Bảo vệ dữ liệu
 
-Truoc khi chay thao tac ghi, da backup cac file:
+Trước thao tác ghi, backup:
 
 - `data/students.json`
 - `data/lecturers.json`
 - `data/courses.json`
 - `data/registrations.json`
 
-Sau kiem thu, `data/*.json` da duoc restore ve baseline.
+Sau kiểm thử, restore baseline:
 
-Baseline sau restore:
-
-- `courses.json`: 10 hoc phan.
-- `registrations.json`: 2 registration.
-- SV001: `OOP101`, `WEB201`, tong 6 tin chi.
+- SV001: OOP101 + WEB201, tổng 6 tín chỉ.
+- SV002: không có registration active.
+- SV003: MATH110.
 - DBS202: `currentCapacity = 28`.
 
-## Cac loi da sua trong F17
+## Browser flow PASS
 
-1. Form login frontend hien thi tai khoan demo `21010045`, trong khi backend demo data dung `SV001`.
-   Ket qua sua: default input, placeholder va hint demo doi ve `SV001`.
-
-2. Frontend mac dinh goi `/api` neu khong co `.env.local`, gay loi khi chay Vite khong cau hinh proxy.
-   Ket qua sua: default API base chuyen sang `http://localhost:8080/api`, van cho override bang `VITE_API_BASE_URL`.
-
-3. Backend CORS chi cho `http://localhost:3000`.
-   Ket qua sua: them `http://127.0.0.1:3000` vao default CORS de test local linh hoat hon.
-
-## Ket qua browser E2E
-
-| Nhom | Scenario | Ket qua |
+| Nhóm | Scenario | Kết quả |
 |---|---|---|
-| Auth | Login demo SV001 voi mat khau bat ky | PASS |
-| Auth | Login SV999 | PASS, hien thi `Khong tim thay sinh vien: SV999` |
-| Auth | Logout | PASS, quay ve man login |
-| Dashboard | SV001 hien thi 2 mon, 6/10 tin chi baseline | PASS |
-| Course | Danh sach mon hien thi 10/10 hoc phan | PASS |
-| Course | Search `DBS202` | PASS, chi hien DBS202 |
-| Course | Search keyword khong ton tai | PASS, hien empty state |
-| Registration | Dang ky DBS202 cho SV001 | PASS, UI cap nhat 3 mon va JSON tang DBS202 len 29 |
-| Registration | Duplicate DBS202 sau khi da dang ky | PASS, API tra `DUPLICATE_REGISTRATION`, khong mutate JSON |
-| Registration | AI301 da day | PASS, UI disable nut dang ky; API tra `COURSE_FULL` |
-| Registration | NET203 sau khi SV001 co 9/10 tin chi | PASS, UI canh bao trung lich, backend tu choi do `CREDIT_LIMIT_EXCEEDED`, khong mutate JSON |
-| Registration | Huy DBS202 | PASS, UI ve 2 mon/6 tin chi va JSON DBS202 ve 28 |
-| Persistence | Restart backend sau khi dang ky DBS202 | PASS, backend doc lai JSON va van co DBS202 |
-| Timetable | DBS202 xuat hien trong thoi khoa bieu sau khi dang ky | PASS |
-| Profile | Ho so SV001 hien dung id, ten, lop | PASS |
-| Notifications | Thong bao demo/local render dung va khong dong bo backend | PASS |
-| Multi-user | SV002 khong co mon dang ky, khong lo du lieu SV001 | PASS |
-| Responsive | Desktop va mobile render khong crash | PASS |
+| Auth | Login demo SV001 với mật khẩu bất kỳ | PASS |
+| Auth | Login SV999 | PASS, backend trả `STUDENT_NOT_FOUND` |
+| Auth | Logout | PASS |
+| Dashboard | SV001 hiển thị baseline 2 môn, 6/10 tín chỉ | PASS |
+| Course | Danh sách hiển thị 10 môn | PASS |
+| Course | Search `DBS202` | PASS |
+| Course | Search keyword không tồn tại | PASS, empty state |
+| Course | Course detail | PASS |
+| Registration | Đăng ký DBS202 cho SV001 | PASS, tổng tín chỉ 6 -> 9 |
+| Registration | Duplicate course | PASS, `DUPLICATE_REGISTRATION` |
+| Registration | Course full AI301 | PASS, `COURSE_FULL` |
+| Registration | Schedule conflict NET203 trên baseline SV001 | PASS, `SCHEDULE_CONFLICT` |
+| Registration | Credit exceeded CLOUD301 | PASS, `CREDIT_LIMIT_EXCEEDED` |
+| Registration | Hủy DBS202 | PASS, tổng tín chỉ 9 -> 6 |
+| Persistence | Restart backend sau mutation | PASS, JSON persistence hoạt động |
+| Timetable | Timetable cập nhật khi đăng ký/hủy | PASS |
+| Profile | Hồ sơ SV001 hiển thị đúng dữ liệu API | PASS |
+| Notifications | Demo/local render, mark read/all read | PASS |
+| Multi-user | SV002 empty state, không lẫn dữ liệu SV001 | PASS |
+| Responsive | Desktop/mobile smoke | PASS |
 
-## API error contract da xac nhan
+## Negative APIs
 
-| API | Ket qua |
+| API | Kết quả |
 |---|---|
-| `POST /api/students/SV001/registrations` voi `DBS202` khi da dang ky | `400 DUPLICATE_REGISTRATION` |
-| `POST /api/students/SV002/registrations` voi `AI301` | `400 COURSE_FULL` |
+| `POST /api/students/SV001/registrations` với course đã đăng ký | `400 DUPLICATE_REGISTRATION` |
+| `POST /api/students/SV001/registrations` với `AI301` | `400 COURSE_FULL` |
+| `POST /api/students/SV001/registrations` với `CLOUD301` | `400 CREDIT_LIMIT_EXCEEDED` |
 | `GET /api/students/SV999/registrations` | `400 STUDENT_NOT_FOUND` |
 
-Tat ca negative case tren khong lam thay doi `courses.json` hoac `registrations.json`.
+Các negative case không mutate `courses.json` hoặc `registrations.json`.
 
-## Screenshot chung cu
+## Screenshot inventory
 
+Ảnh hiện có trong `ho-so-nop-bai/anh-demo/`:
+
+- `ho-so-nop-bai/anh-demo/f17-login-page.png`
 - `ho-so-nop-bai/anh-demo/f17-desktop-sv002-registered-empty.png`
 - `ho-so-nop-bai/anh-demo/f17-mobile-course-list.png`
+- `ho-so-nop-bai/anh-demo/login-redesign-desktop.png`
+- `ho-so-nop-bai/anh-demo/login-redesign-mobile.png`
 
-## Ghi chu ky thuat
+Trạng thái Git trên branch reference tại F18:
 
-Browser automation sandbox khong expose truc tiep `localStorage`, `sessionStorage` va `performance`, nen storage/network duoc audit bang source va hanh vi:
+- `f17-desktop-sv002-registered-empty.png` và `f17-mobile-course-list.png` đang thuộc lịch sử branch reference.
+- `f17-login-page.png`, `login-redesign-desktop.png`, `login-redesign-mobile.png` là evidence local/untracked.
+- F18 không tự stage hoặc commit ảnh nếu chưa có quyết định riêng.
 
-- `frontend/src/app/App.tsx` chi luu `courseRegistration.studentId`.
-- `frontend/src/shared/api/httpClient.ts` khong gan `Authorization`, `Bearer`, token hoac password vao header.
-- Frontend khong doc truc tiep `data/*.json`; data di qua REST API backend.
+## Ghi chú kỹ thuật
 
-## Ket luan
+- Browser automation không cần truy cập trực tiếp `localStorage`; remember/session flow được xác nhận qua hành vi và source.
+- `frontend/src/shared/api/httpClient.ts` không gắn `Authorization`, `Bearer`, token hoặc password vào header.
+- Frontend không đọc trực tiếp `data/*.json`.
+- Sandbox có thể chặn Vite/esbuild bằng `spawn EPERM`; build ngoài sandbox pass.
 
-F17 PASS sau khi sua cac loi cau hinh/demo account. Full Solution local co the chay demo frontend-backend that voi JSON File IO, registration mutation/persistence va cac validator chinh.
+## Kết luận
+
+F17 E2E PASS. Full Solution local chạy được frontend-backend thật với JSON File IO, registration mutation/persistence và các validator chính.

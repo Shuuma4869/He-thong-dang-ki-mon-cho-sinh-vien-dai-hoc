@@ -1,40 +1,64 @@
-# Kien truc frontend
+# Kiến trúc frontend
 
-Frontend la ung dung React single-page dashboard, routing thu cong bang state tab trong `App`.
+Frontend là ứng dụng React single-page dashboard. Routing hiện được điều khiển bằng state tab trong `frontend/src/app/App.tsx`, chưa dùng React Router.
 
-## Trang thai runtime sau F14
+## Cấu trúc
 
-Da ket noi REST API that cho cac luong chinh:
+- `frontend/src/app`: entry, App và route/tab constants.
+- `frontend/src/features/auth`: login demo và API auth.
+- `frontend/src/features/courses`: danh sách, chi tiết, tìm kiếm môn học.
+- `frontend/src/features/registration`: môn đã đăng ký, đăng ký và hủy đăng ký.
+- `frontend/src/features/timetable`: thời khóa biểu.
+- `frontend/src/features/dashboard`: dashboard composition.
+- `frontend/src/features/profile`: hồ sơ sinh viên.
+- `frontend/src/features/notifications`: thông báo demo/local.
+- `frontend/src/shared`: API client, constants, layout, UI components và shared types.
+- `frontend/src/mocks`: dữ liệu hỗ trợ notifications và fallback UI chưa thuộc backend persistence.
+- `frontend/src/styles`: CSS chính.
 
-- Auth demo va Profile.
-- Course list/detail/search.
-- Registration list/register/cancel.
-- Timetable.
-- Dashboard composition.
+## Shared API
 
-Dashboard sau F14 khong co backend dashboard endpoint rieng. Dashboard gom du lieu tu:
+Các file contract:
 
-- `currentStudent` da dang nhap.
-- Registration state do `App` load tu backend.
-- `courseApi.getCourses()`.
-- `timetableApi.getTimetable(studentId)`.
+- `frontend/src/shared/api/httpClient.ts`
+- `frontend/src/shared/api/apiError.ts`
+- `frontend/src/shared/constants/apiEndpoints.ts`
+- `frontend/src/shared/constants/app.ts`
 
-Notifications duoc giu o pham vi frontend demo/local state. Tinh nang nay chua co backend persistence.
+`requestApi<T>` unwrap envelope `ApiResponse<T>` từ backend và trả về `data`. Khi response lỗi, `httpClient` ném `ApiError` có `status`, `errorCode` và `details`.
 
-## Nguyen tac frontend API
+API base mặc định:
 
-- Feature API phai di qua shared `requestApi`.
-- Page/component khong goi `fetch` truc tiep.
-- Frontend khong doc truc tiep `data/*.json`.
-- Khong hard-code `SV001` trong runtime.
-- Khong fallback sang mock cho cac flow da co API that.
+```text
+http://localhost:8080/api
+```
 
-## Cac man hinh chinh
+Có thể override bằng `VITE_API_BASE_URL`.
 
-- Dang nhap demo.
-- Tong quan.
-- Danh sach mon hoc.
-- Mon da dang ky.
-- Thoi khoa bieu.
-- Thong bao demo/local.
-- Ho so sinh vien.
+## Feature runtime API thật
+
+- Auth: `authApi.login`.
+- Profile: `profileApi.getStudentById`.
+- Courses: `courseApi.getCourses`, `getCourseById`, `searchCourses`.
+- Registration: `registrationApi.getRegistrations`, `registerCourse`, `cancelCourse`.
+- Timetable: `timetableApi.getTimetable`.
+- Dashboard: tổng hợp dữ liệu từ state/API đã có, không gọi backend endpoint riêng.
+
+## Quy tắc frontend
+
+- Page/component không gọi `fetch` trực tiếp cho flow đã có feature API.
+- Frontend không đọc `data/*.json`.
+- Không fallback sang mock cho auth/profile/course/registration/timetable runtime.
+- `studentId` runtime lấy từ sinh viên đăng nhập trong `App`, không hard-code cho thao tác nghiệp vụ.
+- Password không lưu trong localStorage/sessionStorage.
+- Remember me chỉ lưu `courseRegistration.studentId`.
+
+## Notifications
+
+Notifications được giữ ở frontend demo/local state:
+
+- unread count
+- mark read
+- mark all read
+
+Không có backend persistence, realtime hoặc WebSocket.
