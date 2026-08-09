@@ -12,17 +12,20 @@ import { TimetableWeeklyPage } from '@/features/timetable/pages/TimetableWeeklyP
 import { NotificationsPage } from '@/features/notifications/pages/NotificationsPage';
 import { ProfilePage } from '@/features/profile/pages/ProfilePage';
 import { profileApi } from '@/features/profile/api/profileApi';
+import { courseApi } from '@/features/courses/api/courseApi';
+import { registrationApi } from '@/features/registration/api/registrationApi';
 import { DesignSystemModal } from '@/dev/DesignSystemModal';
 
 import { Course } from '@/features/courses/types/course.types';
+import { RegistrationSummary } from '@/features/registration/types/registration.types';
 import { UniversityNotification } from '@/features/notifications/types/notification.types';
 import { Student } from '@/features/profile/types/profile.types';
 import { NavigationTab } from '@/shared/types/navigation.types';
 import { ToastMessage } from '@/shared/types/ui.types';
 import { APP_TITLE } from '@/shared/constants/app';
+import { getApiErrorMessage } from '@/shared/api/apiError';
 import {
   SEMESTERS,
-  INITIAL_REGISTERED_IDS,
   NOTIFICATIONS_MOCK,
 } from '@/mocks/mockData';
 
@@ -58,7 +61,9 @@ export default function App() {
 
   // Data State
   const [courses, setCourses] = useState<Course[]>([]);
-  const [registeredIds, setRegisteredIds] = useState<string[]>(INITIAL_REGISTERED_IDS);
+  const [registrationSummary, setRegistrationSummary] = useState<RegistrationSummary | null>(null);
+  const [isRegistrationLoading, setIsRegistrationLoading] = useState(false);
+  const [registrationErrorMessage, setRegistrationErrorMessage] = useState('');
   const [notifications, setNotifications] = useState<UniversityNotification[]>(NOTIFICATIONS_MOCK);
 
   // Global Search State
@@ -87,6 +92,42 @@ export default function App() {
 
   const handleDismissToast = (id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
+  };
+
+  const loadRegistrations = useCallback(async () => {
+    if (!student?.id) {
+      setRegistrationSummary(null);
+      setRegistrationErrorMessage('');
+      return;
+    }
+
+    setIsRegistrationLoading(true);
+    setRegistrationErrorMessage('');
+
+    try {
+      const loadedRegistration = await registrationApi.getRegistrations(student.id);
+      setRegistrationSummary(loadedRegistration);
+    } catch (error) {
+      const message = getApiErrorMessage(error);
+      setRegistrationSummary(null);
+      setRegistrationErrorMessage(message);
+      throw error;
+    } finally {
+      setIsRegistrationLoading(false);
+    }
+  }, [student?.id]);
+
+  const refreshCoursesAfterRegistrationChange = async () => {
+    try {
+      const loadedCourses = await courseApi.getCourses();
+      setCourses(loadedCourses);
+    } catch {
+      addToast(
+        'warning',
+        'Chua dong bo si so',
+        'Thao tac dang ky da thanh cong, nhung danh sach mon hoc can duoc tai lai sau.'
+      );
+    }
   };
 
   useEffect(() => {
@@ -122,6 +163,16 @@ export default function App() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!student?.id) {
+      setRegistrationSummary(null);
+      setRegistrationErrorMessage('');
+      return;
+    }
+
+    void loadRegistrations().catch(() => undefined);
+  }, [student?.id, loadRegistrations]);
+
   // Login handler
   const handleLoginSuccess = (loggedInStudent: Student, rememberMe: boolean) => {
     setStudent(loggedInStudent);
@@ -134,49 +185,77 @@ export default function App() {
   const handleLogout = () => {
     clearStoredStudentId();
     setStudent(null);
+    setRegistrationSummary(null);
+    setRegistrationErrorMessage('');
+    setCourses([]);
     setActiveTab('dashboard');
     addToast('info', 'Đã đăng xuất', 'Bạn đã đăng xuất khỏi hệ thống an toàn.');
   };
 
   // Registered courses objects list
   const registeredCoursesList = useMemo(() => {
-    return courses.filter((c) => registeredIds.includes(c.id));
-  }, [courses, registeredIds]);
+    return registrationSummary?.courses ?? [];
+  }, [registrationSummary]);
 
-  const currentTotalCredits = useMemo(() => {
-    return registeredCoursesList.reduce((sum, c) => sum + c.credits, 0);
+  const registeredIds = useMemo(() => {
+    return registeredCoursesList.map((course) => course.id);
   }, [registeredCoursesList]);
 
+  const currentTotalCredits = useMemo(() => {
+    return registrationSummary?.totalCredits ?? 0;
+  }, [registrationSummary]);
+
   // Course Registration Handler
-  const handleConfirmRegisterSuccess = (registeredCourse: Course) => {
-    // Check if already registered
-    if (registeredIds.includes(registeredCourse.id)) {
-      addToast('warning', 'Đã đăng ký', `Bạn đã đăng ký học phần ${registeredCourse.name} rồi!`);
-      return;
+  const handleConfirmRegisterSuccess = async (registeredCourse: Course) => {
+    if (!student) {
+      const message = 'Can dang nhap truoc khi dang ky hoc phan.';
+      addToast('error', 'Dang ky that bai', message);
+      throw new Error(message);
     }
 
-    // Add to registered list
-    setRegisteredIds((prev) => [...prev, registeredCourse.id]);
+    try {
+      const updatedRegistration = await registrationApi.registerCourse(student.id, registeredCourse.id);
+      setRegistrationSummary(updatedRegistration);
+      await refreshCoursesAfterRegistrationChange();
 
-    addToast(
-      'success',
-      'Đăng ký môn học thành công!',
-      `Đã thêm học phần ${registeredCourse.code} - ${registeredCourse.name} (${registeredCourse.credits} TC) vào danh sách.`
-    );
+      addToast(
+        'success',
+        'Đăng ký môn học thành công!',
+        `Đã thêm học phần ${registeredCourse.code} - ${registeredCourse.name} (${registeredCourse.credits} TC) vào danh sách.`
+      );
+    } catch (error) {
+      const message = getApiErrorMessage(error);
+      addToast('error', 'Dang ky that bai', message);
+      throw error;
+    }
   };
 
   // Course Cancel Handler
-  const handleCancelRegistration = (courseId: string) => {
-    const targetCourse = courses.find((c) => c.id === courseId);
+  const handleCancelRegistration = async (courseId: string) => {
+    if (!student) {
+      const message = 'Can dang nhap truoc khi huy dang ky hoc phan.';
+      addToast('error', 'Huy dang ky that bai', message);
+      throw new Error(message);
+    }
 
-    setRegisteredIds((prev) => prev.filter((id) => id !== courseId));
+    const targetCourse = registeredCoursesList.find((c) => c.id === courseId);
 
-    if (targetCourse) {
+    try {
+      const updatedRegistration = await registrationApi.cancelCourse(student.id, courseId);
+      setRegistrationSummary(updatedRegistration);
+      await refreshCoursesAfterRegistrationChange();
+
       addToast(
         'info',
         'Đã hủy đăng ký',
-        `Đã xóa học phần ${targetCourse.code} - ${targetCourse.name} khỏi danh sách học kỳ này.`
+        targetCourse
+          ? `Đã xóa học phần ${targetCourse.code} - ${targetCourse.name} khỏi danh sách học kỳ này.`
+          : 'Đã xóa học phần khỏi danh sách học kỳ này.'
       );
+    } catch (error) {
+      const message = getApiErrorMessage(error);
+      addToast('error', 'Huy dang ky that bai', message);
+      throw error;
     }
   };
 
@@ -294,6 +373,10 @@ export default function App() {
           {activeTab === 'registered' && (
             <RegisteredCoursesPage
               registeredCourses={registeredCoursesList}
+              totalCredits={currentTotalCredits}
+              isLoading={isRegistrationLoading}
+              errorMessage={registrationErrorMessage}
+              onRefresh={loadRegistrations}
               onCancelRegistration={handleCancelRegistration}
               onNavigate={setActiveTab}
               currentSemester={currentSemester}

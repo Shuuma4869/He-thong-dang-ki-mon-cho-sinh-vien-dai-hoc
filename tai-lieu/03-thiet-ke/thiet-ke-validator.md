@@ -75,8 +75,27 @@ Từng validator không được phụ thuộc nguy hiểm vào thứ tự. Nh�
 - Trùng lịch khi cùng `DayOfWeek` và `newStart < existingEnd` và `newEnd > existingStart`.
 - So sánh bằng `LocalTime.isBefore`, không convert sang String.
 
-## Trạng thái F10
+## Trạng thái F12
 
-F10 chỉ tích hợp frontend Auth/Profile với backend API hiện có.
+F12 chỉ tích hợp frontend Registration với backend API hiện có.
 
 Không thay đổi validator, không thêm rule đăng ký mới và không thay đổi business logic Student, Course hoặc Registration trong phase này.
+
+## Trang thai F12
+
+F12 khong them rule validator moi va khong thay doi business logic dang ky.
+
+Frontend Registration sau F12 chi hien thi canh bao UI neu co thong tin ve trung lich hoac vuot tin chi, nhung khong duoc coi do la validation
+co tham quyen. Quyet dinh thanh cong/that bai luon den tu backend validator chain trong `RegistrationService`.
+
+Register flow bat buoc:
+
+```text
+RegistrationService
+-> tao RegistrationValidationContext
+-> chay List<CourseValidator>
+-> neu hop le moi save Registration va Course capacity
+-> tra RegistrationResponse da cap nhat cho frontend
+```
+
+Cancel flow khong chay `CourseValidator`, nhung van phai kiem tra sinh vien, hoc phan va registration ton tai trong service.

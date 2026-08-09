@@ -62,4 +62,29 @@ Auth/Profile lấy dữ liệu qua REST API:
 - `POST /api/auth/login`
 - `GET /api/students/{studentId}`
 
-Các màn Course, Registration, Timetable và Notifications chưa chuyển sang backend trong F10, vì vậy vẫn sử dụng mock frontend hiện có cho mục đích demo giao diện.
+Sau F12, Course và Registration đã chuyển sang backend. Timetable, Dashboard và Notifications chưa được migrate thành API runtime riêng,
+vì vậy các phần đó vẫn có thể dùng mock hoặc state frontend hiện có cho mục đích demo giao diện.
+## Trang thai File IO sau F12
+
+Registration API van tuan thu luong:
+
+```text
+Controller
+-> RegistrationService
+-> CourseValidator neu dang ky
+-> Repository Interface
+-> Json Repository
+-> JsonFileUtils
+-> data/*.json
+```
+
+`RegistrationService` khong doc file truc tiep. Khi can tra response cho frontend, service resolve du lieu dang ky bang repository:
+
+- `RegistrationRepository` lay phieu dang ky.
+- `CourseRepository.findAll()` tao map hoc phan de resolve cac `courseId` trong registration.
+- `LecturerRepository.findAll()` tao map giang vien de gan thong tin lecturer cho tung hoc phan.
+
+`RegistrationMapper` chi map composition da co san sang DTO, khong goi repository va khong doc JSON.
+
+Frontend Registration sau F12 khong doc `data/*.json` va khong dung mock ids cho runtime. Moi thao tac dang ky, huy hoac lay danh sach da dang ky
+di qua REST API backend. `data/*.json` van co the rong cho den phase tao demo data F15.

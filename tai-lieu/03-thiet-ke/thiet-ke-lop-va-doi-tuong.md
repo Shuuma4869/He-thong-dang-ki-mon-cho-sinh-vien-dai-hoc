@@ -61,3 +61,22 @@ Frontend map dữ liệu này sang `Student` view model:
 - `maxCredits` -> `maxCredits`
 
 Những field hồ sơ chưa có trong backend như email, số điện thoại, ngày sinh, CPA, GPA và tổng tín chỉ tích lũy phải là optional ở frontend. UI chỉ hiển thị placeholder, không hard-code dữ liệu giả cho hồ sơ thật.
+## Registration composition sau F12A
+
+Backend them composition `RegistrationSummary` de tra du lieu dang ky active kem danh sach hoc phan da resolve.
+
+Thanh phan lien quan:
+
+- `Registration`: model phieu dang ky, giu `registrationId`, `studentId`, `status`, `registeredAt`, `details`.
+- `RegistrationDetail`: model dong chi tiet, hien chi giu `courseId`.
+- `RegistrationSummary`: composition gom `Registration` va `List<CourseWithLecturer>`.
+- `CourseWithLecturer`: composition gom `Course` va `Lecturer`.
+- `RegisteredCourseResponse`: DTO hoc phan trong danh sach da dang ky, gom `courseId`, `courseName`, `credits`, `lecturerId`, `lecturer`, `maxCapacity`, `currentCapacity`, `schedules`.
+- `RegistrationResponse`: DTO tong hop gom `registrationId`, `studentId`, `status`, `registeredAt`, `details`, `courses`, `totalCredits`.
+
+Ranh gioi bat buoc:
+
+- Mapper khong goi repository.
+- Controller khong doc JSON va khong tinh business rule.
+- Service resolve composition thong qua repository interface.
+- Validator chi xu ly rule dang ky, khong tao response DTO.

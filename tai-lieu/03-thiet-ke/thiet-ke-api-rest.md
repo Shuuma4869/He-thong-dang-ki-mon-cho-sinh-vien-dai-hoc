@@ -1,6 +1,7 @@
 # Thiết kế API REST
 
-REST API hiện mới khóa contract dùng chung. Chưa triển khai hoàn chỉnh API Student, Course và Registration.
+REST API hiện đã có contract và implementation cho Auth demo, Student/Profile, Course và Registration.
+Các phần quản trị, giảng viên, notification runtime và timetable API đầy đủ chưa triển khai hoàn chỉnh.
 
 ## Prefix API
 
@@ -10,7 +11,8 @@ Các endpoint backend đi dưới prefix:
 /api
 ```
 
-Frontend shared constants hiện khóa `API_BASE_PATH = '/api'`. Feature frontend chưa chuyển sang gọi API thật, mock data vẫn chạy.
+Frontend shared constants hiện khóa `API_BASE_PATH = '/api'`. Auth/Profile, Course và Registration đã chuyển sang gọi API thật;
+các phần chưa migrate vẫn có thể dùng mock data.
 
 ## Auth API
 
@@ -229,4 +231,112 @@ Mapping frontend:
 
 Hai field mock cũ `faculty` và `classGroup` không có nguồn dữ liệu thật trong Course domain hiện tại, nên Course runtime không hiển thị hoặc hard-code hai field này.
 
-Registration, Timetable, Dashboard real data và Notifications chưa được migrate trong F11.
+Registration được migrate ở F12. Timetable, Dashboard real data và Notifications chưa được migrate thành API runtime riêng trong F12.
+
+## Registration API contract sau F12
+
+Endpoints da khoa cho frontend Registration runtime:
+
+```text
+GET /api/students/{studentId}/registrations
+POST /api/students/{studentId}/registrations
+DELETE /api/students/{studentId}/registrations/{courseId}
+```
+
+`studentId` nam tren path va phai lay tu sinh vien dang dang nhap. Frontend khong hard-code `SV001`.
+
+### GET registrations
+
+Tra phieu dang ky active cua sinh vien. Neu sinh vien chua co mon active, API van tra success voi `courses: []` va `totalCredits: 0`.
+
+```json
+{
+  "success": true,
+  "message": "Lay danh sach dang ky hoc phan thanh cong.",
+  "data": {
+    "registrationId": "REG-SV001-123456789",
+    "studentId": "SV001",
+    "status": "ACTIVE",
+    "registeredAt": "2026-08-09T18:00:00",
+    "details": [
+      {
+        "courseId": "OOP101"
+      }
+    ],
+    "courses": [
+      {
+        "courseId": "OOP101",
+        "courseName": "Lap trinh huong doi tuong",
+        "credits": 3,
+        "lecturerId": "GV001",
+        "lecturer": {
+          "lecturerId": "GV001",
+          "fullName": "Tran Thi B",
+          "faculty": "Khoa Cong nghe thong tin"
+        },
+        "maxCapacity": 60,
+        "currentCapacity": 21,
+        "schedules": [
+          {
+            "dayOfWeek": "MONDAY",
+            "startTime": "07:30:00",
+            "endTime": "09:30:00",
+            "room": "A101"
+          }
+        ]
+      }
+    ],
+    "totalCredits": 3
+  }
+}
+```
+
+### POST registration
+
+Request:
+
+```json
+{
+  "courseId": "OOP101"
+}
+```
+
+Response thanh cong tra `RegistrationResponse` da cap nhat, cung shape voi GET.
+
+Business error co the gap:
+
+- `STUDENT_NOT_FOUND`
+- `COURSE_NOT_FOUND`
+- `COURSE_FULL`
+- `DUPLICATE_REGISTRATION`
+- `CREDIT_LIMIT_EXCEEDED`
+- `SCHEDULE_CONFLICT`
+
+### DELETE registration
+
+Endpoint:
+
+```text
+DELETE /api/students/{studentId}/registrations/{courseId}
+```
+
+Response thanh cong tra `RegistrationResponse` da cap nhat. Neu huy mon cuoi cung, response co `courses: []`, `totalCredits: 0`
+va registration status co the la `CANCELLED`.
+
+Business error co the gap:
+
+- `STUDENT_NOT_FOUND`
+- `COURSE_NOT_FOUND`
+- `REGISTRATION_NOT_FOUND`
+
+### Frontend Registration API
+
+Frontend dung:
+
+- `registrationApi.getRegistrations(studentId)`
+- `registrationApi.registerCourse(studentId, courseId)`
+- `registrationApi.cancelCourse(studentId, courseId)`
+
+Tat ca deu di qua shared `requestApi`; page/component khong goi `fetch` truc tiep va khong doc `data/*.json`.
+
+Frontend hien thi loi bang message/errorCode backend tra ve. Cac rule duplicate, gioi han tin chi va trung lich do backend validator quyet dinh.

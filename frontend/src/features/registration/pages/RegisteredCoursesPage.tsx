@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   CheckSquare,
   Clock,
@@ -15,27 +15,50 @@ import { NavigationTab } from '@/shared/types/navigation.types';
 
 interface RegisteredCoursesPageProps {
   registeredCourses: Course[];
-  onCancelRegistration: (courseId: string) => void;
+  totalCredits: number;
+  isLoading: boolean;
+  errorMessage: string;
+  onRefresh: () => Promise<void> | void;
+  onCancelRegistration: (courseId: string) => Promise<void> | void;
   onNavigate: (tab: NavigationTab) => void;
   currentSemester: string;
 }
 
 export const RegisteredCoursesPage: React.FC<RegisteredCoursesPageProps> = ({
   registeredCourses,
+  totalCredits,
+  isLoading,
+  errorMessage,
+  onRefresh,
   onCancelRegistration,
   onNavigate,
   currentSemester,
 }) => {
   const [selectedCourseToCancel, setSelectedCourseToCancel] = useState<Course | null>(null);
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [cancelErrorMessage, setCancelErrorMessage] = useState('');
 
-  const totalCredits = registeredCourses.reduce((sum, c) => sum + c.credits, 0);
   // Estimated tuition rate: ~520,000 VND / credit for Phenikaa University IT majors
   const estimatedTuition = totalCredits * 520000;
 
-  const handleConfirmCancel = () => {
-    if (selectedCourseToCancel) {
-      onCancelRegistration(selectedCourseToCancel.id);
+  useEffect(() => {
+    void Promise.resolve(onRefresh()).catch(() => undefined);
+  }, [onRefresh]);
+
+  const handleConfirmCancel = async () => {
+    if (!selectedCourseToCancel) return;
+
+    setIsCancelling(true);
+    setCancelErrorMessage('');
+
+    try {
+      await onCancelRegistration(selectedCourseToCancel.id);
       setSelectedCourseToCancel(null);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Khong the huy dang ky hoc phan.';
+      setCancelErrorMessage(message);
+    } finally {
+      setIsCancelling(false);
     }
   };
 
@@ -89,7 +112,28 @@ export const RegisteredCoursesPage: React.FC<RegisteredCoursesPageProps> = ({
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
-              {registeredCourses.length === 0 ? (
+              {isLoading ? (
+                <tr>
+                  <td colSpan={9} className="py-12 text-center text-slate-500">
+                    <div className="font-bold text-slate-700 text-sm">Dang tai danh sach da dang ky...</div>
+                  </td>
+                </tr>
+              ) : errorMessage ? (
+                <tr>
+                  <td colSpan={9} className="py-12 text-center text-slate-500">
+                    <div className="max-w-sm mx-auto space-y-3">
+                      <p className="font-bold text-red-700 text-sm">Khong the tai danh sach da dang ky.</p>
+                      <p className="text-xs text-slate-500">{errorMessage}</p>
+                      <button
+                        onClick={() => void Promise.resolve(onRefresh()).catch(() => undefined)}
+                        className="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors cursor-pointer"
+                      >
+                        Thu lai
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ) : registeredCourses.length === 0 ? (
                 <tr>
                   <td colSpan={9} className="py-12 text-center text-slate-500">
                     <div className="max-w-xs mx-auto space-y-3">
@@ -172,7 +216,10 @@ export const RegisteredCoursesPage: React.FC<RegisteredCoursesPageProps> = ({
 
                       <td className="py-4 px-4 text-right">
                         <button
-                          onClick={() => setSelectedCourseToCancel(course)}
+                          onClick={() => {
+                            setCancelErrorMessage('');
+                            setSelectedCourseToCancel(course);
+                          }}
                           className="px-2.5 py-1.5 text-xs font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors cursor-pointer inline-flex items-center gap-1"
                           title="Hủy đăng ký học phần này"
                         >
@@ -234,18 +281,26 @@ export const RegisteredCoursesPage: React.FC<RegisteredCoursesPageProps> = ({
               Bạn có chắc chắn muốn hủy đăng ký học phần này không? Bạn có thể đăng ký lại nếu lớp còn chỗ trống trước khi kết thúc thời hạn.
             </p>
 
+            {cancelErrorMessage && (
+              <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-xs font-semibold text-red-700">
+                {cancelErrorMessage}
+              </div>
+            )}
+
             <div className="flex items-center justify-end gap-3 pt-2">
               <button
                 onClick={() => setSelectedCourseToCancel(null)}
+                disabled={isCancelling}
                 className="px-4 py-2 text-xs font-semibold text-slate-700 hover:text-slate-900 bg-white border border-slate-200 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
               >
                 Giữ lại môn
               </button>
               <button
                 onClick={handleConfirmCancel}
+                disabled={isCancelling}
                 className="px-4 py-2 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl shadow-xs transition-colors cursor-pointer"
               >
-                Xác nhận hủy
+                {isCancelling ? 'Dang huy...' : 'Xác nhận hủy'}
               </button>
             </div>
           </div>
