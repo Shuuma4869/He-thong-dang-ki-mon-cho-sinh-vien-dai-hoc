@@ -16,7 +16,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import vn.edu.phenikaa.courseregistration.exception.CourseFullException;
+import vn.edu.phenikaa.courseregistration.exception.CourseNotFoundException;
+import vn.edu.phenikaa.courseregistration.exception.CreditLimitExceededException;
 import vn.edu.phenikaa.courseregistration.exception.DuplicateRegistrationException;
+import vn.edu.phenikaa.courseregistration.exception.RegistrationNotFoundException;
+import vn.edu.phenikaa.courseregistration.exception.ScheduleConflictException;
 import vn.edu.phenikaa.courseregistration.mapper.CourseMapper;
 import vn.edu.phenikaa.courseregistration.mapper.RegistrationMapper;
 import vn.edu.phenikaa.courseregistration.model.Course;
@@ -109,6 +114,58 @@ class RegistrationControllerTest {
     }
 
     @Test
+    void registerReturnsErrorWhenCourseNotFound() throws Exception {
+        when(registrationService.registerCourseSummary("SV001", "MISSING"))
+                .thenThrow(new CourseNotFoundException("MISSING"));
+
+        mockMvc.perform(post("/api/students/SV001/registrations")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"courseId\":\"MISSING\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value("COURSE_NOT_FOUND"));
+    }
+
+    @Test
+    void registerReturnsErrorWhenCourseIsFull() throws Exception {
+        when(registrationService.registerCourseSummary("SV001", "AI301"))
+                .thenThrow(new CourseFullException("AI301"));
+
+        mockMvc.perform(post("/api/students/SV001/registrations")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"courseId\":\"AI301\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value("COURSE_FULL"));
+    }
+
+    @Test
+    void registerReturnsErrorWhenCreditLimitExceeded() throws Exception {
+        when(registrationService.registerCourseSummary("SV001", "CLOUD301"))
+                .thenThrow(new CreditLimitExceededException(11, 10));
+
+        mockMvc.perform(post("/api/students/SV001/registrations")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"courseId\":\"CLOUD301\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value("CREDIT_LIMIT_EXCEEDED"));
+    }
+
+    @Test
+    void registerReturnsErrorWhenScheduleConflicts() throws Exception {
+        when(registrationService.registerCourseSummary("SV001", "NET203"))
+                .thenThrow(new ScheduleConflictException("NET203", "OOP101"));
+
+        mockMvc.perform(post("/api/students/SV001/registrations")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"courseId\":\"NET203\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value("SCHEDULE_CONFLICT"));
+    }
+
+    @Test
     void registerReturnsValidationErrorWhenCourseIdMissing() throws Exception {
         mockMvc.perform(post("/api/students/SV001/registrations")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -116,6 +173,17 @@ class RegistrationControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"));
+    }
+
+    @Test
+    void cancelReturnsErrorWhenRegistrationNotFound() throws Exception {
+        when(registrationService.cancelCourseSummary("SV001", "OOP101"))
+                .thenThrow(new RegistrationNotFoundException("SV001", "OOP101"));
+
+        mockMvc.perform(delete("/api/students/SV001/registrations/OOP101"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value("REGISTRATION_NOT_FOUND"));
     }
 
     private Registration registration(String registrationId, String studentId, String... courseIds) {

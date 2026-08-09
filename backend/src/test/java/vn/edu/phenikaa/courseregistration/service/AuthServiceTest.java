@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import vn.edu.phenikaa.courseregistration.dto.request.LoginRequest;
+import vn.edu.phenikaa.courseregistration.exception.BusinessException;
 import vn.edu.phenikaa.courseregistration.exception.StudentNotFoundException;
 import vn.edu.phenikaa.courseregistration.model.Student;
 import vn.edu.phenikaa.courseregistration.repository.StudentRepository;
@@ -43,6 +45,24 @@ class AuthServiceTest {
                 .hasMessageContaining("SV404");
         verify(studentRepository).findById("SV404");
         verify(studentRepository, never()).save(any());
+    }
+
+    @Test
+    void loginTrimsStudentIdBeforeLookup() {
+        Student student = student();
+        when(studentRepository.findById("SV001")).thenReturn(Optional.of(student));
+
+        assertThat(service().login(request(" SV001 ", "anything"))).isSameAs(student);
+
+        verify(studentRepository).findById("SV001");
+    }
+
+    @Test
+    void loginThrowsValidationErrorWhenStudentIdIsBlank() {
+        assertThatThrownBy(() -> service().login(request("   ", "anything")))
+                .isInstanceOf(BusinessException.class)
+                .hasFieldOrPropertyWithValue("errorCode", "VALIDATION_ERROR");
+        verifyNoInteractions(studentRepository);
     }
 
     @Test

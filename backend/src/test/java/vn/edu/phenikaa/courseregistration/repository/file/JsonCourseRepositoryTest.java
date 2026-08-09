@@ -52,6 +52,17 @@ class JsonCourseRepositoryTest {
         assertThat(repository.search("khong co")).isEmpty();
     }
 
+    @Test
+    void searchReturnsAllCoursesWhenKeywordIsBlank() {
+        JsonCourseRepository repository = createRepository();
+        repository.save(oopCourse());
+        repository.save(new Course("DBI101", "Co so du lieu", 3, "GV002", 50, 0, List.of()));
+
+        assertThat(repository.search("   "))
+                .extracting(Course::getCourseId)
+                .containsExactly("OOP101", "DBI101");
+    }
+
     private Course oopCourse() {
         return new Course(
                 "OOP101",
