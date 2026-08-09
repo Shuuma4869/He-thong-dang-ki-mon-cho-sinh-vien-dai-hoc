@@ -1,0 +1,65 @@
+<svg width="980" height="560" viewBox="0 0 980 560" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Course registration workspace illustration</title>
+  <desc id="desc">A laptop showing a course registration dashboard on a study desk with books, plant and cup.</desc>
+  <path d="M0 360C95 316 166 346 262 306C374 259 478 272 596 318C710 362 817 323 980 258V560H0V360Z" fill="#60A5FA" opacity="0.42"/>
+  <path d="M0 430C140 395 245 420 378 384C522 345 650 372 775 412C857 438 914 420 980 389V560H0V430Z" fill="#2563EB" opacity="0.28"/>
+  <rect x="86" y="398" width="160" height="34" rx="6" fill="#E2E8F0"/>
+  <rect x="77" y="363" width="176" height="38" rx="6" fill="#F97316"/>
+  <rect x="65" y="327" width="190" height="40" rx="6" fill="#1D4ED8"/>
+  <text x="92" y="354" fill="white" font-family="Arial, sans-serif" font-size="20" font-weight="700">EDUCATION</text>
+  <text x="101" y="389" fill="white" font-family="Arial, sans-serif" font-size="20" font-weight="700">SUCCESS</text>
+  <text x="106" y="421" fill="#1E3A8A" font-family="Arial, sans-serif" font-size="18" font-weight="700">KNOWLEDGE</text>
+  <rect x="292" y="100" width="418" height="302" rx="18" fill="#0F172A"/>
+  <rect x="312" y="122" width="378" height="236" rx="10" fill="#EFF6FF"/>
+  <rect x="330" y="140" width="338" height="42" rx="8" fill="#1D4ED8"/>
+  <circle cx="350" cy="161" r="5" fill="#93C5FD"/>
+  <rect x="370" y="154" width="88" height="12" rx="6" fill="#DBEAFE"/>
+  <rect x="344" y="208" width="292" height="126" rx="12" fill="white"/>
+  <rect x="365" y="230" width="56" height="12" rx="6" fill="#1E3A8A"/>
+  <rect x="365" y="260" width="48" height="10" rx="5" fill="#CBD5E1"/>
+  <rect x="365" y="287" width="48" height="10" rx="5" fill="#CBD5E1"/>
+  <rect x="365" y="314" width="48" height="10" rx="5" fill="#CBD5E1"/>
+  <g opacity="0.86">
+    <rect x="455" y="229" width="28" height="16" rx="4" fill="#DBEAFE"/>
+    <rect x="497" y="229" width="28" height="16" rx="4" fill="#DBEAFE"/>
+    <rect x="539" y="229" width="28" height="16" rx="4" fill="#DBEAFE"/>
+    <rect x="581" y="229" width="28" height="16" rx="4" fill="#DBEAFE"/>
+    <rect x="455" y="256" width="28" height="16" rx="4" fill="#DBEAFE"/>
+    <rect x="497" y="256" width="28" height="16" rx="4" fill="#DBEAFE"/>
+    <rect x="539" y="256" width="28" height="16" rx="4" fill="#2563EB"/>
+    <rect x="581" y="256" width="28" height="16" rx="4" fill="#DBEAFE"/>
+    <rect x="455" y="283" width="28" height="16" rx="4" fill="#DBEAFE"/>
+    <rect x="497" y="283" width="28" height="16" rx="4" fill="#DBEAFE"/>
+    <rect x="539" y="283" width="28" height="16" rx="4" fill="#DBEAFE"/>
+    <rect x="581" y="283" width="28" height="16" rx="4" fill="#DBEAFE"/>
+    <rect x="455" y="310" width="28" height="16" rx="4" fill="#DBEAFE"/>
+    <rect x="497" y="310" width="28" height="16" rx="4" fill="#DBEAFE"/>
+    <rect x="539" y="310" width="28" height="16" rx="4" fill="#DBEAFE"/>
+    <rect x="581" y="310" width="28" height="16" rx="4" fill="#DBEAFE"/>
+  </g>
+  <rect x="644" y="166" width="154" height="92" rx="18" fill="#0B6BFF"/>
+  <circle cx="678" cy="212" r="21" fill="#EFF6FF"/>
+  <path d="M666 226C669 216 687 216 691 226" stroke="#93C5FD" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="678" cy="205" r="10" fill="#93C5FD"/>
+  <rect x="710" y="191" width="50" height="10" rx="5" fill="#DBEAFE"/>
+  <rect x="710" y="212" width="68" height="9" rx="4.5" fill="#BFDBFE"/>
+  <circle cx="779" cy="223" r="14" fill="#10B981"/>
+  <path d="M771 223L777 229L788 216" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M250 424H752L806 478C811 483 807 492 799 492H195C187 492 183 483 188 478L250 424Z" fill="#111827"/>
+  <path d="M273 439H730L757 466H238L273 439Z" fill="#334155"/>
+  <rect x="160" y="479" width="680" height="18" rx="9" fill="#64748B"/>
+  <rect x="436" y="478" width="118" height="8" rx="4" fill="#94A3B8"/>
+  <ellipse cx="505" cy="511" rx="355" ry="22" fill="#0F172A" opacity="0.2"/>
+  <rect x="29" y="500" width="260" height="34" rx="17" fill="#E0F2FE" opacity="0.85"/>
+  <path d="M134 326C134 284 169 250 211 250C254 250 288 284 288 326H134Z" fill="#ECFEFF"/>
+  <rect x="183" y="316" width="58" height="88" rx="12" fill="white"/>
+  <path d="M172 313C169 286 160 269 144 257C165 257 184 277 190 313H172Z" fill="#16A34A"/>
+  <path d="M201 313C201 280 214 255 239 240C236 272 230 295 221 313H201Z" fill="#22C55E"/>
+  <path d="M221 313C229 284 249 266 276 260C264 289 247 306 221 313Z" fill="#15803D"/>
+  <rect x="774" y="300" width="100" height="80" rx="10" fill="white"/>
+  <path d="M873 320H896C918 320 928 348 913 365C902 378 885 377 873 369" stroke="white" stroke-width="18" stroke-linecap="round"/>
+  <path d="M801 336C817 324 834 324 849 336" stroke="#F97316" stroke-width="5" stroke-linecap="round"/>
+  <path d="M810 350C823 342 836 342 848 350" stroke="#1D4ED8" stroke-width="5" stroke-linecap="round"/>
+  <rect x="774" y="382" width="100" height="10" rx="5" fill="#DBEAFE"/>
+  <path d="M31 515C108 492 166 500 240 515" stroke="#0EA5E9" stroke-width="12" stroke-linecap="round" opacity="0.55"/>
+</svg>
