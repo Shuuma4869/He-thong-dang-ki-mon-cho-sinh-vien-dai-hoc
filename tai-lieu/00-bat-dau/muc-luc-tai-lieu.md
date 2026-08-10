@@ -26,6 +26,15 @@
 - `../04-quy-trinh-nhom/quy-uoc-commit.md`
 - `../04-quy-trinh-nhom/quy-trinh-pull-request.md`
 
+## Hướng dẫn thành viên
+
+- `../huong-dan-thanh-vien/00-doc-truoc-khi-bat-dau.md`
+- `../huong-dan-thanh-vien/01-thanh-vien-1-student-auth-profile.md`
+- `../huong-dan-thanh-vien/02-thanh-vien-2-course-lecturer-timetable.md`
+- `../huong-dan-thanh-vien/03-thanh-vien-3-registration-validator.md`
+- `../huong-dan-thanh-vien/04-quy-trinh-pull-request.md`
+- `../huong-dan-thanh-vien/05-checklist-truong-nhom-review.md`
+
 ## Kiểm thử
 
 - `../06-kiem-thu/bao-cao-kiem-thu.md`
