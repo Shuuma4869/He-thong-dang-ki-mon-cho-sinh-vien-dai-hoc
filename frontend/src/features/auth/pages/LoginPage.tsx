@@ -11,9 +11,12 @@ import {
   User,
 } from 'lucide-react';
 import { PhenikaaLogo } from '@/shared/components/branding/PhenikaaLogo';
+import { authApi } from '@/features/auth/api/authApi';
+import { Student } from '@/features/profile/types/profile.types';
+import { getApiErrorMessage } from '@/shared/api/apiError';
 
 interface LoginPageProps {
-  onLoginSuccess: (studentId: string) => void;
+  onLoginSuccess: (student: Student, rememberMe: boolean) => void;
 }
 
 const featureCards = [
@@ -43,11 +46,12 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [showForgotMsg, setShowForgotMsg] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
+    const normalizedStudentId = studentId.trim();
 
-    if (!studentId.trim()) {
+    if (!normalizedStudentId) {
       setErrorMessage('Vui lòng nhập Mã sinh viên');
       return;
     }
@@ -58,10 +62,18 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
     setIsLoading(true);
 
-    setTimeout(() => {
+    try {
+      const student = await authApi.login({
+        studentId: normalizedStudentId,
+        password,
+      });
+
+      onLoginSuccess(student, rememberMe);
+    } catch (error) {
+      setErrorMessage(getApiErrorMessage(error));
+    } finally {
       setIsLoading(false);
-      onLoginSuccess(studentId.trim());
-    }, 600);
+    }
   };
 
   return (
@@ -74,7 +86,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         <div
           className="absolute right-24 top-20 h-20 w-28 opacity-55"
           style={{
-            backgroundImage: 'radial-gradient(circle, rgba(219,234,254,0.78) 1.6px, transparent 1.8px)',
+backgroundImage: 'radial-gradient(circle, rgba(219,234,254,0.78) 1.6px, transparent 1.8px)',
             backgroundSize: '24px 24px',
           }}
         />
@@ -135,8 +147,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           </div>
         </div>
       </section>
-
-      <section className="relative flex min-h-screen flex-col justify-between overflow-hidden bg-[#F8FBFF] px-5 py-8 sm:px-8 lg:px-12 xl:px-16">
+<section className="relative flex min-h-screen flex-col justify-between overflow-hidden bg-[#F8FBFF] px-5 py-8 sm:px-8 lg:px-12 xl:px-16">
         <div className="absolute right-[-86px] top-[-86px] h-56 w-56 rounded-full bg-blue-100/80" />
         <div className="absolute right-[-22px] top-[-30px] h-28 w-28 rounded-full bg-white/80" />
         <div className="absolute bottom-[-92px] right-[-62px] h-48 w-48 rounded-full bg-blue-100/70" />
@@ -190,7 +201,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                     required
                     className="h-14 w-full rounded-xl border border-slate-200 bg-white pl-14 pr-4 text-base font-semibold text-slate-900 shadow-inner shadow-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-100"
                   />
-                </div>
+</div>
               </div>
 
               <div className="space-y-3">
@@ -245,7 +256,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                     <div className="absolute right-0 top-full z-10 mt-2 w-72 rounded-xl bg-slate-900 p-3 text-xs text-white shadow-xl animate-in fade-in slide-in-from-top-2">
                       Vui lòng liên hệ Phòng Đào tạo (Email: daotao@phenikaa-uni.edu.vn - Hotline: 024.6291.8118) để khôi phục mật khẩu.
                     </div>
-                  )}
+)}
                 </div>
               </div>
 
