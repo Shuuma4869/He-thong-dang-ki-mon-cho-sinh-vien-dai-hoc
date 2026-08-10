@@ -1,8 +1,10 @@
 import { ApiError } from '@/shared/api/apiError';
-import { API_BASE_URL } from '@/shared/constants/app';
+import { API_BASE_URL, FALLBACK_API_BASE_URL } from '@/shared/constants/app';
 
 const DEFAULT_API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? API_BASE_URL;
-const DEFAULT_REQUEST_TIMEOUT_MS = 15000;
+const DEFAULT_REQUEST_TIMEOUT_MS = 3000;
+const LOCAL_API_FALLBACK_BASE_URLS =
+  DEFAULT_API_BASE_URL === API_BASE_URL ? [FALLBACK_API_BASE_URL] : [];
 
 export interface HttpRequestOptions extends RequestInit {
   baseUrl?: string;
@@ -26,6 +28,36 @@ export async function requestJson<TResponse>(
   options: HttpRequestOptions = {}
 ): Promise<TResponse> {
   const { baseUrl = DEFAULT_API_BASE_URL, headers, signal, ...requestOptions } = options;
+  const baseUrls = [
+    baseUrl,
+    ...(baseUrl === DEFAULT_API_BASE_URL ? LOCAL_API_FALLBACK_BASE_URLS : []),
+  ];
+  let lastError: unknown;
+
+  for (const candidateBaseUrl of baseUrls) {
+    try {
+      return await requestJsonFromBaseUrl<TResponse>(candidateBaseUrl, path, {
+        ...requestOptions,
+        headers,
+        signal,
+      });
+    } catch (error) {
+      lastError = error;
+      if (!shouldTryFallback(error)) {
+        throw error;
+      }
+    }
+  }
+
+  throw lastError;
+}
+
+async function requestJsonFromBaseUrl<TResponse>(
+  baseUrl: string,
+  path: string,
+  options: RequestInit
+): Promise<TResponse> {
+  const { headers, signal, ...requestOptions } = options;
   const timeoutController = new AbortController();
   const timeoutId = window.setTimeout(() => timeoutController.abort(), DEFAULT_REQUEST_TIMEOUT_MS);
   const abortFromCaller = () => timeoutController.abort(signal?.reason);
@@ -73,6 +105,11 @@ export async function requestJson<TResponse>(
     window.clearTimeout(timeoutId);
     signal?.removeEventListener('abort', abortFromCaller);
   }
+}
+
+function shouldTryFallback(error: unknown): boolean {
+  return error instanceof TypeError
+    || (error instanceof ApiError && error.errorCode === 'NETWORK_TIMEOUT');
 }
 
 export async function requestApi<TData>(
