@@ -23,6 +23,15 @@ git status
 git diff --check
 ```
 
+Kiểm tra phạm vi file so với `develop`:
+
+```powershell
+git fetch origin
+git diff --name-status origin/develop...HEAD
+```
+
+Danh sách này chỉ nên có file thuộc feature của bạn. Nếu có file lạ, không push và báo trưởng nhóm.
+
 Chạy kiểm tra:
 
 ```powershell
@@ -49,12 +58,13 @@ Không commit:
 ## 2. Kiểm tra commit author
 
 ```powershell
-git log -5 --format="%h | %an | %ae | %s"
+git fetch origin
+git log origin/develop..HEAD --format="%h | %an | %ae | %s"
 ```
 
-Commit của bạn phải mang tên và email GitHub của bạn. Nếu sai, báo trưởng nhóm trước khi push.
+Lệnh này chỉ xem các commit mà feature branch hiện tại thêm vào so với `develop`. Commit của bạn phải mang tên và email GitHub của bạn. Nếu sai, báo trưởng nhóm trước khi push.
 
-Không tự rewrite lịch sử sau khi đã tạo Pull Request nếu chưa được hướng dẫn.
+Không tự rewrite lịch sử sau khi đã tạo Pull Request nếu chưa được hướng dẫn. Không tự rebase hoặc merge `develop` vào feature branch sau khi Pull Request đã mở nếu trưởng nhóm chưa hướng dẫn.
 
 ## 3. Push feature branch
 
@@ -62,8 +72,9 @@ Ví dụ:
 
 ```powershell
 git push -u origin feature/student-auth-profile
-git push -u origin feature/course-lecturer-timetable
+git push -u origin feature/course-lecturer
 git push -u origin feature/registration-validator
+git push -u origin feature/timetable
 ```
 
 Không chạy:
@@ -71,6 +82,8 @@ Không chạy:
 ```powershell
 git push origin develop
 git push origin main
+git push --force
+git push --force-with-lease
 ```
 
 ## 4. Tạo Pull Request

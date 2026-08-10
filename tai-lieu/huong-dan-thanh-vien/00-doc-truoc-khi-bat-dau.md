@@ -23,16 +23,19 @@ feature branch
 Các phần làm theo thứ tự sau:
 
 ```text
-Develop foundation
+Develop nền
    |
    v
 Student/Auth/Profile
    |
    v
-Course/Lecturer/Timetable
+Course/Lecturer/Schedule
    |
    v
 Registration/Validators
+   |
+   v
+Timetable
    |
    v
 Develop hoàn chỉnh
@@ -43,13 +46,16 @@ Thứ tự làm việc của nhóm:
 1. Thành viên 1 hoàn thiện Student/Auth/Profile.
 2. Trưởng nhóm review và merge vào `develop`.
 3. Thành viên 2 cập nhật `develop` mới nhất.
-4. Thành viên 2 hoàn thiện Course/Lecturer/Timetable.
+4. Thành viên 2 hoàn thiện Course/Lecturer/Schedule trên branch `feature/course-lecturer`.
 5. Trưởng nhóm review và merge vào `develop`.
 6. Thành viên 3 cập nhật `develop` mới nhất.
 7. Thành viên 3 hoàn thiện Registration/Validators.
 8. Trưởng nhóm review và merge vào `develop`.
+9. Thành viên 2 cập nhật `develop` mới nhất.
+10. Thành viên 2 hoàn thiện Timetable trên branch mới `feature/timetable`.
+11. Trưởng nhóm review và merge vào `develop`.
 
-Registration làm sau vì cần dùng `StudentRepository`, `CourseRepository`, `RegistrationRepository` và `CourseValidator`.
+Registration làm sau vì cần Student và Course. Timetable cần Registration và Course nên được hoàn thiện sau Registration. Khi branch `feature/course-lecturer` đã merge, không dùng lại branch đó cho Timetable; hãy tạo branch mới.
 
 ## 3. Clone project
 

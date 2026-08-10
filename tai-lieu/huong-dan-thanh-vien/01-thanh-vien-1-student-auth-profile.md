@@ -51,14 +51,26 @@ Không sửa Course, Timetable, Registration hoặc Validator.
 | `backend/src/main/java/vn/edu/phenikaa/courseregistration/repository/file/JsonStudentRepository.java` | Đọc/ghi sinh viên qua `JsonFileUtils` | OWNED |
 | `backend/src/main/java/vn/edu/phenikaa/courseregistration/service/StudentService.java` | Nghiệp vụ đọc sinh viên | OWNED |
 | `backend/src/main/java/vn/edu/phenikaa/courseregistration/controller/StudentController.java` | REST API sinh viên | OWNED |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/dto/response/StudentResponse.java` | DTO trả dữ liệu sinh viên | OWNED |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/mapper/StudentMapper.java` | Map `Student` sang `StudentResponse` | OWNED |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/exception/StudentNotFoundException.java` | Lỗi `STUDENT_NOT_FOUND` | OWNED |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/dto/request/LoginRequest.java` | DTO request đăng nhập | OWNED |
 | `backend/src/main/java/vn/edu/phenikaa/courseregistration/service/AuthService.java` | Đăng nhập demo | OWNED |
 | `backend/src/main/java/vn/edu/phenikaa/courseregistration/controller/AuthController.java` | REST API đăng nhập | OWNED |
-| `frontend/src/features/auth/**` | API/types/behavior đăng nhập | OWNED, không redesign UI |
-| `frontend/src/features/profile/**` | API/types/profile binding | OWNED |
+| `frontend/src/features/auth/api/**` | Gọi API đăng nhập | OWNED |
+| `frontend/src/features/auth/types/**` | Type request/form đăng nhập | OWNED |
+| `frontend/src/features/auth/pages/LoginPage.tsx` | Nối submit/loading/error | INTEGRATION ONLY |
+| `frontend/src/features/profile/api/**` | Gọi API hồ sơ | OWNED |
+| `frontend/src/features/profile/types/**` | Type và mapper hồ sơ | OWNED |
+| `frontend/src/features/profile/pages/ProfilePage.tsx` | Hiển thị dữ liệu Student thật | INTEGRATION ONLY |
+| `frontend/public/assets/images/login-workspace-illustration.svg` | Ảnh trang đăng nhập | READ ONLY |
 | `frontend/src/app/App.tsx` | Gắn current student, session, logout | INTEGRATION ONLY |
 | `frontend/src/shared/constants/apiEndpoints.ts` | Thêm endpoint Auth/Student nếu thiếu | INTEGRATION ONLY |
 | `frontend/src/shared/api/httpClient.ts` | HTTP envelope chung | READ ONLY |
 | `frontend/src/shared/api/apiError.ts` | Lỗi API chung | READ ONLY, chỉ sửa khi có lỗi thật |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/dto/response/ApiResponse.java` | Envelope API thành công | READ ONLY |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/dto/response/ApiErrorResponse.java` | Envelope API lỗi | READ ONLY |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/exception/GlobalExceptionHandler.java` | Xử lý lỗi chung | READ ONLY |
 | `backend/src/main/java/vn/edu/phenikaa/courseregistration/utils/JsonFileUtils.java` | Đọc/ghi JSON chung | READ ONLY |
 | `data/*.json` | Demo seed | READ ONLY |
 
@@ -188,6 +200,8 @@ Bạn chỉ nối behavior/API:
 - `frontend/src/features/auth/pages/LoginPage.tsx`: xử lý submit, loading, error.
 - `frontend/src/app/App.tsx`: giữ current student, restore session, logout.
 
+Với `LoginPage.tsx`, chỉ nối submit/loading/error. Không đổi layout, style, nội dung hình ảnh hoặc thiết kế tổng thể của trang đăng nhập.
+
 Không lưu password vào `localStorage` hoặc `sessionStorage`. Nếu có remember me, chỉ lưu mã sinh viên.
 
 ## 10. Profile frontend
@@ -210,7 +224,45 @@ Các field frontend cần map:
 
 Các field mở rộng như email, phone, avatar nếu chưa có backend thì không tự bịa thành dữ liệu bắt buộc.
 
-## 11. Test bắt buộc
+## 11. Trình tự thực hiện
+
+Bước 1: kiểm tra branch và kéo `develop` mới nhất. Mục tiêu là bắt đầu từ nền chung sạch. Chạy `git branch --show-current` và `git status`; chưa commit ở bước này.
+
+Bước 2: tạo branch `feature/student-auth-profile`. Mục tiêu là tách phần việc của bạn khỏi `develop`. Chạy `git branch --show-current`; chưa commit.
+
+Bước 3: hoàn thiện `User.java` và `Student.java` nếu trên `develop` còn thiếu. Mục tiêu là domain Student có encapsulation, constructor và getter/setter cần thiết. Chạy test compile backend nếu có thay đổi domain. Chỉ commit khi domain compile được.
+
+Bước 4: tạo hoặc sửa `StudentRepository.java` và `JsonStudentRepository.java`. Mục tiêu là đọc/ghi sinh viên qua `JsonFileUtils`. Chạy `JsonStudentRepositoryTest`. Nếu test pass, có thể commit phần domain/repository.
+
+Bước 5: tạo `StudentNotFoundException.java`. Mục tiêu là thống nhất error code `STUDENT_NOT_FOUND`. Chạy test service liên quan nếu đã có.
+
+Bước 6: tạo `StudentService.java`. Mục tiêu là tìm sinh viên theo mã và trả lỗi đúng khi không tồn tại. Chạy `StudentServiceTest`. Nếu pass, có thể commit phần service.
+
+Bước 7: tạo `StudentResponse.java` và `StudentMapper.java`. Mục tiêu là không trả trực tiếp model ra API khi đã có DTO. Chạy lại `StudentServiceTest` hoặc test compile backend.
+
+Bước 8: tạo `StudentController.java`. Mục tiêu là có `GET /api/students/{studentId}` đúng envelope. Chạy `StudentControllerTest`. Nếu pass, có thể commit phần Student API.
+
+Bước 9: tạo `LoginRequest.java`. Mục tiêu là nhận `studentId` và `password`, trong đó `studentId` được validate không rỗng. Chạy test compile backend.
+
+Bước 10: tạo `AuthService.java` và `AuthController.java`. Mục tiêu là đăng nhập demo bằng mã sinh viên, không lưu password và không dùng JWT. Chạy `AuthServiceTest` và `AuthControllerTest`. Nếu pass, có thể commit phần Auth.
+
+Bước 11: cập nhật `frontend/src/shared/constants/apiEndpoints.ts` nếu thiếu endpoint Auth/Student. Mục tiêu là frontend dùng chung endpoint constants. Chạy `npm run typecheck`; chỉ commit nếu không lỗi type.
+
+Bước 12: hoàn thiện `frontend/src/features/auth/api/authApi.ts` và `frontend/src/features/auth/types/auth.types.ts`. Mục tiêu là gọi API login và map response thành Student frontend. Chạy `npm run typecheck`.
+
+Bước 13: nối `LoginPage.tsx`. Mục tiêu là submit/loading/error chạy đúng, không đổi giao diện. Chạy `npm run typecheck` và kiểm tra đăng nhập thủ công nếu có backend local.
+
+Bước 14: nối `frontend/src/app/App.tsx` cho current student, remember/session restore và logout. Mục tiêu là login xong vào dashboard, reload vẫn khôi phục khi remember được bật. Chạy `npm run typecheck`.
+
+Bước 15: hoàn thiện `profileApi`, `profile.types` và `ProfilePage.tsx`. Mục tiêu là Profile dùng `GET /api/students/{studentId}`. Chạy `npm run typecheck`.
+
+Bước 16: chạy toàn bộ backend test và package. Mục tiêu là chắc phần Student/Auth không phá module khác. Chỉ commit nếu `clean test` và `clean package` pass.
+
+Bước 17: chạy frontend typecheck/build. Mục tiêu là phần auth/profile compile và build được. Chỉ commit nếu cả hai pass.
+
+Bước 18: kiểm tra `git diff --name-status origin/develop...HEAD`. Mục tiêu là chỉ có file thuộc Student/Auth/Profile và integration nhỏ. Nếu có file lạ, dừng lại và hỏi trưởng nhóm.
+
+## 12. Test bắt buộc
 
 Backend:
 
@@ -232,7 +284,7 @@ Scenario tối thiểu:
 
 Không cần test getter/setter.
 
-## 12. Commit plan
+## 13. Commit plan
 
 Gợi ý commit:
 
@@ -245,7 +297,7 @@ test(student): cover student and authentication flows
 
 Chỉ commit khi phần tương ứng đã chạy được. Không tạo commit rỗng.
 
-## 13. Kiểm tra trước khi push
+## 14. Kiểm tra trước khi push
 
 ```powershell
 cd backend
@@ -257,7 +309,7 @@ npm run build
 cd ..
 ```
 
-## 14. Push và Pull Request
+## 15. Push và Pull Request
 
 ```powershell
 git push -u origin feature/student-auth-profile

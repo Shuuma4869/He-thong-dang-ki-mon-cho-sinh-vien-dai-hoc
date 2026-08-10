@@ -5,7 +5,7 @@
 - [Hướng dẫn chung](00-doc-truoc-khi-bat-dau.md)
 - [Quy trình Pull Request](04-quy-trinh-pull-request.md)
 
-Chỉ bắt đầu sau khi Student/Auth/Profile và Course/Lecturer/Timetable đã được merge vào `develop`.
+Chỉ bắt đầu sau khi Student/Auth/Profile và Course/Lecturer/Schedule đã được merge vào `develop`. Không cần chờ Timetable.
 
 ## 1. Branch làm việc
 
@@ -42,7 +42,7 @@ Bạn phụ trách:
 - 5 validator đăng ký
 - frontend registration
 
-Không sửa Student, Course, Lecturer, Timetable trừ khi cần nối integration rất nhỏ và có lý do rõ.
+Không sửa Student, Course, Lecturer hoặc Timetable trừ khi cần nối integration rất nhỏ và có lý do rõ.
 
 ## 3. File ownership
 
@@ -56,6 +56,16 @@ Không sửa Student, Course, Lecturer, Timetable trừ khi cần nối integrat
 | `backend/src/main/java/vn/edu/phenikaa/courseregistration/repository/file/JsonRegistrationRepository.java` | JSON repository đăng ký | OWNED |
 | `backend/src/main/java/vn/edu/phenikaa/courseregistration/service/RegistrationService.java` | Nghiệp vụ đăng ký/hủy | OWNED |
 | `backend/src/main/java/vn/edu/phenikaa/courseregistration/controller/RegistrationController.java` | REST API đăng ký | OWNED |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/dto/request/RegistrationRequest.java` | DTO request đăng ký | OWNED |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/dto/response/RegistrationResponse.java` | DTO response đăng ký | OWNED |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/dto/response/RegistrationDetailResponse.java` | DTO dòng chi tiết đăng ký | OWNED |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/dto/response/RegisteredCourseResponse.java` | DTO học phần trong phiếu đăng ký | OWNED |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/mapper/RegistrationMapper.java` | Map registration summary sang DTO | OWNED |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/exception/CourseFullException.java` | Lỗi `COURSE_FULL` | OWNED |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/exception/CreditLimitExceededException.java` | Lỗi `CREDIT_LIMIT_EXCEEDED` | OWNED |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/exception/DuplicateRegistrationException.java` | Lỗi `DUPLICATE_REGISTRATION` | OWNED |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/exception/RegistrationNotFoundException.java` | Lỗi `REGISTRATION_NOT_FOUND` | OWNED |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/exception/ScheduleConflictException.java` | Lỗi `SCHEDULE_CONFLICT` | OWNED |
 | `backend/src/main/java/vn/edu/phenikaa/courseregistration/validator/**` | 5 validator | OWNED |
 | `frontend/src/features/registration/**` | Registration API, modal, page, types | OWNED |
 | `frontend/src/app/App.tsx` | Gắn register/cancel/toast/refresh | INTEGRATION ONLY |
@@ -63,6 +73,13 @@ Không sửa Student, Course, Lecturer, Timetable trừ khi cần nối integrat
 | `backend/src/main/java/vn/edu/phenikaa/courseregistration/interfaces/CourseValidator.java` | Contract validator | READ ONLY |
 | `backend/src/main/java/vn/edu/phenikaa/courseregistration/interfaces/Registrable.java` | Contract chung | READ ONLY |
 | `backend/src/main/java/vn/edu/phenikaa/courseregistration/validator/context/RegistrationValidationContext.java` | Context validator | READ ONLY nếu đã có |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/exception/CourseNotFoundException.java` | Lỗi course dùng lại trong validator | READ ONLY |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/exception/StudentNotFoundException.java` | Lỗi student dùng lại trong service | READ ONLY |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/dto/response/ApiResponse.java` | Envelope API thành công | READ ONLY |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/dto/response/ApiErrorResponse.java` | Envelope API lỗi | READ ONLY |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/exception/GlobalExceptionHandler.java` | Xử lý lỗi chung | READ ONLY |
+| `frontend/src/shared/api/httpClient.ts` | HTTP envelope chung | READ ONLY |
+| `frontend/src/shared/api/apiError.ts` | Lỗi API chung | READ ONLY |
 | `backend/src/main/java/vn/edu/phenikaa/courseregistration/utils/JsonFileUtils.java` | Đọc/ghi JSON chung | READ ONLY |
 | `data/*.json` | Demo seed | READ ONLY |
 
@@ -294,7 +311,55 @@ Yêu cầu:
 - Không lấy `enrolled++` ở frontend làm nguồn chính.
 - Không tự viết lại business rule duplicate/credit/capacity ở frontend.
 
-## 13. Test bắt buộc
+## 13. Trình tự thực hiện
+
+Bước 1: kiểm tra `develop` sau khi Student và Course đã merge, rồi tạo branch `feature/registration-validator`. Mục tiêu là bắt đầu trên nền đã có StudentRepository và CourseRepository. Chạy `git branch --show-current`; chưa commit.
+
+Bước 2: hoàn thiện `Registration.java`, `RegistrationDetail.java` và `RegistrationStatus.java`. Mục tiêu là domain đăng ký có phiếu, chi tiết và trạng thái. Chạy backend compile; chỉ commit khi compile pass.
+
+Bước 3: tạo `RegistrationRepository.java`. Mục tiêu là khóa contract tìm registration theo sinh viên và học phần. Chạy test compile backend.
+
+Bước 4: tạo `JsonRegistrationRepository.java`. Mục tiêu là đọc/ghi qua `JsonFileUtils`. Chạy `JsonRegistrationRepositoryTest`. Nếu pass, có thể commit domain/repository.
+
+Bước 5: tạo các exception đăng ký: `DuplicateRegistrationException`, `CourseFullException`, `CreditLimitExceededException`, `ScheduleConflictException`, `RegistrationNotFoundException`. Mục tiêu là mỗi rule có error code rõ. Chạy test compile backend.
+
+Bước 6: kiểm tra lại `CourseNotFoundException` và `StudentNotFoundException` chỉ được reuse. Mục tiêu là không tạo lỗi trùng chức năng. Chưa commit nếu chỉ đọc kiểm tra.
+
+Bước 7: tạo hoặc dùng `RegistrationValidationContext`. Mục tiêu là gom dữ liệu cho validator, không đọc repository trong validator. Chạy test compile backend.
+
+Bước 8: tạo `CourseExistenceValidator`. Mục tiêu là course không tồn tại trả `COURSE_NOT_FOUND`. Chạy `CourseExistenceValidatorTest`.
+
+Bước 9: tạo `DuplicateCourseValidator`. Mục tiêu là course đã đăng ký trả `DUPLICATE_REGISTRATION`. Chạy `DuplicateCourseValidatorTest`.
+
+Bước 10: tạo `CapacityValidator`. Mục tiêu là lớp đầy trả `COURSE_FULL`. Chạy `CapacityValidatorTest`.
+
+Bước 11: tạo `CreditLimitValidator`. Mục tiêu là vượt số tín chỉ tối đa trả `CREDIT_LIMIT_EXCEEDED`. Chạy `CreditLimitValidatorTest`.
+
+Bước 12: tạo `ScheduleConflictValidator`. Mục tiêu là bắt trùng lịch theo rule overlap. Chạy `ScheduleConflictValidatorTest`. Nếu 5 validator test pass, có thể commit phần validator.
+
+Bước 13: thêm `@Order(10/20/30/40/50)` cho 5 validator. Mục tiêu là duplicate được báo trước credit/capacity khi cùng lúc vi phạm nhiều rule. Chạy `RegistrationValidatorOrderTest`.
+
+Bước 14: tạo `RegistrationSummary.java`, `RegistrationResponse.java`, `RegistrationDetailResponse.java`, `RegisteredCourseResponse.java` và `RegistrationMapper.java`. Mục tiêu là GET/POST/DELETE trả state đăng ký đã resolve course. Chạy backend compile.
+
+Bước 15: tạo `RegistrationService.java`. Mục tiêu là register/cancel đúng luồng, không mutate khi validation fail. Chạy `RegistrationServiceTest`. Nếu pass, có thể commit service/mapper.
+
+Bước 16: tạo `RegistrationRequest.java` và `RegistrationController.java`. Mục tiêu là có GET/POST/DELETE đúng API, `courseId` blank trả `VALIDATION_ERROR`. Chạy `RegistrationControllerTest`. Nếu pass, có thể commit API.
+
+Bước 17: cập nhật `apiEndpoints.ts` nếu thiếu endpoint Registration. Mục tiêu là frontend dùng endpoint chung. Chạy `npm run typecheck`.
+
+Bước 18: hoàn thiện `registration.types.ts` và `registrationApi.ts`. Mục tiêu là gọi GET/POST/DELETE và map response thành `RegistrationSummary`. Chạy `npm run typecheck`.
+
+Bước 19: nối `RegisterConfirmModal.tsx`, `RegisteredCoursesPage.tsx` và integration nhỏ trong `App.tsx`. Mục tiêu là register/cancel có loading, error, toast và refresh capacity. Chạy `npm run typecheck` và kiểm tra thủ công nếu backend local chạy được.
+
+Bước 20: chạy backend `clean test`, `clean package`, frontend `typecheck`, `build`. Chỉ commit khi tất cả pass.
+
+Bước 21: kiểm tra `git diff --name-status origin/develop...HEAD`. Mục tiêu là chỉ có file Registration/Validator và integration nhỏ. Nếu có file lạ, dừng lại và hỏi trưởng nhóm.
+
+## 14. Test bắt buộc
+
+Repository test:
+
+- `JsonRegistrationRepositoryTest`
 
 Validator tests:
 
@@ -337,7 +402,7 @@ Controller tests:
 - business error code;
 - validation error.
 
-## 14. Regression test validator order
+## 15. Regression test validator order
 
 Bắt buộc có case:
 
@@ -348,7 +413,7 @@ duplicate + full -> DUPLICATE_REGISTRATION
 
 Đây là test quan trọng để bảo vệ thứ tự validator.
 
-## 15. Commit plan
+## 16. Commit plan
 
 Gợi ý commit:
 
@@ -360,7 +425,7 @@ feat(frontend): connect registration flow
 test(registration): cover registration business rules
 ```
 
-## 16. Kiểm tra trước khi push
+## 17. Kiểm tra trước khi push
 
 ```powershell
 cd backend
@@ -372,7 +437,7 @@ npm run build
 cd ..
 ```
 
-## 17. Push và Pull Request
+## 18. Push và Pull Request
 
 ```powershell
 git push -u origin feature/registration-validator

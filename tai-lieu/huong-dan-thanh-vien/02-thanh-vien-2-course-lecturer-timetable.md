@@ -1,28 +1,37 @@
-# Thành viên 2 - Course, Lecturer và Timetable
+# Thành viên 2 - Course, Lecturer, Schedule và Timetable
 
 Đọc trước:
 
 - [Hướng dẫn chung](00-doc-truoc-khi-bat-dau.md)
 - [Quy trình Pull Request](04-quy-trinh-pull-request.md)
 
-Chỉ bắt đầu sau khi phần Student/Auth/Profile đã được merge vào `develop`.
+Thành viên 2 làm hai lượt riêng:
 
-## 1. Branch làm việc
+- Phần A: Course/Lecturer/Schedule trên branch `feature/course-lecturer`.
+- Phần B: Timetable trên branch mới `feature/timetable`.
+
+Không dùng lại branch `feature/course-lecturer` sau khi branch đó đã merge.
+
+## Phần A - Course / Lecturer / Schedule
+
+### 1. Khi nào bắt đầu
+
+Bắt đầu phần A sau khi Student/Auth/Profile đã được merge vào `develop`.
 
 ```powershell
 git switch develop
 git pull --ff-only origin develop
-git switch -c feature/course-lecturer-timetable
+git switch -c feature/course-lecturer
 git branch --show-current
 ```
 
 Kết quả cần là:
 
 ```text
-feature/course-lecturer-timetable
+feature/course-lecturer
 ```
 
-## 2. Phạm vi
+### 2. Phạm vi phần A
 
 Bạn phụ trách:
 
@@ -37,16 +46,13 @@ Bạn phụ trách:
 - `CourseService`
 - `CourseController`
 - `CourseResponse`, `LecturerResponse`, `ScheduleResponse`
-- `TimetableEntry`
-- `TimetableService`
-- `TimetableController`
-- `TimetableSlotResponse`
+- `CourseMapper`
 - frontend courses
-- frontend timetable
+- course tests
 
-Không sửa Student/Auth/Profile và không triển khai Registration.
+Không triển khai Timetable trong branch này. Không sửa Student/Auth/Profile và không triển khai Registration.
 
-## 3. File ownership
+### 3. File ownership phần A
 
 | File/Folder | Trách nhiệm | Được sửa |
 |---|---|---|
@@ -60,17 +66,28 @@ Không sửa Student/Auth/Profile và không triển khai Registration.
 | `backend/src/main/java/vn/edu/phenikaa/courseregistration/repository/file/JsonLecturerRepository.java` | JSON repository giảng viên | OWNED |
 | `backend/src/main/java/vn/edu/phenikaa/courseregistration/service/CourseService.java` | Nghiệp vụ học phần | OWNED |
 | `backend/src/main/java/vn/edu/phenikaa/courseregistration/controller/CourseController.java` | REST API học phần | OWNED |
-| `backend/src/main/java/vn/edu/phenikaa/courseregistration/service/TimetableService.java` | Suy ra thời khóa biểu | OWNED |
-| `backend/src/main/java/vn/edu/phenikaa/courseregistration/controller/TimetableController.java` | REST API thời khóa biểu | OWNED |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/dto/response/CourseResponse.java` | DTO học phần | OWNED |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/dto/response/LecturerResponse.java` | DTO giảng viên | OWNED |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/dto/response/ScheduleResponse.java` | DTO lịch học | OWNED |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/mapper/CourseMapper.java` | Map Course/Lecturer/Schedule sang DTO | OWNED |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/exception/LecturerNotFoundException.java` | Lỗi `LECTURER_NOT_FOUND` | OWNED |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/exception/CourseNotFoundException.java` | Lỗi `COURSE_NOT_FOUND` | READ ONLY / REUSE EXISTING |
 | `frontend/src/features/courses/**` | Course API, mapper, page, modal | OWNED |
-| `frontend/src/features/timetable/**` | Timetable API/types/page | OWNED |
-| `frontend/src/app/App.tsx` | Gắn course/timetable state vào UI | INTEGRATION ONLY |
-| `frontend/src/shared/constants/apiEndpoints.ts` | Thêm endpoint Course/Timetable nếu thiếu | INTEGRATION ONLY |
+| `frontend/src/app/App.tsx` | Gắn danh sách course vào UI | INTEGRATION ONLY |
+| `frontend/src/shared/constants/apiEndpoints.ts` | Thêm endpoint Course nếu thiếu | INTEGRATION ONLY |
 | `frontend/src/shared/api/httpClient.ts` | HTTP envelope chung | READ ONLY |
+| `frontend/src/shared/api/apiError.ts` | Lỗi API chung | READ ONLY |
 | `backend/src/main/java/vn/edu/phenikaa/courseregistration/utils/JsonFileUtils.java` | Đọc/ghi JSON chung | READ ONLY |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/dto/response/ApiResponse.java` | Envelope API thành công | READ ONLY |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/dto/response/ApiErrorResponse.java` | Envelope API lỗi | READ ONLY |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/exception/GlobalExceptionHandler.java` | Xử lý lỗi chung | READ ONLY |
 | `backend/src/main/java/vn/edu/phenikaa/courseregistration/service/RegistrationService.java` | Nghiệp vụ đăng ký | READ ONLY |
+| `frontend/src/features/timetable/**` | Timetable frontend | READ ONLY trong phần A |
+| `data/*.json` | Demo seed | READ ONLY |
 
-## 4. Domain Course/Lecturer/Schedule
+`CourseNotFoundException` đã thuộc contract dùng chung cho Course API và phần validation đăng ký. Không xóa, không đổi package, không đổi `errorCode`, không tạo exception khác cùng chức năng.
+
+### 4. Domain Course/Lecturer/Schedule
 
 `Lecturer` kế thừa `User`:
 
@@ -109,9 +126,9 @@ Quy định:
 
 - Không đặt rule đăng ký trong model.
 - Không tự tăng/giảm capacity trong Course API.
-- Không thêm persistence riêng cho thời khóa biểu.
+- Không thêm persistence riêng cho Timetable ở phần A.
 
-## 5. Repository
+### 5. Repository
 
 Contract học phần:
 
@@ -136,7 +153,7 @@ public interface LecturerRepository {
 
 `JsonCourseRepository` và `JsonLecturerRepository` dùng `JsonFileUtils`. Không đọc JSON ở service/controller.
 
-## 6. Course service
+### 6. Course service và API
 
 Chức năng:
 
@@ -144,12 +161,7 @@ Chức năng:
 - Lấy chi tiết học phần theo `courseId`.
 - Tìm kiếm học phần theo keyword.
 
-Lỗi:
-
-- Không tìm thấy học phần: `COURSE_NOT_FOUND`.
-- Học phần có `lecturerId` không khớp dữ liệu giảng viên: `LECTURER_NOT_FOUND`.
-
-## 7. Course API
+API:
 
 ```text
 GET /api/courses
@@ -170,24 +182,14 @@ currentCapacity
 schedules
 ```
 
-`lecturer` gồm:
+`lecturer` gồm `lecturerId`, `fullName`, `faculty`. `schedules[]` gồm `dayOfWeek`, `startTime`, `endTime`, `room`.
 
-```text
-lecturerId
-fullName
-faculty
-```
+Lỗi:
 
-`schedules[]` gồm:
+- Không tìm thấy học phần: `COURSE_NOT_FOUND`.
+- Học phần có `lecturerId` không khớp dữ liệu giảng viên: `LECTURER_NOT_FOUND`.
 
-```text
-dayOfWeek
-startTime
-endTime
-room
-```
-
-## 8. Frontend Course
+### 7. Frontend Course
 
 Các file chính:
 
@@ -212,9 +214,139 @@ Course mapper cần chuyển:
 
 Không hard-code danh sách môn học trong frontend.
 
-## 9. Timetable backend
+### 8. Trình tự thực hiện phần A
 
-Thời khóa biểu được suy ra từ đăng ký đang active của sinh viên. Không có file JSON riêng cho timetable.
+Bước 1: kiểm tra `develop` và tạo branch `feature/course-lecturer`. Mục tiêu là bắt đầu đúng nền sau Student/Auth/Profile. Chạy `git branch --show-current`; chưa commit.
+
+Bước 2: hoàn thiện `Lecturer.java`, `Course.java`, `Schedule.java`. Mục tiêu là domain đúng field và không chứa rule đăng ký. Chạy backend compile hoặc test hiện có. Chỉ commit khi compile pass.
+
+Bước 3: tạo hoặc sửa `CourseRepository.java` và `LecturerRepository.java`. Mục tiêu là contract repository đúng. Chạy test compile backend.
+
+Bước 4: tạo `JsonCourseRepository.java` và `JsonLecturerRepository.java`. Mục tiêu là đọc/ghi qua `JsonFileUtils`. Chạy `JsonCourseRepositoryTest` và `JsonLecturerRepositoryTest`. Nếu pass, có thể commit domain/repository.
+
+Bước 5: kiểm tra `CourseNotFoundException.java` đang dùng đúng error code. Mục tiêu là reuse class sẵn có, không tạo lỗi trùng chức năng. Chạy test compile backend.
+
+Bước 6: tạo `LecturerNotFoundException.java`. Mục tiêu là báo lỗi khi course trỏ tới lecturer không tồn tại. Chạy service test nếu đã có.
+
+Bước 7: tạo `CourseWithLecturer.java`. Mục tiêu là service có object trung gian để trả course kèm lecturer. Chạy test compile backend.
+
+Bước 8: tạo `CourseResponse.java`, `LecturerResponse.java`, `ScheduleResponse.java` và `CourseMapper.java`. Mục tiêu là API trả DTO đúng contract. Chạy `CourseServiceTest` nếu mapper đã được service dùng.
+
+Bước 9: tạo `CourseService.java`. Mục tiêu là list/detail/search và resolve lecturer đúng. Chạy `CourseServiceTest`. Nếu pass, có thể commit service/mapper.
+
+Bước 10: tạo `CourseController.java`. Mục tiêu là đủ 3 endpoint course. Chạy `CourseControllerTest`. Nếu pass, có thể commit Course API.
+
+Bước 11: cập nhật `apiEndpoints.ts` nếu thiếu endpoint Course. Mục tiêu là frontend không hard-code URL rải rác. Chạy `npm run typecheck`.
+
+Bước 12: hoàn thiện `course.types.ts`, `courseApi.ts` và `courseMappers.ts`. Mục tiêu là map response backend sang model frontend. Chạy `npm run typecheck`.
+
+Bước 13: nối `CourseListPage.tsx` và `CourseDetailModal.tsx`. Mục tiêu là list/search/detail dùng API thật. Chạy `npm run typecheck` và kiểm tra thủ công nếu backend local chạy được.
+
+Bước 14: cập nhật `App.tsx` hoặc `Header.tsx` chỉ khi cần gắn course state/search. Mục tiêu là integration nhỏ, không rewrite shared architecture. Chạy `npm run typecheck`.
+
+Bước 15: chạy backend `clean test`, `clean package`, frontend `typecheck`, `build`. Chỉ commit khi tất cả pass.
+
+Bước 16: kiểm tra `git diff --name-status origin/develop...HEAD`. Mục tiêu là chỉ có file Course/Lecturer/Schedule và integration nhỏ. Nếu có file lạ, dừng lại và hỏi trưởng nhóm.
+
+### 9. Test bắt buộc phần A
+
+Backend:
+
+- `JsonCourseRepositoryTest`
+- `JsonLecturerRepositoryTest`
+- `CourseServiceTest`
+- `CourseControllerTest`
+
+Scenario tối thiểu:
+
+- list course trả dữ liệu;
+- detail course tồn tại;
+- detail course không tồn tại;
+- search theo mã/tên;
+- lecturer được map đúng;
+- lecturer thiếu trả lỗi đúng.
+
+Frontend:
+
+- course list load được từ API;
+- search gọi API đúng;
+- course detail hiển thị lecturer/schedule/capacity;
+- empty/error/loading state ổn.
+
+### 10. Commit plan phần A
+
+```text
+feat(course): implement course lecturer persistence
+feat(course): expose course lecturer api
+feat(frontend): connect course list and detail
+test(course): cover course lecturer flows
+```
+
+### 11. Push và Pull Request phần A
+
+```powershell
+git push -u origin feature/course-lecturer
+```
+
+Pull Request:
+
+- Base: `develop`
+- Compare: `feature/course-lecturer`
+- Title: `[Course] Hoàn thiện học phần, giảng viên và lịch học`
+
+Sau khi tạo Pull Request phần A, dừng lại và chờ trưởng nhóm review. Không làm Timetable trên branch này.
+
+## Phần B - Timetable
+
+### 12. Khi nào bắt đầu
+
+Chỉ bắt đầu phần B sau khi trưởng nhóm thông báo Registration/Validators đã được merge vào `develop`.
+
+```powershell
+git switch develop
+git pull --ff-only origin develop
+git switch -c feature/timetable
+git branch --show-current
+```
+
+Kết quả cần là:
+
+```text
+feature/timetable
+```
+
+### 13. Phạm vi phần B
+
+Bạn phụ trách:
+
+- `TimetableEntry`
+- `TimetableService`
+- `TimetableController`
+- `TimetableSlotResponse`
+- `TimetableMapper`
+- frontend timetable
+- timetable tests
+
+Timetable phụ thuộc Registration và Course. Không tạo file JSON riêng cho Timetable.
+
+### 14. File ownership phần B
+
+| File/Folder | Trách nhiệm | Được sửa |
+|---|---|---|
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/model/TimetableEntry.java` | Composition cho một dòng thời khóa biểu | OWNED |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/service/TimetableService.java` | Suy ra thời khóa biểu | OWNED |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/controller/TimetableController.java` | REST API thời khóa biểu | OWNED |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/dto/response/TimetableSlotResponse.java` | DTO thời khóa biểu | OWNED |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/mapper/TimetableMapper.java` | Map timetable entry sang DTO | OWNED |
+| `frontend/src/features/timetable/**` | Timetable API/types/page | OWNED |
+| `frontend/src/app/App.tsx` | Gắn timetable view nếu cần | INTEGRATION ONLY |
+| `frontend/src/shared/constants/apiEndpoints.ts` | Thêm endpoint Timetable nếu thiếu | INTEGRATION ONLY |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/service/RegistrationService.java` | Nguồn registration active | READ ONLY |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/repository/RegistrationRepository.java` | Repository đăng ký | READ ONLY |
+| `backend/src/main/java/vn/edu/phenikaa/courseregistration/utils/JsonFileUtils.java` | Đọc/ghi JSON chung | READ ONLY |
+| `frontend/src/shared/api/httpClient.ts` | HTTP envelope chung | READ ONLY |
+
+### 15. Timetable backend
 
 API:
 
@@ -245,7 +377,7 @@ kiểm tra student tồn tại
 -> sort theo ngày và giờ bắt đầu nếu cần
 ```
 
-## 10. Frontend Timetable
+### 16. Frontend Timetable
 
 Các file chính:
 
@@ -255,73 +387,69 @@ Các file chính:
 
 Frontend dùng API timetable. Không tự đọc `data/registrations.json`, `data/courses.json` hoặc `data/lecturers.json`.
 
-## 11. Test bắt buộc
+### 17. Trình tự thực hiện phần B
 
-Backend:
+Bước 1: cập nhật `develop` sau khi Registration đã merge và tạo branch `feature/timetable`. Mục tiêu là Timetable nhìn thấy contract Registration mới nhất. Chạy `git branch --show-current`; chưa commit.
 
-- `JsonCourseRepositoryTest`
-- `JsonLecturerRepositoryTest`
-- `CourseServiceTest`
-- `CourseControllerTest`
+Bước 2: tạo `TimetableEntry.java`. Mục tiêu là biểu diễn một dòng thời khóa biểu đã resolve course, lecturer và schedule. Chạy backend compile.
+
+Bước 3: tạo `TimetableSlotResponse.java` và `TimetableMapper.java`. Mục tiêu là response không trả model trực tiếp. Chạy test compile backend.
+
+Bước 4: tạo `TimetableService.java`. Mục tiêu là lấy registration active, resolve course/lecturer và tạo slot. Chạy `TimetableServiceTest`. Nếu pass, có thể commit service/mapper.
+
+Bước 5: tạo `TimetableController.java`. Mục tiêu là có `GET /api/students/{studentId}/timetable`. Chạy `TimetableControllerTest`. Nếu pass, có thể commit API.
+
+Bước 6: cập nhật `apiEndpoints.ts` nếu thiếu endpoint Timetable. Mục tiêu là frontend dùng constant chung. Chạy `npm run typecheck`.
+
+Bước 7: hoàn thiện `timetable.types.ts` và `timetableApi.ts`. Mục tiêu là gọi API và map response đúng. Chạy `npm run typecheck`.
+
+Bước 8: nối `TimetableWeeklyPage.tsx`. Mục tiêu là loading/error/empty và lịch tuần hiển thị từ API. Chạy `npm run typecheck` và kiểm tra thủ công nếu có backend local.
+
+Bước 9: chạy backend `clean test`, `clean package`, frontend `typecheck`, `build`. Chỉ commit khi tất cả pass.
+
+Bước 10: kiểm tra `git diff --name-status origin/develop...HEAD`. Mục tiêu là chỉ có file Timetable và integration nhỏ. Nếu có file lạ, dừng lại và hỏi trưởng nhóm.
+
+### 18. Test bắt buộc phần B
+
 - `TimetableServiceTest`
 - `TimetableControllerTest`
 
 Scenario tối thiểu:
 
-- list course trả dữ liệu;
-- detail course tồn tại;
-- detail course không tồn tại;
-- search theo mã/tên;
-- lecturer được map đúng;
-- lecturer thiếu trả lỗi đúng;
 - timetable empty khi sinh viên chưa đăng ký;
 - timetable có dữ liệu từ registration active;
 - course nhiều schedule tạo nhiều slot;
-- registration đã hủy không xuất hiện.
+- registration đã hủy không xuất hiện;
+- slot có lecturer name, room, ngày và giờ đúng.
 
-## 12. Commit plan
-
-Gợi ý commit:
+### 19. Commit plan phần B
 
 ```text
-feat(course): implement course and lecturer api
-feat(frontend): connect course list and detail
-feat(timetable): expose timetable api
+feat(timetable): expose student timetable api
 feat(frontend): connect timetable view
-test(course): cover course lecturer and timetable flows
+test(timetable): cover timetable flow
 ```
 
-## 13. Kiểm tra trước khi push
+### 20. Push và Pull Request phần B
 
 ```powershell
-cd backend
-.\mvnw.cmd clean test
-.\mvnw.cmd clean package
-cd ..\frontend
-npm run typecheck
-npm run build
-cd ..
+git push -u origin feature/timetable
 ```
 
-## 14. Push và Pull Request
-
-```powershell
-git push -u origin feature/course-lecturer-timetable
-```
-
-Tạo Pull Request:
+Pull Request:
 
 - Base: `develop`
-- Compare: `feature/course-lecturer-timetable`
-- Title: `[Course] Hoàn thiện học phần, giảng viên và thời khóa biểu`
+- Compare: `feature/timetable`
+- Title: `[Timetable] Hoàn thiện thời khóa biểu sinh viên`
 
 ## Điều kiện để được tạo Pull Request
 
-- [ ] Đúng branch `feature/course-lecturer-timetable`
-- [ ] File đúng phạm vi
+### Phần A
+
+- [ ] Đúng branch `feature/course-lecturer`
+- [ ] File đúng phạm vi Course/Lecturer/Schedule
 - [ ] Course API đúng contract
 - [ ] Lecturer mapping đúng
-- [ ] Timetable không có persistence riêng
 - [ ] Frontend không dùng mock course
 - [ ] Không gọi `fetch` trực tiếp trong page
 - [ ] Backend test pass
@@ -332,4 +460,19 @@ Tạo Pull Request:
 - [ ] Git status sạch
 - [ ] Không push `develop` hoặc `main`
 
-Hoàn thành các bước trên rồi tạo Pull Request và chờ trưởng nhóm review.
+### Phần B
+
+- [ ] Đúng branch `feature/timetable`
+- [ ] Registration đã merge vào `develop` trước khi bắt đầu
+- [ ] Timetable không có persistence riêng
+- [ ] Timetable API đúng contract
+- [ ] Frontend Timetable dùng API thật
+- [ ] Backend test pass
+- [ ] Backend package pass
+- [ ] Frontend typecheck pass
+- [ ] Frontend build pass
+- [ ] Commit author đúng
+- [ ] Git status sạch
+- [ ] Không push `develop` hoặc `main`
+
+Hoàn thành từng phần rồi tạo Pull Request riêng và chờ trưởng nhóm review.

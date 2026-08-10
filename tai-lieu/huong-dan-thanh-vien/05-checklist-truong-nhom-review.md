@@ -7,6 +7,8 @@ Tài liệu này dành cho trưởng nhóm khi review Pull Request của các th
 - [ ] Base branch là `develop`.
 - [ ] Compare branch là `feature/...`.
 - [ ] Commit author là thành viên làm phần đó.
+- [ ] Đã kiểm tra `git diff --name-status origin/develop...<feature>`.
+- [ ] Đã kiểm tra commit author chỉ trong phạm vi branch bằng log so với `origin/develop`.
 - [ ] Không có file ngoài scope.
 - [ ] Không có build artifacts.
 - [ ] Không có secret hoặc `.env.local`.
@@ -32,7 +34,7 @@ Tài liệu này dành cho trưởng nhóm khi review Pull Request của các th
 - [ ] Profile frontend dùng Student API.
 - [ ] Có test service, repository, controller và auth.
 
-## 3. Review Course/Lecturer/Timetable
+## 3. Review Course/Lecturer/Schedule
 
 - [ ] `Course`, `Lecturer`, `Schedule` đúng field.
 - [ ] `CourseRepository` và `LecturerRepository` đúng contract.
@@ -41,11 +43,9 @@ Tài liệu này dành cho trưởng nhóm khi review Pull Request của các th
 - [ ] Course API trả lecturer details và schedules.
 - [ ] Search hoạt động theo keyword.
 - [ ] Không tự thay đổi capacity trong Course API.
-- [ ] Timetable được suy ra từ registration active.
-- [ ] Không có timetable persistence riêng.
 - [ ] Frontend Course dùng API thật, không quay lại mock course.
-- [ ] Frontend Timetable dùng API thật.
-- [ ] Có test course, lecturer và timetable.
+- [ ] Không có file Timetable trong Pull Request Course nếu chưa tới lượt.
+- [ ] Có test course và lecturer.
 
 ## 4. Review Registration/Validators
 
@@ -66,7 +66,18 @@ Tài liệu này dành cho trưởng nhóm khi review Pull Request của các th
 - [ ] Frontend đồng bộ lại course capacity sau register/cancel.
 - [ ] Có test validator, service, controller và regression validator order.
 
-## 5. Cách đối chiếu với bản local của trưởng nhóm
+## 5. Review Timetable
+
+- [ ] Pull Request dùng branch riêng `feature/timetable`.
+- [ ] Registration/Validators đã được merge vào `develop` trước khi bắt đầu.
+- [ ] Timetable được suy ra từ registration active.
+- [ ] Không có timetable persistence riêng.
+- [ ] Timetable API trả đúng `courseId`, `courseName`, `credits`, `lecturerName`, `dayOfWeek`, `startTime`, `endTime`, `room`.
+- [ ] Frontend Timetable dùng API thật.
+- [ ] Không đọc trực tiếp `data/*.json` ở frontend.
+- [ ] Có test service và controller cho timetable.
+
+## 6. Cách đối chiếu với bản local của trưởng nhóm
 
 Trưởng nhóm có thể đối chiếu Pull Request với bản local đang giữ để kiểm tra:
 
@@ -78,7 +89,7 @@ Trưởng nhóm có thể đối chiếu Pull Request với bản local đang gi
 
 Không yêu cầu implementation giống từng dòng. Thành viên có thể viết khác nếu behavior đúng, contract đúng, code rõ và test pass.
 
-## 6. Merge policy
+## 7. Merge policy
 
 Sau review PASS, merge Pull Request vào `develop`.
 
@@ -86,12 +97,13 @@ Sau review PASS, merge Pull Request vào `develop`.
 
 Nếu cần sửa nhỏ, ưu tiên yêu cầu thành viên tự sửa trên feature branch. Trưởng nhóm chỉ tự sửa sau merge khi đó là vấn đề tích hợp thuộc trách nhiệm trưởng nhóm.
 
-## 7. Thứ tự merge
+## 8. Thứ tự merge
 
 ```text
 Student/Auth/Profile
--> Course/Lecturer/Timetable
+-> Course/Lecturer/Schedule
 -> Registration/Validators
+-> Timetable
 ```
 
 Sau mỗi lần merge, `develop` phải build/test pass trước khi cho người tiếp theo bắt đầu.
