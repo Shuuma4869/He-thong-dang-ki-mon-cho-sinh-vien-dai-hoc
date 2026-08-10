@@ -87,10 +87,10 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
               <span>{currentSemester}</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-              Xin chao, {student.name}!
+              Xin chào, {student.name}!
             </h1>
             <p className="text-blue-100 text-xs sm:text-sm font-medium opacity-90 max-w-2xl">
-              Lop <strong className="text-white">{student.className}</strong> - Nganh{' '}
+              Lớp <strong className="text-white">{student.className}</strong> - Ngành{' '}
               <strong className="text-white">{student.major}</strong>
             </p>
           </div>
@@ -99,7 +99,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
             onClick={() => onNavigate('courses')}
             className="px-5 py-2.5 bg-white text-blue-700 hover:bg-blue-50 active:bg-blue-100 font-bold text-xs sm:text-sm rounded-xl shadow-sm transition-all flex items-center gap-2 cursor-pointer shrink-0"
           >
-            <span>Dang ky mon hoc</span>
+            <span>Đăng ký môn học</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
@@ -108,7 +108,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
       {isLoading && (
         <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs p-8 flex items-center justify-center gap-3 text-sm font-semibold text-slate-600">
           <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
-          Dang tai du lieu tong quan...
+          Đang tải dữ liệu tổng quan...
         </div>
       )}
 
@@ -117,7 +117,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
             <div>
-              <h2 className="text-sm font-bold text-red-700">Khong tai duoc du lieu tong quan</h2>
+              <h2 className="text-sm font-bold text-red-700">Không tải được dữ liệu tổng quan</h2>
               <p className="text-xs text-slate-600 mt-1">{errorMessage}</p>
             </div>
           </div>
@@ -126,7 +126,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
             className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-700 font-semibold text-xs rounded-xl border border-red-200 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
           >
             <RefreshCw className="w-4 h-4" />
-            Thu lai
+            Thử lại
           </button>
         </div>
       )}
@@ -135,7 +135,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <MetricCard
-              label="Tin chi da dang ky"
+              label="Tín chỉ đã đăng ký"
               icon={<BookCheck className="w-5 h-5" />}
               tone="blue"
             >
@@ -149,41 +149,41 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                   style={{ width: `${creditPercent}%` }}
                 />
               </div>
-              <p className="text-[11px] text-slate-500 mt-1.5">Nguon: Registration API + Student API.</p>
+              <p className="text-[11px] text-slate-500 mt-1.5">Dựa trên đăng ký hiện tại và hồ sơ sinh viên.</p>
             </MetricCard>
 
             <MetricCard
-              label="So mon da dang ky"
+              label="Số môn đã đăng ký"
               icon={<CalendarCheck2 className="w-5 h-5" />}
               tone="emerald"
             >
               <span className="text-2xl font-bold text-slate-900">{registeredCourses.length}</span>
-              <span className="text-xs text-slate-500 font-medium ml-1">hoc phan</span>
-              <p className="text-[11px] text-slate-500 mt-2">Nguon: RegistrationResponse.courses.</p>
+              <span className="text-xs text-slate-500 font-medium ml-1">học phần</span>
+              <p className="text-[11px] text-slate-500 mt-2">Danh sách học phần sinh viên đang đăng ký.</p>
             </MetricCard>
 
             <MetricCard
-              label="Mon dang mo"
+              label="Môn đang mở"
               icon={<GraduationCap className="w-5 h-5" />}
               tone="indigo"
             >
               <span className="text-2xl font-bold text-slate-900">{openCourses.length}</span>
-              <span className="text-xs text-slate-500 font-medium ml-1">hoc phan</span>
-              <p className="text-[11px] text-slate-500 mt-2">Nguon: Course API hien tai.</p>
+              <span className="text-xs text-slate-500 font-medium ml-1">học phần</span>
+              <p className="text-[11px] text-slate-500 mt-2">Số học phần đang mở trong dữ liệu hiện tại.</p>
             </MetricCard>
 
             <MetricCard
-              label="Thong bao demo"
+              label="Thông báo"
               icon={<Bell className="w-5 h-5" />}
               tone="amber"
             >
               <span className="text-2xl font-bold text-slate-900">{unreadNotifs.length}</span>
-              <span className="text-xs text-slate-500 font-medium ml-1">chua doc</span>
+              <span className="text-xs text-slate-500 font-medium ml-1">chưa đọc</span>
               <button
                 onClick={() => onNavigate('notifications')}
                 className="text-[11px] font-semibold text-blue-600 hover:underline mt-2 block cursor-pointer"
               >
-                Xem thong bao demo/local
+                Xem thông báo
               </button>
             </MetricCard>
           </div>
@@ -200,14 +200,14 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                     onClick={() => onNavigate('timetable')}
                     className="text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
                   >
-                    Xem thoi khoa bieu
+                    Xem thời khóa biểu
                   </button>
                 </div>
 
                 {schedulePreview.length === 0 ? (
                   <div className="p-8 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">
                     <p className="text-xs text-slate-500">
-                      Ban chua co lich hoc tu cac mon dang ky active.
+                      Bạn chưa có lịch học từ các môn đăng ký đang hiệu lực.
                     </p>
                   </div>
                 ) : (
@@ -247,22 +247,22 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
               </div>
 
               <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                <h2 className="text-base font-bold text-slate-900">Thao tac nhanh</h2>
+                <h2 className="text-base font-bold text-slate-900">Thao tác nhanh</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <QuickAction label="Dang ky mon" description="Tra cuu hoc phan" icon={<BookCheck className="w-4 h-4" />} onClick={() => onNavigate('courses')} />
-                  <QuickAction label="Thoi khoa bieu" description="Xem lich tuan" icon={<CalendarCheck2 className="w-4 h-4" />} onClick={() => onNavigate('timetable')} />
-                  <QuickAction label="Da dang ky" description="Quan ly hoc phan" icon={<GraduationCap className="w-4 h-4" />} onClick={() => onNavigate('registered')} />
-                  <QuickAction label="Ho so" description="Thong tin sinh vien" icon={<User className="w-4 h-4" />} onClick={() => onNavigate('profile')} />
+                  <QuickAction label="Đăng ký môn" description="Tra cứu học phần" icon={<BookCheck className="w-4 h-4" />} onClick={() => onNavigate('courses')} />
+                  <QuickAction label="Thời khóa biểu" description="Xem lịch tuần" icon={<CalendarCheck2 className="w-4 h-4" />} onClick={() => onNavigate('timetable')} />
+                  <QuickAction label="Đã đăng ký" description="Quản lý học phần" icon={<GraduationCap className="w-4 h-4" />} onClick={() => onNavigate('registered')} />
+                  <QuickAction label="Hồ sơ" description="Thông tin sinh viên" icon={<User className="w-4 h-4" />} onClick={() => onNavigate('profile')} />
                 </div>
               </div>
             </div>
 
             <div className="space-y-6">
               <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-                <h2 className="text-base font-bold text-slate-900">Tong quan dang ky</h2>
+                <h2 className="text-base font-bold text-slate-900">Tổng quan đăng ký</h2>
                 {registeredCourses.length === 0 ? (
                   <div className="p-5 rounded-xl bg-slate-50 border border-dashed border-slate-200">
-                    <p className="text-xs text-slate-500">Ban chua dang ky mon hoc nao.</p>
+                    <p className="text-xs text-slate-500">Bạn chưa đăng ký môn học nào.</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -284,8 +284,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
               <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-base font-bold text-slate-900">Thong bao demo/local</h2>
-                    <p className="text-[11px] text-slate-500 mt-1">Khong dong bo tu backend.</p>
+                    <h2 className="text-base font-bold text-slate-900">Thông báo</h2>
+                    <p className="text-[11px] text-slate-500 mt-1">Thông báo chỉ lưu trong phiên giao diện.</p>
                   </div>
                   <button
                     onClick={() => onNavigate('notifications')}

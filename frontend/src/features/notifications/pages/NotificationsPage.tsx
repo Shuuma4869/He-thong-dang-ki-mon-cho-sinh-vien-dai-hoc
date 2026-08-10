@@ -45,10 +45,10 @@ export const NotificationsPage: React.FC<NotificationsPageProps> = ({
         <div>
           <div className="flex items-center gap-2">
             <Bell className="w-5 h-5 text-blue-600" />
-            <h1 className="text-xl font-bold text-slate-900">Thong bao demo/local</h1>
+            <h1 className="text-xl font-bold text-slate-900">Thông báo</h1>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            Tinh nang giao dien bo tro, dung du lieu mau va trang thai doc/chua doc trong frontend.
+            Tính năng hỗ trợ giao diện, dùng dữ liệu mẫu và trạng thái đọc/chưa đọc trong frontend.
           </p>
         </div>
 
@@ -57,13 +57,12 @@ export const NotificationsPage: React.FC<NotificationsPageProps> = ({
           className="px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs rounded-xl border border-blue-200 transition-colors flex items-center gap-1.5 cursor-pointer shrink-0"
         >
           <CheckCircle2 className="w-4 h-4 text-blue-600" />
-          <span>Danh dau tat ca la da doc</span>
+          <span>Đánh dấu tất cả là đã đọc</span>
         </button>
       </div>
 
       <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-xs text-amber-800">
-        Notifications chua co backend persistence trong phien ban do an hien tai. Cac thong bao ben duoi la demo/local state,
-        khong dong bo tu backend.
+        Thông báo hiện được lưu trong phiên giao diện và chưa có phần lưu trữ riêng ở backend.
       </div>
 
       <div className="flex items-center gap-2 overflow-x-auto pb-1">
@@ -85,7 +84,7 @@ export const NotificationsPage: React.FC<NotificationsPageProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden divide-y divide-slate-100 max-h-[600px] overflow-y-auto">
           {filteredNotifs.length === 0 ? (
-            <div className="p-8 text-center text-slate-500 text-xs">Khong co thong bao nao trong muc nay</div>
+            <div className="p-8 text-center text-slate-500 text-xs">Không có thông báo nào trong mục này</div>
           ) : (
             filteredNotifs.map((notification) => {
               const isSelected = activeNotifId === notification.id;
@@ -146,7 +145,7 @@ export const NotificationsPage: React.FC<NotificationsPageProps> = ({
               <div className="text-xs text-slate-700 leading-relaxed whitespace-pre-line space-y-2 pt-2">
                 <p>{activeNotif.content}</p>
                 <p className="pt-4 text-slate-500 italic">
-                  Noi dung nay duoc giu o pham vi demo giao dien, chua dong bo tu backend.
+                  Nội dung này chỉ phục vụ minh họa giao diện thông báo.
                 </p>
               </div>
             </div>

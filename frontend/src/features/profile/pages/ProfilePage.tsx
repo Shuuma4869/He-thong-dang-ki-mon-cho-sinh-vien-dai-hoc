@@ -26,7 +26,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ student }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState(false);
   const [passwordError, setPasswordError] = useState('');
-  const missingText = 'Chua dong bo';
+  const missingText = 'Chưa đồng bộ';
   const displayText = (value?: string) => (value?.trim() ? value : missingText);
   const cpaText = typeof student.cpa === 'number' ? student.cpa.toFixed(2) : missingText;
   const creditsProgressText =
@@ -38,7 +38,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ student }) => {
     && typeof student.totalCreditsRequired === 'number'
     && student.totalCreditsRequired > 0
       ? `Dat ${Math.round((student.creditsPassed / student.totalCreditsRequired) * 100)}% chuong trinh`
-      : 'Cho API tien do hoc tap';
+      : 'Chưa có dữ liệu tiến độ học tập';
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -191,13 +191,13 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ student }) => {
               <div className="p-4 rounded-xl bg-blue-50/80 border border-blue-200 space-y-1">
                 <span className="text-[11px] font-bold uppercase text-blue-700">Gioi Han Tin Chi</span>
                 <p className="text-2xl font-extrabold text-blue-900">{student.maxCredits}</p>
-                <span className="text-[10px] text-blue-600 font-semibold block">Tin chi toi da moi hoc ky</span>
+                <span className="text-[10px] text-blue-600 font-semibold block">Tín chỉ tối đa mỗi học kỳ</span>
               </div>
 
               <div className="p-4 rounded-xl bg-indigo-50/80 border border-indigo-200 space-y-1">
                 <span className="text-[11px] font-bold uppercase text-indigo-700">CPA Tich Luy</span>
                 <p className="text-2xl font-extrabold text-indigo-900">{cpaText}</p>
-                <span className="text-[10px] text-indigo-600 font-semibold block">Cho API diem tich luy</span>
+                <span className="text-[10px] text-indigo-600 font-semibold block">Chưa có dữ liệu điểm tích lũy</span>
               </div>
 
               <div className="p-4 rounded-xl bg-emerald-50/80 border border-emerald-200 space-y-1">

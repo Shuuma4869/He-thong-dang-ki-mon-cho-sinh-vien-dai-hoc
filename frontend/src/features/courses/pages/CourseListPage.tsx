@@ -69,7 +69,7 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
 
       setCourses([]);
       onCoursesLoaded([]);
-      setErrorMessage(getApiErrorMessage(error) || 'Khong the tai danh sach mon hoc. Vui long thu lai.');
+      setErrorMessage(getApiErrorMessage(error) || 'Không thể tải danh sách môn học. Vui lòng thử lại.');
     } finally {
       if (requestSeqRef.current === requestId) {
         setIsLoading(false);
@@ -85,7 +85,6 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
     return () => window.clearTimeout(timeoutId);
   }, [filters.searchQuery, loadCourses]);
 
-  // Compute registered schedules to check schedule conflict dynamically
   const registeredCoursesList = useMemo(() => {
     return courses.filter((c) => registeredCourseIds.includes(c.id));
   }, [courses, registeredCourseIds]);
@@ -100,7 +99,6 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
     return slots;
   }, [registeredCoursesList]);
 
-  // Check if a course conflicts in schedule
   const checkHasScheduleConflict = (course: Course): boolean => {
     if (registeredCourseIds.includes(course.id)) return false;
 
@@ -115,17 +113,14 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
     return false;
   };
 
-  // Filtered course list
   const filteredCourses = useMemo(() => {
     return courses.filter((course) => {
-      // Day filter
       if (filters.dayOfWeek !== 'Tất cả các ngày') {
         const dayNum = parseInt(filters.dayOfWeek.replace('Thứ ', ''));
         const matchesDay = course.schedules.some((s) => s.dayOfWeek === dayNum);
         if (!matchesDay) return false;
       }
 
-      // Status filter
       const isRegistered = registeredCourseIds.includes(course.id);
       const isFull = course.enrolled >= course.capacity;
       const isConflict = checkHasScheduleConflict(course);
@@ -135,7 +130,6 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
       if (filters.status === 'Đã đăng ký' && !isRegistered) return false;
       if (filters.status === 'Trùng lịch' && !isConflict) return false;
 
-      // Min credits filter
       if (filters.minCredits !== 'Tất cả tín chỉ') {
         const creds = parseInt(filters.minCredits.replace(' TC', ''));
         if (course.credits !== creds) return false;
@@ -157,7 +151,6 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
-      {/* Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs">
         <div>
           <div className="flex items-center gap-2">
@@ -176,7 +169,6 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
         </div>
       </div>
 
-      {/* Advanced Search & Multi-field Filter Panel */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2 text-xs font-bold text-slate-800 uppercase tracking-wider">
@@ -268,7 +260,6 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
         </div>
       </div>
 
-      {/* Enterprise Data Table */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[900px]">
@@ -289,20 +280,20 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
               {isLoading ? (
                 <tr>
                   <td colSpan={9} className="py-12 text-center text-slate-500">
-                    <div className="font-bold text-slate-700 text-sm">Dang tai danh sach mon hoc...</div>
+                    <div className="font-bold text-slate-700 text-sm">Đang tải danh sách môn học...</div>
                   </td>
                 </tr>
               ) : errorMessage ? (
                 <tr>
                   <td colSpan={9} className="py-12 text-center text-slate-500">
                     <div className="max-w-sm mx-auto space-y-3">
-                      <p className="font-bold text-red-700 text-sm">Khong the tai danh sach mon hoc.</p>
+                      <p className="font-bold text-red-700 text-sm">Không thể tải danh sách môn học.</p>
                       <p className="text-xs text-slate-500">{errorMessage}</p>
                       <button
                         onClick={() => void loadCourses(filters.searchQuery)}
                         className="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors cursor-pointer"
                       >
-                        Thu lai
+                        Thử lại
                       </button>
                     </div>
                   </td>
@@ -318,7 +309,7 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
                         className="w-36 h-auto mx-auto"
                       />
                       <p className="font-bold text-slate-700 text-sm">
-                        {filters.searchQuery.trim() ? 'Khong tim thay mon hoc phu hop' : 'Chua co mon hoc mo'}
+                        {filters.searchQuery.trim() ? 'Không tìm thấy môn học phù hợp' : 'Chưa có môn học mở'}
                       </p>
                       <p className="text-xs text-slate-500">
                         Vui lòng kiểm tra lại từ khóa hoặc thử lại với bộ lọc khác.
@@ -360,7 +351,7 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
                           {course.name}
                         </button>
                         <span className="text-[10px] text-slate-500 block mt-0.5">
-                          Ma giang vien: {course.lecturerId ?? 'Chua dong bo'}
+                          Mã giảng viên: {course.lecturerId ?? 'Chưa đồng bộ'}
                         </span>
                       </td>
 

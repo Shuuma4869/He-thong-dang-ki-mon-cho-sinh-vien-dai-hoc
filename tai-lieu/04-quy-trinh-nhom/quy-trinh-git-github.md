@@ -5,14 +5,15 @@ Không code trực tiếp trên `main`.
 ## Clone repository
 
 ```powershell
-cd D:\Projects
+mkdir projects
+cd projects
 git clone https://github.com/Shuuma4869/He-thong-dang-ki-mon-cho-sinh-vien-dai-hoc.git he-thong-dang-ky-mon-hoc
 cd he-thong-dang-ky-mon-hoc
 git switch develop
 git pull origin develop
 ```
 
-Nên clone vào đường dẫn không dấu tiếng Việt, ví dụ `D:\Projects\he-thong-dang-ky-mon-hoc`, để tránh lỗi classpath Maven/Spring Boot trên Windows.
+Nên clone vào thư mục không dấu tiếng Việt, ví dụ `<thu-muc-lam-viec>\he-thong-dang-ky-mon-hoc`, để tránh lỗi classpath Maven/Spring Boot trên Windows.
 
 Luồng đề xuất:
 
@@ -33,4 +34,4 @@ git push -u origin feature/<ten-module>
 
 Tạo Pull Request về `main` và chờ review.
 
-Không push `reference/full-solution` vì đây là branch tham chiếu local của trưởng nhóm.
+Branch tham chiếu hoàn chỉnh của trưởng nhóm chỉ dùng local, không push lên GitHub.

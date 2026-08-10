@@ -42,9 +42,9 @@ Thứ tự là contract bắt buộc:
 
 Không dựa vào tên class, thứ tự file, reflection order hoặc thứ tự component scan ngầm định.
 
-## Vì sao deterministic ordering quan trọng
+## Vì sao thứ tự validator quan trọng
 
-Bug F15C: khi một request vừa duplicate vừa làm vượt số tín chỉ, hệ thống từng trả `CREDIT_LIMIT_EXCEEDED` thay vì `DUPLICATE_REGISTRATION`.
+Trong quá trình kiểm thử, nhóm từng gặp trường hợp một request vừa duplicate vừa làm vượt số tín chỉ. Nếu thứ tự validator không ổn định, hệ thống có thể trả `CREDIT_LIMIT_EXCEEDED` thay vì `DUPLICATE_REGISTRATION`.
 
 Expected contract hiện tại:
 

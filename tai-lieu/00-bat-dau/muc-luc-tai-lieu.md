@@ -29,7 +29,7 @@
 ## Kiểm thử
 
 - `../06-kiem-thu/bao-cao-kiem-thu.md`
-- `../06-kiem-thu/bao-cao-kiem-thu-e2e-f17.md`
+- `../06-kiem-thu/bao-cao-kiem-thu-tich-hop.md`
 
 ## Vận hành
 

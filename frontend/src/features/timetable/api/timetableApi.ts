@@ -32,7 +32,7 @@ function mapTimetableEntriesToCourses(entries: TimetableEntryResponse[]): Course
       schedules: [schedule],
       enrolled: 0,
       capacity: 0,
-      status: 'Da dang ky',
+      status: 'Đã đăng ký',
     });
   }
 

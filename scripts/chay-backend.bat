@@ -4,7 +4,8 @@ set "PROJECT_ROOT=%~dp0.."
 set "RUN_DRIVE="
 
 for %%D in (Z Y X W V U T S R Q P O N M L K J I H G F E) do (
-  if not exist %%D:\nul (
+  call :drive_available %%D
+  if errorlevel 1 (
     set "RUN_DRIVE=%%D:"
     goto :drive_found
   )
@@ -24,3 +25,7 @@ set "EXIT_CODE=%ERRORLEVEL%"
 cd /d "%PROJECT_ROOT%"
 subst %RUN_DRIVE% /D
 exit /b %EXIT_CODE%
+
+:drive_available
+if exist "%~1:\nul" exit /b 0
+exit /b 1

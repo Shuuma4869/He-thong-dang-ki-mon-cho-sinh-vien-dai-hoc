@@ -155,10 +155,10 @@ export const TimetableWeeklyPage: React.FC<TimetableWeeklyPageProps> = ({
         <div>
           <div className="flex items-center gap-2">
             <CalendarDays className="w-5 h-5 text-blue-600" />
-            <h1 className="text-xl font-bold text-slate-900">Thoi khoa bieu sinh vien</h1>
+            <h1 className="text-xl font-bold text-slate-900">Thời khóa biểu sinh viên</h1>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            {currentSemester} - lich hoc theo tuan, lay tu cac mon da dang ky tren backend.
+            {currentSemester} - lịch học theo tuần, lấy từ các môn đã đăng ký.
           </p>
         </div>
 
@@ -168,7 +168,7 @@ export const TimetableWeeklyPage: React.FC<TimetableWeeklyPageProps> = ({
               onClick={() => setCurrentWeek(Math.max(weeks[0], currentWeek - 1))}
               disabled={currentWeek === weeks[0]}
               className="p-1 text-slate-600 hover:text-slate-900 disabled:opacity-30 cursor-pointer"
-              aria-label="Tuan truoc"
+              aria-label="Tuần trước"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -207,7 +207,7 @@ export const TimetableWeeklyPage: React.FC<TimetableWeeklyPageProps> = ({
       {isLoading && (
         <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs p-8 flex items-center justify-center gap-3 text-sm font-semibold text-slate-600">
           <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
-          Dang tai thoi khoa bieu...
+          Đang tải thời khóa biểu...
         </div>
       )}
 
@@ -216,7 +216,7 @@ export const TimetableWeeklyPage: React.FC<TimetableWeeklyPageProps> = ({
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
             <div>
-              <h2 className="text-sm font-bold text-red-700">Khong tai duoc thoi khoa bieu</h2>
+              <h2 className="text-sm font-bold text-red-700">Không tải được thời khóa biểu</h2>
               <p className="text-xs text-slate-600 mt-1">{errorMessage}</p>
             </div>
           </div>
@@ -225,16 +225,16 @@ export const TimetableWeeklyPage: React.FC<TimetableWeeklyPageProps> = ({
             className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-700 font-semibold text-xs rounded-xl border border-red-200 transition-colors flex items-center justify-center gap-1.5 cursor-pointer no-print"
           >
             <RefreshCw className="w-4 h-4" />
-            Thu lai
+            Thử lại
           </button>
         </div>
       )}
 
       {!isLoading && !errorMessage && timetableCourses.length === 0 && (
         <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs p-6">
-          <h2 className="text-sm font-bold text-slate-800">Chua co lich hoc</h2>
+          <h2 className="text-sm font-bold text-slate-800">Chưa có lịch học</h2>
           <p className="text-xs text-slate-500 mt-1">
-            Backend tra ve danh sach rong. Sinh vien nay chua co mon dang ky active trong hoc ky hien tai.
+            Sinh viên này chưa có môn đăng ký đang hiệu lực trong học kỳ hiện tại.
           </p>
         </div>
       )}

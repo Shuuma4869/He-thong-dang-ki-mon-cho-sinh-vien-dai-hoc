@@ -5,7 +5,6 @@ import {
   ChevronDown,
   User,
   LogOut,
-  Palette,
   CheckCircle2,
   Calendar,
   BookOpen,
@@ -30,7 +29,6 @@ interface HeaderProps {
   onMarkNotificationRead: (id: string) => void;
   onNavigate: (tab: NavigationTab) => void;
   onLogout: () => void;
-  onOpenDesignSystem: () => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
   courses?: Course[];
@@ -46,7 +44,6 @@ export const Header: React.FC<HeaderProps> = ({
   onMarkNotificationRead,
   onNavigate,
   onLogout,
-  onOpenDesignSystem,
   searchQuery,
   onSearchChange,
   courses = [],
@@ -62,7 +59,6 @@ export const Header: React.FC<HeaderProps> = ({
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
-  // Filter matching course suggestions dynamically
   const matchingCourses = React.useMemo(() => {
     if (!searchQuery.trim() || !courses.length) return [];
     const q = searchQuery.toLowerCase().trim();
@@ -71,10 +67,9 @@ export const Header: React.FC<HeaderProps> = ({
         c.code.toLowerCase().includes(q) ||
         c.name.toLowerCase().includes(q) ||
         c.lecturer.toLowerCase().includes(q)
-    ).slice(0, 6); // Top 6 matching items for smooth dropdown
+    ).slice(0, 6);
   }, [searchQuery, courses]);
 
-  // Click outside listener to close search dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
@@ -94,12 +89,11 @@ export const Header: React.FC<HeaderProps> = ({
     }
   };
 
-  const studentEmail = student.email ?? 'Chua dong bo email';
-  const studentFaculty = student.faculty ?? 'Chua dong bo khoa';
+  const studentEmail = student.email ?? 'Chưa đồng bộ email';
+  const studentFaculty = student.faculty ?? 'Chưa đồng bộ khoa';
 
   return (
     <header className="sticky top-0 z-30 h-16 bg-white border-b border-slate-200 px-4 lg:px-8 flex items-center justify-between shadow-2xs">
-      {/* Left Area: Global Search with Live Autocomplete Suggestions */}
       <div className="flex items-center gap-4 flex-1 max-w-lg relative" ref={searchRef}>
         <div className="relative w-full">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
@@ -128,7 +122,6 @@ export const Header: React.FC<HeaderProps> = ({
           )}
         </div>
 
-        {/* Live Search Autocomplete Dropdown List */}
         {isSearchFocused && searchQuery.trim().length > 0 && (
           <div className="absolute left-0 right-0 top-12 bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150">
             <div className="px-4 py-2.5 bg-slate-50 border-b border-slate-100 flex items-center justify-between text-xs font-bold text-slate-500 uppercase tracking-wider">
@@ -164,7 +157,7 @@ export const Header: React.FC<HeaderProps> = ({
                         <p className="text-[11px] text-slate-500 truncate flex items-center gap-2">
                           <span>{course.lecturer}</span>
                           <span>•</span>
-                          <span>{course.lecturerId ?? 'Chua dong bo'}</span>
+                          <span>{course.lecturerId ?? 'Chưa đồng bộ'}</span>
                         </p>
                       </div>
 
@@ -206,19 +199,7 @@ export const Header: React.FC<HeaderProps> = ({
         )}
       </div>
 
-      {/* Right Area: Controls & Profile */}
       <div className="flex items-center gap-3">
-        {/* Figma Design System Inspector Toggle */}
-        <button
-          onClick={onOpenDesignSystem}
-          className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer"
-          title="Xem Hệ thống Thiết kế Figma (Design System Tokens & Components)"
-        >
-          <Palette className="w-3.5 h-3.5 text-blue-600" />
-          <span>Figma System</span>
-        </button>
-
-        {/* Semester Selector Dropdown */}
         <div className="relative">
           <button
             onClick={() => setShowSemesterMenu(!showSemesterMenu)}
@@ -256,7 +237,6 @@ export const Header: React.FC<HeaderProps> = ({
           )}
         </div>
 
-        {/* Notification Bell */}
         <div className="relative">
           <button
             onClick={() => setShowNotifications(!showNotifications)}
@@ -332,7 +312,6 @@ export const Header: React.FC<HeaderProps> = ({
 
         <div className="h-6 w-px bg-slate-200 mx-1" />
 
-        {/* Student Profile Dropdown */}
         <div className="relative">
           <button
             onClick={() => setShowProfileMenu(!showProfileMenu)}

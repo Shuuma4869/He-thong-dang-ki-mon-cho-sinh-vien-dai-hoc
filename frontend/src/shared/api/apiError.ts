@@ -12,16 +12,16 @@ export class ApiError extends Error {
 
 export function getApiErrorMessage(error: unknown): string {
   if (error instanceof ApiError) {
-    return error.message || 'Yeu cau API that bai.';
+    return error.message || 'Yêu cầu API thất bại.';
   }
 
   if (error instanceof TypeError) {
-    return 'Khong the ket noi den may chu backend. Vui long kiem tra backend dang chay.';
+    return 'Không thể kết nối đến máy chủ backend. Vui lòng kiểm tra backend đang chạy.';
   }
 
   if (error instanceof Error) {
-    return error.message || 'Da co loi xay ra.';
+    return error.message || 'Đã có lỗi xảy ra.';
   }
 
-  return 'Da co loi xay ra.';
+  return 'Đã có lỗi xảy ra.';
 }

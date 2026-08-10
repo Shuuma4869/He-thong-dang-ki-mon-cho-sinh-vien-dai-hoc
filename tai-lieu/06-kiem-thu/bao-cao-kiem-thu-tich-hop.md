@@ -1,12 +1,8 @@
-# Báo cáo kiểm thử E2E F17
+# Báo cáo kiểm thử tích hợp
 
 ## Phạm vi
 
-Kiểm thử end-to-end trên trình duyệt thật cho Full Solution local của “Hệ thống đăng ký môn học”.
-
-Branch kiểm thử: `reference/full-solution`.
-
-Branch reference là local only trong phase này, không push.
+Kiểm thử tích hợp trên trình duyệt thật cho “Hệ thống đăng ký môn học”, gồm frontend React, backend Spring Boot và dữ liệu JSON local.
 
 ## Môi trường
 
@@ -39,7 +35,7 @@ Sau kiểm thử, restore baseline:
 - SV003: MATH110.
 - DBS202: `currentCapacity = 28`.
 
-## Browser flow PASS
+## Luồng trình duyệt
 
 | Nhóm | Scenario | Kết quả |
 |---|---|---|
@@ -75,21 +71,9 @@ Sau kiểm thử, restore baseline:
 
 Các negative case không mutate `courses.json` hoặc `registrations.json`.
 
-## Screenshot inventory
+## Ảnh minh chứng
 
-Ảnh hiện có trong `ho-so-nop-bai/anh-demo/`:
-
-- `ho-so-nop-bai/anh-demo/f17-login-page.png`
-- `ho-so-nop-bai/anh-demo/f17-desktop-sv002-registered-empty.png`
-- `ho-so-nop-bai/anh-demo/f17-mobile-course-list.png`
-- `ho-so-nop-bai/anh-demo/login-redesign-desktop.png`
-- `ho-so-nop-bai/anh-demo/login-redesign-mobile.png`
-
-Trạng thái Git trên branch reference tại F18:
-
-- `f17-desktop-sv002-registered-empty.png` và `f17-mobile-course-list.png` đang thuộc lịch sử branch reference.
-- `f17-login-page.png`, `login-redesign-desktop.png`, `login-redesign-mobile.png` là evidence local/untracked.
-- F18 không tự stage hoặc commit ảnh nếu chưa có quyết định riêng.
+Ảnh minh chứng cho luồng đăng nhập, danh sách học phần và trạng thái đăng ký được lưu trong `ho-so-nop-bai/anh-demo/` khi nhóm cần chuẩn bị hồ sơ nộp bài. Các ảnh phát sinh khi kiểm thử giao diện được quản lý riêng, không tự đưa vào commit nếu chưa có quyết định của nhóm.
 
 ## Ghi chú kỹ thuật
 
@@ -100,4 +84,4 @@ Trạng thái Git trên branch reference tại F18:
 
 ## Kết luận
 
-F17 E2E PASS. Full Solution local chạy được frontend-backend thật với JSON File IO, registration mutation/persistence và các validator chính.
+Kiểm thử tích hợp PASS. Hệ thống chạy được frontend-backend thật với JSON File IO, registration mutation/persistence và các validator chính.

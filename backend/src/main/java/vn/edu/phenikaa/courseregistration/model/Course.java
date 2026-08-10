@@ -3,7 +3,7 @@ package vn.edu.phenikaa.courseregistration.model;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Model học phần; rule nghiệp vụ sẽ được bổ sung ở service/validator. */
+/** Model học phần; các kiểm tra nghiệp vụ nằm ở service/validator. */
 public class Course {
     private String courseId;
     private String courseName;

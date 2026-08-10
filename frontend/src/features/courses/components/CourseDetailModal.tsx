@@ -40,7 +40,7 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({
       const loadedCourse = await courseApi.getCourseById(courseId);
       setDetailCourse(loadedCourse);
     } catch (error) {
-      setDetailError(getApiErrorMessage(error) || 'Khong the tai chi tiet mon hoc.');
+      setDetailError(getApiErrorMessage(error) || 'Không thể tải chi tiết môn học.');
     } finally {
       setIsLoadingDetail(false);
     }
@@ -66,7 +66,6 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
       <div className="bg-white w-full max-w-2xl rounded-2xl border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-        {/* Header */}
         <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
           <div className="flex items-center gap-2.5">
             <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
@@ -88,28 +87,26 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({
           </button>
         </div>
 
-        {/* Content Body */}
         <div className="p-6 overflow-y-auto space-y-6 text-sm text-slate-700">
           {isLoadingDetail && (
             <div className="p-3.5 bg-blue-50 rounded-xl border border-blue-100 text-xs font-semibold text-blue-700">
-              Dang tai chi tiet mon hoc...
+              Đang tải chi tiết môn học...
             </div>
           )}
 
           {detailError && (
             <div className="p-3.5 bg-red-50 rounded-xl border border-red-100 text-xs text-red-700 space-y-2">
-              <p className="font-bold">Khong the tai chi tiet mon hoc.</p>
+              <p className="font-bold">Không thể tải chi tiết môn học.</p>
               <p>{detailError}</p>
               <button
                 onClick={() => void loadCourseDetail(course.id)}
                 className="px-3 py-1.5 bg-white border border-red-200 rounded-lg font-semibold text-red-700 hover:bg-red-100 transition-colors cursor-pointer"
               >
-                Thu lai
+                Thử lại
               </button>
             </div>
           )}
 
-          {/* Quick Metrics Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
               <span className="text-[11px] font-semibold text-slate-500 uppercase">Tín chỉ</span>
@@ -134,7 +131,6 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({
             </div>
           </div>
 
-          {/* Lecturer & Faculty Info */}
           <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 space-y-2">
             <div className="flex items-center gap-2 text-blue-900 font-bold">
               <User className="w-4 h-4 text-blue-600" />
@@ -143,11 +139,10 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({
             </div>
             <div className="flex items-center gap-2 text-xs text-slate-600">
               <Award className="w-4 h-4 text-slate-400" />
-              <span>Ma giang vien: <strong>{activeCourse.lecturerId ?? 'Chua dong bo'}</strong></span>
+              <span>Mã giảng viên: <strong>{activeCourse.lecturerId ?? 'Chưa đồng bộ'}</strong></span>
             </div>
           </div>
 
-          {/* Schedule Breakdown */}
           <div className="space-y-2">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
               <Clock className="w-4 h-4 text-blue-600" />
@@ -177,7 +172,6 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({
             </div>
           </div>
 
-          {/* Prerequisite Course */}
           {activeCourse.prerequisite && (
             <div className="p-3.5 bg-amber-50 rounded-xl border border-amber-200 flex items-start gap-2.5 text-xs text-amber-900">
               <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
@@ -190,7 +184,6 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({
             </div>
           )}
 
-          {/* Description */}
           {activeCourse.description && (
             <div className="space-y-1.5">
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
@@ -204,7 +197,6 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({
           )}
         </div>
 
-        {/* Modal Footer */}
         <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
           <button
             onClick={onClose}

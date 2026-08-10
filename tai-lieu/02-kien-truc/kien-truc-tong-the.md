@@ -2,7 +2,7 @@
 
 Dự án là monorepo gồm frontend React, backend Spring Boot, data JSON và tài liệu.
 
-## Trạng thái hiện tại sau F17
+## Trạng thái hiện tại
 
 - Frontend đã kết nối REST API thật cho auth demo, profile, courses, registration, timetable và dashboard composition.
 - Backend đã có controller, service, validator, repository JSON File IO, DTO, mapper và exception handler cho các flow core.

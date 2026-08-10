@@ -22,7 +22,6 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
 
   const [imgError, setImgError] = useState(false);
 
-  // If a valid src is provided (not an SVG data URI or empty) and hasn't errored
   if (src && !imgError && !src.startsWith('data:image/svg+xml')) {
     return (
       <img

@@ -14,7 +14,6 @@ import { ProfilePage } from '@/features/profile/pages/ProfilePage';
 import { profileApi } from '@/features/profile/api/profileApi';
 import { courseApi } from '@/features/courses/api/courseApi';
 import { registrationApi } from '@/features/registration/api/registrationApi';
-import { DesignSystemModal } from '@/dev/DesignSystemModal';
 
 import { Course } from '@/features/courses/types/course.types';
 import { RegistrationSummary } from '@/features/registration/types/registration.types';
@@ -48,43 +47,31 @@ function storeStudentId(studentId: string, rememberMe: boolean) {
 }
 
 export default function App() {
-  // Authentication State
   const [isInitializing, setIsInitializing] = useState(true);
   const [student, setStudent] = useState<Student | null>(null);
   const isAuthenticated = student !== null;
 
-  // Active Navigation Tab
   const [activeTab, setActiveTab] = useState<NavigationTab>('dashboard');
-
-  // Semester State
   const [currentSemester, setCurrentSemester] = useState<string>(SEMESTERS[0]);
 
-  // Data State
   const [courses, setCourses] = useState<Course[]>([]);
   const [registrationSummary, setRegistrationSummary] = useState<RegistrationSummary | null>(null);
   const [isRegistrationLoading, setIsRegistrationLoading] = useState(false);
   const [registrationErrorMessage, setRegistrationErrorMessage] = useState('');
   const [notifications, setNotifications] = useState<UniversityNotification[]>(NOTIFICATIONS_MOCK);
 
-  // Global Search State
   const [searchQuery, setSearchQuery] = useState('');
-
-  // Sidebar Collapse State
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  // Modal States
   const [selectedCourseForDetail, setSelectedCourseForDetail] = useState<Course | null>(null);
   const [selectedCourseForRegister, setSelectedCourseForRegister] = useState<Course | null>(null);
-  const [isDesignSystemOpen, setIsDesignSystemOpen] = useState(false);
 
-  // Toast System
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   const addToast = (type: 'success' | 'error' | 'warning' | 'info', title: string, message: string) => {
     const id = Date.now().toString();
     setToasts((prev) => [...prev, { id, type, title, message }]);
 
-    // Auto dismiss toast after 4 seconds
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
     }, 4000);
@@ -124,8 +111,8 @@ export default function App() {
     } catch {
       addToast(
         'warning',
-        'Chua dong bo si so',
-        'Thao tac dang ky da thanh cong, nhung danh sach mon hoc can duoc tai lai sau.'
+        'Chưa đồng bộ sĩ số',
+        'Thao tác đăng ký đã thành công, nhưng danh sách môn học cần được tải lại sau.'
       );
     }
   };
@@ -173,7 +160,6 @@ export default function App() {
     void loadRegistrations().catch(() => undefined);
   }, [student?.id, loadRegistrations]);
 
-  // Login handler
   const handleLoginSuccess = (loggedInStudent: Student, rememberMe: boolean) => {
     setStudent(loggedInStudent);
     storeStudentId(loggedInStudent.id, rememberMe);
@@ -181,7 +167,6 @@ export default function App() {
     addToast('success', 'Đăng nhập thành công', `Chào mừng ${loggedInStudent.name} quay trở lại Phenikaa Portal!`);
   };
 
-  // Logout handler
   const handleLogout = () => {
     clearStoredStudentId();
     setStudent(null);
@@ -192,7 +177,6 @@ export default function App() {
     addToast('info', 'Đã đăng xuất', 'Bạn đã đăng xuất khỏi hệ thống an toàn.');
   };
 
-  // Registered courses objects list
   const registeredCoursesList = useMemo(() => {
     return registrationSummary?.courses ?? [];
   }, [registrationSummary]);
@@ -205,11 +189,10 @@ export default function App() {
     return registrationSummary?.totalCredits ?? 0;
   }, [registrationSummary]);
 
-  // Course Registration Handler
   const handleConfirmRegisterSuccess = async (registeredCourse: Course) => {
     if (!student) {
-      const message = 'Can dang nhap truoc khi dang ky hoc phan.';
-      addToast('error', 'Dang ky that bai', message);
+      const message = 'Cần đăng nhập trước khi đăng ký học phần.';
+      addToast('error', 'Đăng ký thất bại', message);
       throw new Error(message);
     }
 
@@ -225,16 +208,15 @@ export default function App() {
       );
     } catch (error) {
       const message = getApiErrorMessage(error);
-      addToast('error', 'Dang ky that bai', message);
+      addToast('error', 'Đăng ký thất bại', message);
       throw error;
     }
   };
 
-  // Course Cancel Handler
   const handleCancelRegistration = async (courseId: string) => {
     if (!student) {
-      const message = 'Can dang nhap truoc khi huy dang ky hoc phan.';
-      addToast('error', 'Huy dang ky that bai', message);
+      const message = 'Cần đăng nhập trước khi hủy đăng ký học phần.';
+      addToast('error', 'Hủy đăng ký thất bại', message);
       throw new Error(message);
     }
 
@@ -254,12 +236,11 @@ export default function App() {
       );
     } catch (error) {
       const message = getApiErrorMessage(error);
-      addToast('error', 'Huy dang ky that bai', message);
+      addToast('error', 'Hủy đăng ký thất bại', message);
       throw error;
     }
   };
 
-  // Mark notification read
   const handleMarkNotificationRead = (id: string) => {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
@@ -285,7 +266,6 @@ export default function App() {
     );
   }
 
-  // If not authenticated, render Login Page
   if (!isAuthenticated) {
     return (
       <main>
@@ -299,10 +279,8 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] flex flex-col font-sans selection:bg-blue-100 selection:text-blue-800">
-      {/* Toast Alert System */}
       <ToastContainer toasts={toasts} onDismiss={handleDismissToast} />
 
-      {/* Left Sidebar Navigation */}
       <Sidebar
         activeTab={activeTab}
         onNavigate={(tab) => {
@@ -316,13 +294,11 @@ export default function App() {
         onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
       />
 
-      {/* Main App Container */}
       <div
         className={`flex-1 flex flex-col transition-all duration-300 ${
           sidebarCollapsed ? 'lg:pl-20' : 'lg:pl-64'
         }`}
       >
-        {/* Top Header Navbar */}
         <Header
           student={student}
           currentSemester={currentSemester}
@@ -334,7 +310,6 @@ export default function App() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           onLogout={handleLogout}
-          onOpenDesignSystem={() => setIsDesignSystemOpen(true)}
           searchQuery={searchQuery}
           onSearchChange={(q) => {
             setSearchQuery(q);
@@ -347,7 +322,6 @@ export default function App() {
           onOpenCourseDetail={setSelectedCourseForDetail}
         />
 
-        {/* View Router Workspace */}
         <main className="flex-1 p-4 lg:p-8 max-w-7xl w-full mx-auto space-y-6">
           {activeTab === 'dashboard' && (
             <DashboardPage
@@ -406,7 +380,6 @@ export default function App() {
         </main>
       </div>
 
-      {/* Course Detail Modal */}
       <CourseDetailModal
         course={selectedCourseForDetail}
         onClose={() => setSelectedCourseForDetail(null)}
@@ -418,19 +391,12 @@ export default function App() {
         onRequestRegister={(course) => setSelectedCourseForRegister(course)}
       />
 
-      {/* Register Confirmation Modal */}
       <RegisterConfirmModal
         course={selectedCourseForRegister}
         currentTotalCredits={currentTotalCredits}
         registeredCourses={registeredCoursesList}
         onClose={() => setSelectedCourseForRegister(null)}
         onConfirmSuccess={handleConfirmRegisterSuccess}
-      />
-
-      {/* Figma Design System Tokens Inspector Modal */}
-      <DesignSystemModal
-        isOpen={isDesignSystemOpen}
-        onClose={() => setIsDesignSystemOpen(false)}
       />
     </div>
   );

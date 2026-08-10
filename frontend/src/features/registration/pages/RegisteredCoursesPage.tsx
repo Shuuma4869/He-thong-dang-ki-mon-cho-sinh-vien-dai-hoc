@@ -38,7 +38,6 @@ export const RegisteredCoursesPage: React.FC<RegisteredCoursesPageProps> = ({
   const [isCancelling, setIsCancelling] = useState(false);
   const [cancelErrorMessage, setCancelErrorMessage] = useState('');
 
-  // Estimated tuition rate: ~520,000 VND / credit for Phenikaa University IT majors
   const estimatedTuition = totalCredits * 520000;
 
   useEffect(() => {
@@ -55,7 +54,7 @@ export const RegisteredCoursesPage: React.FC<RegisteredCoursesPageProps> = ({
       await onCancelRegistration(selectedCourseToCancel.id);
       setSelectedCourseToCancel(null);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Khong the huy dang ky hoc phan.';
+      const message = error instanceof Error ? error.message : 'Không thể hủy đăng ký học phần.';
       setCancelErrorMessage(message);
     } finally {
       setIsCancelling(false);
@@ -64,7 +63,6 @@ export const RegisteredCoursesPage: React.FC<RegisteredCoursesPageProps> = ({
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
-      {/* Header Summary */}
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
@@ -115,20 +113,20 @@ export const RegisteredCoursesPage: React.FC<RegisteredCoursesPageProps> = ({
               {isLoading ? (
                 <tr>
                   <td colSpan={9} className="py-12 text-center text-slate-500">
-                    <div className="font-bold text-slate-700 text-sm">Dang tai danh sach da dang ky...</div>
+                    <div className="font-bold text-slate-700 text-sm">Đang tải danh sách đã đăng ký...</div>
                   </td>
                 </tr>
               ) : errorMessage ? (
                 <tr>
                   <td colSpan={9} className="py-12 text-center text-slate-500">
                     <div className="max-w-sm mx-auto space-y-3">
-                      <p className="font-bold text-red-700 text-sm">Khong the tai danh sach da dang ky.</p>
+                      <p className="font-bold text-red-700 text-sm">Không thể tải danh sách đã đăng ký.</p>
                       <p className="text-xs text-slate-500">{errorMessage}</p>
                       <button
                         onClick={() => void Promise.resolve(onRefresh()).catch(() => undefined)}
                         className="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors cursor-pointer"
                       >
-                        Thu lai
+                        Thử lại
                       </button>
                     </div>
                   </td>
@@ -300,7 +298,7 @@ export const RegisteredCoursesPage: React.FC<RegisteredCoursesPageProps> = ({
                 disabled={isCancelling}
                 className="px-4 py-2 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl shadow-xs transition-colors cursor-pointer"
               >
-                {isCancelling ? 'Dang huy...' : 'Xác nhận hủy'}
+                {isCancelling ? 'Đang hủy...' : 'Xác nhận hủy'}
               </button>
             </div>
           </div>

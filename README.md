@@ -82,10 +82,10 @@ Frontend không đọc trực tiếp `data/*.json`. Controller, service và mode
 +-- backend/           # Spring Boot backend
 +-- data/              # students, lecturers, courses, registrations
 +-- tai-lieu/          # Tài liệu phân tích, kiến trúc, thiết kế, vận hành, kiểm thử
-+-- thiet-ke/          # Tài nguyên thiết kế, UML chuẩn bị cho phase sau
++-- thiet-ke/          # Tài nguyên thiết kế và thư mục UML
 +-- ho-so-nop-bai/     # Hồ sơ nộp bài và ảnh demo đã chọn
 +-- scripts/           # Script chạy backend/frontend/kiểm tra
-+-- .github/           # Template GitHub
++-- .github/           # Mẫu GitHub
 +-- .env.example       # Ghi chú cấu hình môi trường cấp root
 +-- frontend/.env.example
 +-- README.md
@@ -115,12 +115,13 @@ npm -v
 Clone repository:
 
 ```powershell
-cd D:\Projects
+mkdir projects
+cd projects
 git clone https://github.com/Shuuma4869/He-thong-dang-ki-mon-cho-sinh-vien-dai-hoc.git he-thong-dang-ky-mon-hoc
 cd he-thong-dang-ky-mon-hoc
 ```
 
-Nên clone vào đường dẫn không dấu tiếng Việt để giảm rủi ro lỗi classpath trên Windows.
+Nên clone vào thư mục không dấu tiếng Việt để giảm rủi ro lỗi classpath trên Windows.
 
 Chạy backend:
 
@@ -185,13 +186,13 @@ Chạy toàn bộ:
 scripts\kiem-tra-du-an.bat
 ```
 
-Kết quả regression gần nhất của Full Solution local:
+Kết quả kiểm thử gần nhất của bản tham chiếu local:
 
 - Backend: 98 tests pass, 0 failures, 0 errors, 0 skipped.
 - Backend package: pass.
 - Frontend typecheck: pass.
 - Frontend build: pass khi chạy ngoài sandbox nếu môi trường chặn Vite/esbuild bằng `spawn EPERM`.
-- Browser E2E F17: pass.
+- Kiểm thử tích hợp trình duyệt: pass.
 
 ## Phân công tổng quan
 
@@ -217,7 +218,7 @@ Chi tiết xem `tai-lieu/04-quy-trinh-nhom/phan-cong-thanh-vien.md`.
 - `tai-lieu/03-thiet-ke/thiet-ke-api-rest.md`
 - `tai-lieu/03-thiet-ke/thiet-ke-validator.md`
 - `tai-lieu/06-kiem-thu/bao-cao-kiem-thu.md`
-- `tai-lieu/06-kiem-thu/bao-cao-kiem-thu-e2e-f17.md`
+- `tai-lieu/06-kiem-thu/bao-cao-kiem-thu-tich-hop.md`
 - `tai-lieu/07-van-hanh/huong-dan-chay-backend.md`
 - `tai-lieu/07-van-hanh/huong-dan-chay-frontend.md`
 - `tai-lieu/08-bao-cao-va-demo/kich-ban-du-lieu-demo.md`

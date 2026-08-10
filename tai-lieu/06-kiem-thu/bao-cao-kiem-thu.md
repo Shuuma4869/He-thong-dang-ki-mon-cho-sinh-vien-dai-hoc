@@ -1,6 +1,6 @@
 # Báo cáo kiểm thử
 
-Tài liệu này ghi nhận trạng thái kiểm thử của Full Solution local sau F17.
+Tài liệu này ghi nhận trạng thái kiểm thử của bản tham chiếu local.
 
 Không công bố coverage phần trăm vì dự án chưa cấu hình công cụ đo coverage.
 
@@ -9,7 +9,7 @@ Không công bố coverage phần trăm vì dự án chưa cấu hình công c�
 - Backend: JUnit 5, AssertJ, Mockito, Spring Boot Test, MockMvc.
 - Repository/File IO: `@TempDir`, không mutate root `data/*.json`.
 - Frontend: TypeScript typecheck và Vite production build.
-- Browser E2E: kiểm tra luồng người dùng thật trên frontend + backend local.
+- Kiểm thử tích hợp trình duyệt: kiểm tra luồng người dùng thật trên frontend + backend local.
 
 ## Kết quả regression
 
@@ -91,7 +91,7 @@ Request courseId validation:
 
 ## Test isolation
 
-- Unit/repository tests không phụ thuộc đường dẫn `D:\OOP\...`.
+- Unit/repository tests không phụ thuộc đường dẫn máy cá nhân.
 - Repository tests dùng thư mục tạm.
 - Runtime verification có backup/restore baseline data.
 - Sau kiểm thử, `git diff -- data/` phải rỗng.
