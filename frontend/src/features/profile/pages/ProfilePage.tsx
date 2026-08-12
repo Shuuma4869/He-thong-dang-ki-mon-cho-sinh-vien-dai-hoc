@@ -26,19 +26,6 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ student }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState(false);
   const [passwordError, setPasswordError] = useState('');
-  const missingText = 'Chưa đồng bộ';
-  const displayText = (value?: string) => (value?.trim() ? value : missingText);
-  const cpaText = typeof student.cpa === 'number' ? student.cpa.toFixed(2) : missingText;
-  const creditsProgressText =
-    typeof student.creditsPassed === 'number' && typeof student.totalCreditsRequired === 'number'
-      ? `${student.creditsPassed} / ${student.totalCreditsRequired}`
-      : missingText;
-  const creditsPercentText =
-    typeof student.creditsPassed === 'number'
-    && typeof student.totalCreditsRequired === 'number'
-    && student.totalCreditsRequired > 0
-      ? `Dat ${Math.round((student.creditsPassed / student.totalCreditsRequired) * 100)}% chuong trinh`
-      : 'Chưa có dữ liệu tiến độ học tập';
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,7 +62,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ student }) => {
 
         <button
           onClick={() => setShowPasswordModal(true)}
-className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
         >
           <Lock className="w-4 h-4" />
           <span>Đổi mật khẩu</span>
@@ -112,7 +99,7 @@ className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs 
 
             <div className="flex items-center justify-between py-1 border-b border-slate-50">
               <span className="text-slate-400">Niên khóa:</span>
-              <strong className="text-slate-800">{displayText(student.cohort)}</strong>
+              <strong className="text-slate-800">{student.cohort}</strong>
             </div>
 
             <div className="flex items-center justify-between py-1 border-b border-slate-50">
@@ -133,7 +120,7 @@ className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs 
         <div className="lg:col-span-2 space-y-6">
           {/* Personal & Academic Specs Card */}
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-<h2 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+            <h2 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
               <Building2 className="w-4 h-4 text-blue-600" />
               <span>Thông Tin Chi Tiết Học Tập</span>
             </h2>
@@ -141,7 +128,7 @@ className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
                 <span className="text-slate-400 font-medium">Khoa phụ trách</span>
-                <p className="font-bold text-slate-900">{displayText(student.faculty)}</p>
+                <p className="font-bold text-slate-900">{student.faculty}</p>
               </div>
 
               <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
@@ -153,7 +140,7 @@ className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs 
                 <span className="text-slate-400 font-medium">Email sinh viên</span>
                 <p className="font-bold text-blue-700 flex items-center gap-1">
                   <Mail className="w-3.5 h-3.5" />
-                  {displayText(student.email)}
+                  {student.email}
                 </p>
               </div>
 
@@ -161,7 +148,7 @@ className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs 
                 <span className="text-slate-400 font-medium">Số điện thoại</span>
                 <p className="font-bold text-slate-900 flex items-center gap-1">
                   <Phone className="w-3.5 h-3.5" />
-                  {displayText(student.phone)}
+                  {student.phone}
                 </p>
               </div>
 
@@ -169,13 +156,13 @@ className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs 
                 <span className="text-slate-400 font-medium">Ngày sinh</span>
                 <p className="font-bold text-slate-900 flex items-center gap-1">
                   <Calendar className="w-3.5 h-3.5" />
-                  {displayText(student.dob)}
+                  {student.dob}
                 </p>
               </div>
 
               <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
                 <span className="text-slate-400 font-medium">Giới tính</span>
-                <p className="font-bold text-slate-900">{displayText(student.gender)}</p>
+                <p className="font-bold text-slate-900">{student.gender}</p>
               </div>
             </div>
           </div>
@@ -188,24 +175,24 @@ className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs 
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-<div className="p-4 rounded-xl bg-blue-50/80 border border-blue-200 space-y-1">
-                <span className="text-[11px] font-bold uppercase text-blue-700">Gioi Han Tin Chi</span>
-                <p className="text-2xl font-extrabold text-blue-900">{student.maxCredits}</p>
-                <span className="text-[10px] text-blue-600 font-semibold block">Tín chỉ tối đa mỗi học kỳ</span>
+              <div className="p-4 rounded-xl bg-blue-50/80 border border-blue-200 space-y-1">
+                <span className="text-[11px] font-bold uppercase text-blue-700">Điểm CPA Tích Lũy</span>
+                <p className="text-2xl font-extrabold text-blue-900">{student.cpa}</p>
+                <span className="text-[10px] text-blue-600 font-semibold block">Xếp loại: Giỏi</span>
               </div>
 
               <div className="p-4 rounded-xl bg-indigo-50/80 border border-indigo-200 space-y-1">
-                <span className="text-[11px] font-bold uppercase text-indigo-700">CPA Tich Luy</span>
-                <p className="text-2xl font-extrabold text-indigo-900">{cpaText}</p>
-                <span className="text-[10px] text-indigo-600 font-semibold block">Chưa có dữ liệu điểm tích lũy</span>
+                <span className="text-[11px] font-bold uppercase text-indigo-700">GPA Học Kỳ Gần Nhất</span>
+                <p className="text-2xl font-extrabold text-indigo-900">{student.gpaPrevious}</p>
+                <span className="text-[10px] text-indigo-600 font-semibold block">Học kỳ 2 (2025-2026)</span>
               </div>
 
               <div className="p-4 rounded-xl bg-emerald-50/80 border border-emerald-200 space-y-1">
                 <span className="text-[11px] font-bold uppercase text-emerald-700">Tín Chỉ Đã Đạt</span>
                 <p className="text-2xl font-extrabold text-emerald-900">
-                  {creditsProgressText}
+                  {student.creditsPassed} / {student.totalCreditsRequired}
                 </p>
-                <span className="text-[10px] text-emerald-600 font-semibold block">{creditsPercentText}</span>
+                <span className="text-[10px] text-emerald-600 font-semibold block">Đạt 66.6% chương trình</span>
               </div>
             </div>
           </div>
@@ -239,7 +226,7 @@ className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs 
                   type="password"
                   value={oldPassword}
                   onChange={(e) => setOldPassword(e.target.value)}
-placeholder="••••••••"
+                  placeholder="••••••••"
                   required
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white"
                 />
