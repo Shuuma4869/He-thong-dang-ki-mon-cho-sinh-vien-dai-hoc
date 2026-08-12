@@ -1,19 +1,21 @@
-package vn.edu.phenikaa.courseregistration.model;
+package vn.edu.phenikaa.courseregistration.dto.response;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 
-/** Model lịch học của một lớp học phần. */
-public class Schedule {
+/**
+ * DTO trả lịch học.
+ */
+public class ScheduleResponse {
     private DayOfWeek dayOfWeek;
     private LocalTime startTime;
     private LocalTime endTime;
     private String room;
 
-    public Schedule() {
+    public ScheduleResponse() {
     }
 
-    public Schedule(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime, String room) {
+    public ScheduleResponse(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime, String room) {
         this.dayOfWeek = dayOfWeek;
         this.startTime = startTime;
         this.endTime = endTime;
