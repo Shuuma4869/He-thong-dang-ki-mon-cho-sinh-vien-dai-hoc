@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { LoginPage } from '@/features/auth/pages/LoginPage';
 import { Header } from '@/shared/components/layout/Header';
 import { Sidebar } from '@/shared/components/layout/Sidebar';
@@ -11,57 +11,67 @@ import { RegisteredCoursesPage } from '@/features/registration/pages/RegisteredC
 import { TimetableWeeklyPage } from '@/features/timetable/pages/TimetableWeeklyPage';
 import { NotificationsPage } from '@/features/notifications/pages/NotificationsPage';
 import { ProfilePage } from '@/features/profile/pages/ProfilePage';
-import { DesignSystemModal } from '@/dev/DesignSystemModal';
+import { profileApi } from '@/features/profile/api/profileApi';
+import { courseApi } from '@/features/courses/api/courseApi';
+import { registrationApi } from '@/features/registration/api/registrationApi';
 
 import { Course } from '@/features/courses/types/course.types';
+import { RegistrationSummary } from '@/features/registration/types/registration.types';
 import { UniversityNotification } from '@/features/notifications/types/notification.types';
 import { Student } from '@/features/profile/types/profile.types';
 import { NavigationTab } from '@/shared/types/navigation.types';
 import { ToastMessage } from '@/shared/types/ui.types';
 import { APP_TITLE } from '@/shared/constants/app';
+import { getApiErrorMessage } from '@/shared/api/apiError';
 import {
-  INITIAL_STUDENT,
   SEMESTERS,
-  COURSES_MOCK,
-  INITIAL_REGISTERED_IDS,
   NOTIFICATIONS_MOCK,
 } from '@/mocks/mockData';
 
+const AUTH_STUDENT_ID_STORAGE_KEY = 'courseRegistration.studentId';
+
+function getStoredStudentId(): string | null {
+  return localStorage.getItem(AUTH_STUDENT_ID_STORAGE_KEY)
+    ?? sessionStorage.getItem(AUTH_STUDENT_ID_STORAGE_KEY);
+}
+
+function clearStoredStudentId() {
+  localStorage.removeItem(AUTH_STUDENT_ID_STORAGE_KEY);
+  sessionStorage.removeItem(AUTH_STUDENT_ID_STORAGE_KEY);
+}
+
+function storeStudentId(studentId: string, rememberMe: boolean) {
+  clearStoredStudentId();
+  const storage = rememberMe ? localStorage : sessionStorage;
+  storage.setItem(AUTH_STUDENT_ID_STORAGE_KEY, studentId);
+}
+
 export default function App() {
-  // Authentication State
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [student, setStudent] = useState<Student>(INITIAL_STUDENT);
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [student, setStudent] = useState<Student | null>(null);
+  const isAuthenticated = student !== null;
 
-  // Active Navigation Tab
   const [activeTab, setActiveTab] = useState<NavigationTab>('dashboard');
-
-  // Semester State
   const [currentSemester, setCurrentSemester] = useState<string>(SEMESTERS[0]);
 
-  // Data State
-  const [courses, setCourses] = useState<Course[]>(COURSES_MOCK);
-  const [registeredIds, setRegisteredIds] = useState<string[]>(INITIAL_REGISTERED_IDS);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [registrationSummary, setRegistrationSummary] = useState<RegistrationSummary | null>(null);
+const [isRegistrationLoading, setIsRegistrationLoading] = useState(false);
+  const [registrationErrorMessage, setRegistrationErrorMessage] = useState('');
   const [notifications, setNotifications] = useState<UniversityNotification[]>(NOTIFICATIONS_MOCK);
 
-  // Global Search State
   const [searchQuery, setSearchQuery] = useState('');
-
-  // Sidebar Collapse State
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  // Modal States
   const [selectedCourseForDetail, setSelectedCourseForDetail] = useState<Course | null>(null);
   const [selectedCourseForRegister, setSelectedCourseForRegister] = useState<Course | null>(null);
-  const [isDesignSystemOpen, setIsDesignSystemOpen] = useState(false);
 
-  // Toast System
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   const addToast = (type: 'success' | 'error' | 'warning' | 'info', title: string, message: string) => {
     const id = Date.now().toString();
     setToasts((prev) => [...prev, { id, type, title, message }]);
 
-    // Auto dismiss toast after 4 seconds
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
     }, 4000);
@@ -71,84 +81,169 @@ export default function App() {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
-  // Login handler
-  const handleLoginSuccess = (studentIdInput: string) => {
-    setStudent((prev) => ({
-      ...prev,
-      id: studentIdInput || prev.id,
-    }));
-    setIsAuthenticated(true);
-    addToast('success', 'Đăng nhập thành công', `Chào mừng ${student.name} quay trở lại Phenikaa Portal!`);
-  };
-
-  // Logout handler
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    setActiveTab('dashboard');
-    addToast('info', 'Đã đăng xuất', 'Bạn đã đăng xuất khỏi hệ thống an toàn.');
-  };
-
-  // Registered courses objects list
-  const registeredCoursesList = useMemo(() => {
-    return courses.filter((c) => registeredIds.includes(c.id));
-  }, [courses, registeredIds]);
-
-  const currentTotalCredits = useMemo(() => {
-    return registeredCoursesList.reduce((sum, c) => sum + c.credits, 0);
-  }, [registeredCoursesList]);
-
-  // Course Registration Handler
-  const handleConfirmRegisterSuccess = (registeredCourse: Course) => {
-    // Check if already registered
-    if (registeredIds.includes(registeredCourse.id)) {
-      addToast('warning', 'Đã đăng ký', `Bạn đã đăng ký học phần ${registeredCourse.name} rồi!`);
+  const loadRegistrations = useCallback(async () => {
+    if (!student?.id) {
+      setRegistrationSummary(null);
+      setRegistrationErrorMessage('');
       return;
     }
 
-    // Add to registered list
-    setRegisteredIds((prev) => [...prev, registeredCourse.id]);
+    setIsRegistrationLoading(true);
+    setRegistrationErrorMessage('');
 
-    // Increment enrolled capacity count
-    setCourses((prevCourses) =>
-      prevCourses.map((c) =>
-        c.id === registeredCourse.id ? { ...c, enrolled: c.enrolled + 1 } : c
-      )
-    );
+    try {
+      const loadedRegistration = await registrationApi.getRegistrations(student.id);
+      setRegistrationSummary(loadedRegistration);
+    } catch (error) {
+      const message = getApiErrorMessage(error);
+      setRegistrationSummary(null);
+      setRegistrationErrorMessage(message);
+      throw error;
+    } finally {
+      setIsRegistrationLoading(false);
+    }
+  }, [student?.id]);
 
-    addToast(
-      'success',
-      'Đăng ký môn học thành công!',
-      `Đã thêm học phần ${registeredCourse.code} - ${registeredCourse.name} (${registeredCourse.credits} TC) vào danh sách.`
-    );
-  };
-
-  // Course Cancel Handler
-  const handleCancelRegistration = (courseId: string) => {
-    const targetCourse = courses.find((c) => c.id === courseId);
-
-    setRegisteredIds((prev) => prev.filter((id) => id !== courseId));
-
-    // Decrement enrolled count
-    setCourses((prevCourses) =>
-      prevCourses.map((c) =>
-        c.id === courseId ? { ...c, enrolled: Math.max(0, c.enrolled - 1) } : c
-      )
-    );
-
-    if (targetCourse) {
+  const refreshCoursesAfterRegistrationChange = async () => {
+    try {
+      const loadedCourses = await courseApi.getCourses();
+      setCourses(loadedCourses);
+    } catch {
       addToast(
-        'info',
-        'Đã hủy đăng ký',
-        `Đã xóa học phần ${targetCourse.code} - ${targetCourse.name} khỏi danh sách học kỳ này.`
+        'warning',
+        'Chưa đồng bộ sĩ số',
+        'Thao tác đăng ký đã thành công, nhưng danh sách môn học cần được tải lại sau.'
       );
     }
   };
 
-  // Mark notification read
+  useEffect(() => {
+    let isMounted = true;
+    const storedStudentId = getStoredStudentId();
+
+    if (!storedStudentId) {
+      setIsInitializing(false);
+      return;
+    }
+
+    profileApi
+      .getStudentById(storedStudentId)
+      .then((storedStudent) => {
+        if (isMounted) {
+          setStudent(storedStudent);
+        }
+      })
+      .catch(() => {
+        clearStoredStudentId();
+        if (isMounted) {
+          setStudent(null);
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsInitializing(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!student?.id) {
+      setRegistrationSummary(null);
+      setRegistrationErrorMessage('');
+      return;
+    }
+
+    void loadRegistrations().catch(() => undefined);
+  }, [student?.id, loadRegistrations]);
+const handleLoginSuccess = (loggedInStudent: Student, rememberMe: boolean) => {
+    setStudent(loggedInStudent);
+    storeStudentId(loggedInStudent.id, rememberMe);
+    setActiveTab('dashboard');
+    addToast('success', 'Đăng nhập thành công', `Chào mừng ${loggedInStudent.name} quay trở lại Phenikaa Portal!`);
+  };
+
+  const handleLogout = () => {
+    clearStoredStudentId();
+    setStudent(null);
+    setRegistrationSummary(null);
+    setRegistrationErrorMessage('');
+    setCourses([]);
+    setActiveTab('dashboard');
+    addToast('info', 'Đã đăng xuất', 'Bạn đã đăng xuất khỏi hệ thống an toàn.');
+  };
+
+  const registeredCoursesList = useMemo(() => {
+    return registrationSummary?.courses ?? [];
+  }, [registrationSummary]);
+
+  const registeredIds = useMemo(() => {
+    return registeredCoursesList.map((course) => course.id);
+  }, [registeredCoursesList]);
+
+  const currentTotalCredits = useMemo(() => {
+    return registrationSummary?.totalCredits ?? 0;
+  }, [registrationSummary]);
+
+  const handleConfirmRegisterSuccess = async (registeredCourse: Course) => {
+    if (!student) {
+      const message = 'Cần đăng nhập trước khi đăng ký học phần.';
+      addToast('error', 'Đăng ký thất bại', message);
+      throw new Error(message);
+    }
+
+    try {
+      const updatedRegistration = await registrationApi.registerCourse(student.id, registeredCourse.id);
+      setRegistrationSummary(updatedRegistration);
+      await refreshCoursesAfterRegistrationChange();
+
+      addToast(
+        'success',
+        'Đăng ký môn học thành công!',
+        `Đã thêm học phần ${registeredCourse.code} - ${registeredCourse.name} (${registeredCourse.credits} TC) vào danh sách.`
+      );
+    } catch (error) {
+      const message = getApiErrorMessage(error);
+      addToast('error', 'Đăng ký thất bại', message);
+      throw error;
+    }
+  };
+
+  const handleCancelRegistration = async (courseId: string) => {
+    if (!student) {
+      const message = 'Cần đăng nhập trước khi hủy đăng ký học phần.';
+      addToast('error', 'Hủy đăng ký thất bại', message);
+      throw new Error(message);
+    }
+
+    const targetCourse = registeredCoursesList.find((c) => c.id === courseId);
+
+    try {
+      const updatedRegistration = await registrationApi.cancelCourse(student.id, courseId);
+      setRegistrationSummary(updatedRegistration);
+      await refreshCoursesAfterRegistrationChange();
+
+      addToast(
+        'info',
+        'Đã hủy đăng ký',
+        targetCourse
+          ? `Đã xóa học phần ${targetCourse.code} - ${targetCourse.name} khỏi danh sách học kỳ này.`
+          : 'Đã xóa học phần khỏi danh sách học kỳ này.'
+      );
+    } catch (error) {
+      const message = getApiErrorMessage(error);
+      addToast('error', 'Hủy đăng ký thất bại', message);
+      throw error;
+    }
+  };
+
   const handleMarkNotificationRead = (id: string) => {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
-    );
+);
   };
 
   const handleMarkAllNotificationsRead = () => {
@@ -156,7 +251,20 @@ export default function App() {
     addToast('success', 'Đã cập nhật', 'Đã đánh dấu tất cả thông báo là đã đọc.');
   };
 
-  // If not authenticated, render Login Page
+  const handleCoursesLoaded = useCallback((loadedCourses: Course[]) => {
+    setCourses(loadedCourses);
+  }, []);
+
+  if (isInitializing) {
+    return (
+      <main className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
+        <div className="rounded-2xl border border-slate-200 bg-white px-6 py-5 text-sm font-semibold text-slate-700 shadow-sm">
+          Đang khôi phục phiên đăng nhập...
+        </div>
+      </main>
+    );
+  }
+
   if (!isAuthenticated) {
     return (
       <main>
@@ -169,11 +277,9 @@ export default function App() {
   const unreadNotifCount = notifications.filter((n) => !n.isRead).length;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] flex flex-col font-sans selection:bg-blue-100 selection:text-blue-800">
-      {/* Toast Alert System */}
+    <div className="min-h-screen overflow-x-hidden bg-[#F8FAFC] text-[#0F172A] flex flex-col font-sans selection:bg-blue-100 selection:text-blue-800">
       <ToastContainer toasts={toasts} onDismiss={handleDismissToast} />
 
-      {/* Left Sidebar Navigation */}
       <Sidebar
         activeTab={activeTab}
         onNavigate={(tab) => {
@@ -187,13 +293,11 @@ export default function App() {
         onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
       />
 
-      {/* Main App Container */}
       <div
-        className={`flex-1 flex flex-col transition-all duration-300 ${
+        className={`flex-1 min-w-0 flex flex-col transition-all duration-300 ${
           sidebarCollapsed ? 'lg:pl-20' : 'lg:pl-64'
         }`}
       >
-        {/* Top Header Navbar */}
         <Header
           student={student}
           currentSemester={currentSemester}
@@ -205,7 +309,6 @@ export default function App() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           onLogout={handleLogout}
-          onOpenDesignSystem={() => setIsDesignSystemOpen(true)}
           searchQuery={searchQuery}
           onSearchChange={(q) => {
             setSearchQuery(q);
@@ -218,12 +321,15 @@ export default function App() {
           onOpenCourseDetail={setSelectedCourseForDetail}
         />
 
-        {/* View Router Workspace */}
-        <main className="flex-1 p-4 lg:p-8 max-w-7xl w-full mx-auto space-y-6">
+        <main className="flex-1 min-w-0 w-full max-w-[1680px] mx-auto space-y-8 px-4 py-5 sm:px-6 lg:px-10 xl:px-12 2xl:px-14">
           {activeTab === 'dashboard' && (
             <DashboardPage
               student={student}
               registeredCourses={registeredCoursesList}
+              totalCredits={currentTotalCredits}
+              isRegistrationLoading={isRegistrationLoading}
+registrationErrorMessage={registrationErrorMessage}
+              onRefreshRegistrations={loadRegistrations}
               notifications={notifications}
               onNavigate={setActiveTab}
               currentSemester={currentSemester}
@@ -232,18 +338,22 @@ export default function App() {
 
           {activeTab === 'courses' && (
             <CourseListPage
-              courses={courses}
               registeredCourseIds={registeredIds}
               onOpenCourseDetail={setSelectedCourseForDetail}
               onRequestRegister={setSelectedCourseForRegister}
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
+              onCoursesLoaded={handleCoursesLoaded}
             />
           )}
 
           {activeTab === 'registered' && (
             <RegisteredCoursesPage
               registeredCourses={registeredCoursesList}
+              totalCredits={currentTotalCredits}
+              isLoading={isRegistrationLoading}
+              errorMessage={registrationErrorMessage}
+              onRefresh={loadRegistrations}
               onCancelRegistration={handleCancelRegistration}
               onNavigate={setActiveTab}
               currentSemester={currentSemester}
@@ -252,7 +362,7 @@ export default function App() {
 
           {activeTab === 'timetable' && (
             <TimetableWeeklyPage
-              registeredCourses={registeredCoursesList}
+              studentId={student.id}
               currentSemester={currentSemester}
             />
           )}
@@ -269,7 +379,6 @@ export default function App() {
         </main>
       </div>
 
-      {/* Course Detail Modal */}
       <CourseDetailModal
         course={selectedCourseForDetail}
         onClose={() => setSelectedCourseForDetail(null)}
@@ -281,19 +390,12 @@ export default function App() {
         onRequestRegister={(course) => setSelectedCourseForRegister(course)}
       />
 
-      {/* Register Confirmation Modal */}
       <RegisterConfirmModal
         course={selectedCourseForRegister}
         currentTotalCredits={currentTotalCredits}
         registeredCourses={registeredCoursesList}
         onClose={() => setSelectedCourseForRegister(null)}
         onConfirmSuccess={handleConfirmRegisterSuccess}
-      />
-
-      {/* Figma Design System Tokens Inspector Modal */}
-      <DesignSystemModal
-        isOpen={isDesignSystemOpen}
-        onClose={() => setIsDesignSystemOpen(false)}
       />
     </div>
   );

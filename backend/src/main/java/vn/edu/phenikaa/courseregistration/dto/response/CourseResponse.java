@@ -1,34 +1,39 @@
-package vn.edu.phenikaa.courseregistration.model;
+package vn.edu.phenikaa.courseregistration.dto.response;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/** Model học phần; các kiểm tra nghiệp vụ nằm ở service/validator. */
-public class Course {
+/**
+ * DTO trả thông tin học phần.
+ */
+public class CourseResponse {
     private String courseId;
     private String courseName;
     private int credits;
     private String lecturerId;
+    private LecturerResponse lecturer;
     private int maxCapacity;
     private int currentCapacity;
-    private List<Schedule> schedules = new ArrayList<>();
+    private List<ScheduleResponse> schedules = new ArrayList<>();
 
-    public Course() {
+    public CourseResponse() {
     }
 
-    public Course(
+    public CourseResponse(
         String courseId,
         String courseName,
         int credits,
         String lecturerId,
+        LecturerResponse lecturer,
         int maxCapacity,
         int currentCapacity,
-        List<Schedule> schedules
+        List<ScheduleResponse> schedules
     ) {
         this.courseId = courseId;
         this.courseName = courseName;
         this.credits = credits;
         this.lecturerId = lecturerId;
+        this.lecturer = lecturer;
         this.maxCapacity = maxCapacity;
         this.currentCapacity = currentCapacity;
         this.schedules = schedules == null ? new ArrayList<>() : schedules;
@@ -66,6 +71,14 @@ public class Course {
         this.lecturerId = lecturerId;
     }
 
+    public LecturerResponse getLecturer() {
+        return lecturer;
+    }
+
+    public void setLecturer(LecturerResponse lecturer) {
+        this.lecturer = lecturer;
+    }
+
     public int getMaxCapacity() {
         return maxCapacity;
     }
@@ -82,11 +95,11 @@ public class Course {
         this.currentCapacity = currentCapacity;
     }
 
-    public List<Schedule> getSchedules() {
+    public List<ScheduleResponse> getSchedules() {
         return schedules;
     }
 
-    public void setSchedules(List<Schedule> schedules) {
+    public void setSchedules(List<ScheduleResponse> schedules) {
         this.schedules = schedules;
     }
 }

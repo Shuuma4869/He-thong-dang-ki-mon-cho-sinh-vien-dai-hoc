@@ -4,6 +4,14 @@ package vn.edu.phenikaa.courseregistration.model;
 public class Lecturer extends User {
     private String faculty;
 
+    public Lecturer() {
+    }
+
+    public Lecturer(String id, String fullName, String faculty) {
+        super(id, fullName);
+        this.faculty = faculty;
+    }
+
     public String getFaculty() {
         return faculty;
     }
