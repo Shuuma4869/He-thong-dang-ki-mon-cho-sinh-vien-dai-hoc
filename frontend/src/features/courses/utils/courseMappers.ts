@@ -7,13 +7,13 @@ import {
 } from '@/features/courses/types/course.types';
 
 const DAY_META: Record<BackendDayOfWeek, { number: number; label: string }> = {
-  MONDAY: { number: 2, label: 'Thu Hai' },
-  TUESDAY: { number: 3, label: 'Thu Ba' },
-  WEDNESDAY: { number: 4, label: 'Thu Tu' },
-  THURSDAY: { number: 5, label: 'Thu Nam' },
-  FRIDAY: { number: 6, label: 'Thu Sau' },
-  SATURDAY: { number: 7, label: 'Thu Bay' },
-  SUNDAY: { number: 8, label: 'Chu Nhat' },
+  MONDAY: { number: 2, label: 'Thứ Hai' },
+  TUESDAY: { number: 3, label: 'Thứ Ba' },
+  WEDNESDAY: { number: 4, label: 'Thứ Tư' },
+  THURSDAY: { number: 5, label: 'Thứ Năm' },
+  FRIDAY: { number: 6, label: 'Thứ Sáu' },
+  SATURDAY: { number: 7, label: 'Thứ Bảy' },
+  SUNDAY: { number: 8, label: 'Chủ Nhật' },
 };
 
 const PERIODS = [

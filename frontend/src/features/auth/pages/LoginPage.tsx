@@ -38,7 +38,7 @@ const featureCards = [
 ];
 
 export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
-  const [studentId, setStudentId] = useState('SV001');
+  const [studentId, setStudentId] = useState('23010690');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -198,7 +198,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                     type="text"
                     value={studentId}
                     onChange={(e) => setStudentId(e.target.value)}
-                    placeholder="Ví dụ: SV001"
+                    placeholder="Ví dụ: 23010690"
                     required
                     className="h-14 w-full rounded-xl border border-slate-200 bg-white pl-14 pr-4 text-base font-semibold text-slate-900 shadow-inner shadow-slate-100 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-100"
                   />
@@ -286,7 +286,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             <div className="mt-8 rounded-xl border border-slate-200 bg-slate-50/80 p-4 text-center">
               <p className="text-sm text-slate-500">
                 <strong className="font-extrabold text-slate-800">Tài khoản demo:</strong> Mã SV:{' '}
-                <code className="rounded bg-blue-50 px-1.5 py-0.5 font-mono font-bold text-blue-700">SV001</code>
+                <code className="rounded bg-blue-50 px-1.5 py-0.5 font-mono font-bold text-blue-700">23010690</code>
                 {' '}/ Mật khẩu: bất kỳ
               </p>
             </div>
