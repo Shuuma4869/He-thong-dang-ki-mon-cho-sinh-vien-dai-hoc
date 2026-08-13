@@ -61,7 +61,7 @@ class DemoDataIntegrityTest {
                 .orElseThrow();
 
         assertThat(demoStudent.getFullName()).isEqualTo("Nguyễn Trọng Tuấn");
-        assertThat(demoStudent.getClassName()).isEqualTo("CNTT");
+        assertThat(demoStudent.getClassName()).isEqualTo("CNTT7 - K17");
         assertThat(demoStudent.getMajor()).isEqualTo("Công nghệ thông tin");
         assertThat(demoStudent.getMaxCredits()).isEqualTo(18);
 

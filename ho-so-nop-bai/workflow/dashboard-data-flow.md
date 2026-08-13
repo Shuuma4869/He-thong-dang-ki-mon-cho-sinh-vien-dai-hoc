@@ -12,7 +12,7 @@ Nguồn dữ liệu:
 Baseline demo:
 
 - Sinh viên: `23010690 - Nguyễn Trọng Tuấn`
-- Lớp: `CNTT`
+- Lớp: `CNTT7 - K17`
 - Ngành: `Công nghệ thông tin`
 - Giới hạn tín chỉ: `18`
 - Môn đã đăng ký: `OOP101`, `WEB201`, `DSA102`, `DBS202`, `SE204`

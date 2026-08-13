@@ -2,7 +2,7 @@
 
 ## Moc nen Student/Auth/Profile da khoa
 
-- Sinh vien demo chinh la `23010690`, ho ten Nguyen Trong Tuan, lop `CNTT`, nganh Cong nghe thong tin, gioi han 18 tin chi.
+- Sinh vien demo chinh la `23010690`, ho ten Nguyen Trong Tuan, lop `CNTT7 - K17`, nganh Cong nghe thong tin, gioi han 18 tin chi.
 - Auth demo chi kiem tra `studentId` ton tai, khong luu password, khong JWT, khong Spring Security.
 - Profile va dashboard phai lay du lieu sinh vien qua Student API, khong hard-code ten sinh vien trong component.
 

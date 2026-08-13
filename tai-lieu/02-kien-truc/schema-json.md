@@ -10,8 +10,8 @@ Root là array.
 [
   {
     "id": "23010690",
-    "fullName": "Nguyen Minh An",
-    "className": "CNTT",
+    "fullName": "Nguyen Trong Tuan",
+    "className": "CNTT7 - K17",
     "major": "Cong nghe thong tin",
     "maxCredits": 18
   }

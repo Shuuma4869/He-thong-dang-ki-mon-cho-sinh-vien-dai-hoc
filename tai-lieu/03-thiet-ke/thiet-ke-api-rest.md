@@ -57,7 +57,7 @@ Response:
   "data": {
     "studentId": "23010690",
     "fullName": "Nguyen Trong Tuan",
-    "className": "CNTT",
+    "className": "CNTT7 - K17",
     "major": "Cong nghe thong tin",
     "maxCredits": 18
   }
@@ -84,7 +84,7 @@ Response:
   "data": {
     "studentId": "23010690",
     "fullName": "Nguyen Trong Tuan",
-    "className": "CNTT",
+    "className": "CNTT7 - K17",
     "major": "Cong nghe thong tin",
     "maxCredits": 18
   }
