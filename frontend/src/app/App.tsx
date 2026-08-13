@@ -278,7 +278,7 @@ export default function App() {
   const unreadNotifCount = notifications.filter((n) => !n.isRead).length;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] flex flex-col font-sans selection:bg-blue-100 selection:text-blue-800">
+    <div className="min-h-screen overflow-x-hidden bg-[#F8FAFC] text-[#0F172A] flex flex-col font-sans selection:bg-blue-100 selection:text-blue-800">
       <ToastContainer toasts={toasts} onDismiss={handleDismissToast} />
 
       <Sidebar
@@ -295,7 +295,7 @@ export default function App() {
       />
 
       <div
-        className={`flex-1 flex flex-col transition-all duration-300 ${
+        className={`flex-1 min-w-0 flex flex-col transition-all duration-300 ${
           sidebarCollapsed ? 'lg:pl-20' : 'lg:pl-64'
         }`}
       >
@@ -322,7 +322,7 @@ export default function App() {
           onOpenCourseDetail={setSelectedCourseForDetail}
         />
 
-        <main className="flex-1 p-4 lg:p-8 max-w-7xl w-full mx-auto space-y-6">
+        <main className="flex-1 min-w-0 w-full max-w-[1680px] mx-auto space-y-8 px-4 py-5 sm:px-6 lg:px-10 xl:px-12 2xl:px-14">
           {activeTab === 'dashboard' && (
             <DashboardPage
               student={student}

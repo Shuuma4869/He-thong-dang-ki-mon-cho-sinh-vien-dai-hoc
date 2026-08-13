@@ -70,8 +70,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
-      <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 rounded-2xl p-6 lg:p-8 text-white shadow-md relative overflow-hidden">
+    <div className="space-y-8 animate-in fade-in duration-300">
+      <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 rounded-2xl p-7 sm:p-8 lg:p-10 text-white shadow-lg shadow-blue-950/10 relative overflow-hidden min-h-[190px]">
         <img
           src="/assets/images/dashboard-banner.svg"
           alt=""
@@ -80,16 +80,16 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
         />
         <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-white/5 skew-x-12 pointer-events-none" />
 
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-xs text-xs font-medium text-blue-100 border border-white/20">
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+        <div className="relative z-10 flex h-full flex-col md:flex-row md:items-center justify-between gap-8">
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-xs text-sm font-semibold text-blue-100 border border-white/20">
+              <Sparkles className="w-4 h-4 text-amber-300" />
               <span>{currentSemester}</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+            <h1 className="text-3xl sm:text-4xl xl:text-5xl font-extrabold tracking-tight">
               Xin chào, {student.name}!
             </h1>
-            <p className="text-blue-100 text-xs sm:text-sm font-medium opacity-90 max-w-2xl">
+            <p className="text-blue-100 text-sm sm:text-base font-semibold opacity-95 max-w-3xl">
               Lớp <strong className="text-white">{student.className}</strong> - Ngành{' '}
               <strong className="text-white">{student.major}</strong>
             </p>
@@ -97,10 +97,10 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
 
           <button
             onClick={() => onNavigate('courses')}
-            className="px-5 py-2.5 bg-white text-blue-700 hover:bg-blue-50 active:bg-blue-100 font-bold text-xs sm:text-sm rounded-xl shadow-sm transition-all flex items-center gap-2 cursor-pointer shrink-0"
+            className="px-6 py-3.5 bg-white text-blue-700 hover:bg-blue-50 active:bg-blue-100 font-bold text-sm sm:text-base rounded-xl shadow-md transition-all flex items-center gap-2.5 cursor-pointer shrink-0"
           >
             <span>Đăng ký môn học</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-5 h-5" />
           </button>
         </div>
       </div>
@@ -133,72 +133,72 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
 
       {!isLoading && !errorMessage && (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 xl:gap-6">
             <MetricCard
               label="Tín chỉ đã đăng ký"
-              icon={<BookCheck className="w-5 h-5" />}
+              icon={<BookCheck className="w-6 h-6" />}
               tone="blue"
             >
               <div className="flex items-baseline gap-1.5">
-                <span className="text-2xl font-bold text-slate-900">{totalCredits}</span>
-                <span className="text-xs text-slate-500 font-medium">/ {maxCredits} tin chi toi da</span>
+                <span className="text-3xl font-bold text-slate-900">{totalCredits}</span>
+                <span className="text-sm text-slate-500 font-semibold">/ {maxCredits} tin chi toi da</span>
               </div>
-              <div className="w-full h-2 bg-slate-100 rounded-full mt-2.5 overflow-hidden">
+              <div className="w-full h-2.5 bg-slate-100 rounded-full mt-3 overflow-hidden">
                 <div
                   className="h-full rounded-full bg-blue-600 transition-all duration-500"
                   style={{ width: `${creditPercent}%` }}
                 />
               </div>
-              <p className="text-[11px] text-slate-500 mt-1.5">Dựa trên đăng ký hiện tại và hồ sơ sinh viên.</p>
+              <p className="text-xs text-slate-500 mt-2">Dựa trên đăng ký hiện tại và hồ sơ sinh viên.</p>
             </MetricCard>
 
             <MetricCard
               label="Số môn đã đăng ký"
-              icon={<CalendarCheck2 className="w-5 h-5" />}
+              icon={<CalendarCheck2 className="w-6 h-6" />}
               tone="emerald"
             >
-              <span className="text-2xl font-bold text-slate-900">{registeredCourses.length}</span>
-              <span className="text-xs text-slate-500 font-medium ml-1">học phần</span>
-              <p className="text-[11px] text-slate-500 mt-2">Danh sách học phần sinh viên đang đăng ký.</p>
+              <span className="text-3xl font-bold text-slate-900">{registeredCourses.length}</span>
+              <span className="text-sm text-slate-500 font-semibold ml-1">học phần</span>
+              <p className="text-xs text-slate-500 mt-2.5">Danh sách học phần sinh viên đang đăng ký.</p>
             </MetricCard>
 
             <MetricCard
               label="Môn đang mở"
-              icon={<GraduationCap className="w-5 h-5" />}
+              icon={<GraduationCap className="w-6 h-6" />}
               tone="indigo"
             >
-              <span className="text-2xl font-bold text-slate-900">{openCourses.length}</span>
-              <span className="text-xs text-slate-500 font-medium ml-1">học phần</span>
-              <p className="text-[11px] text-slate-500 mt-2">Số học phần đang mở trong dữ liệu hiện tại.</p>
+              <span className="text-3xl font-bold text-slate-900">{openCourses.length}</span>
+              <span className="text-sm text-slate-500 font-semibold ml-1">học phần</span>
+              <p className="text-xs text-slate-500 mt-2.5">Số học phần đang mở trong dữ liệu hiện tại.</p>
             </MetricCard>
 
             <MetricCard
               label="Thông báo"
-              icon={<Bell className="w-5 h-5" />}
+              icon={<Bell className="w-6 h-6" />}
               tone="amber"
             >
-              <span className="text-2xl font-bold text-slate-900">{unreadNotifs.length}</span>
-              <span className="text-xs text-slate-500 font-medium ml-1">chưa đọc</span>
+              <span className="text-3xl font-bold text-slate-900">{unreadNotifs.length}</span>
+              <span className="text-sm text-slate-500 font-semibold ml-1">chưa đọc</span>
               <button
                 onClick={() => onNavigate('notifications')}
-                className="text-[11px] font-semibold text-blue-600 hover:underline mt-2 block cursor-pointer"
+                className="text-xs font-bold text-blue-600 hover:underline mt-2.5 block cursor-pointer"
               >
                 Xem thông báo
               </button>
             </MetricCard>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+          <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,2fr)_minmax(360px,0.95fr)] gap-6 xl:gap-8">
+            <div className="xl:col-span-1 space-y-6">
+              <div className="bg-white p-7 rounded-2xl border border-slate-200 shadow-sm space-y-5">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full bg-blue-600" />
-                    <h2 className="text-base font-bold text-slate-900">Lich hoc cua ban</h2>
+                    <h2 className="text-lg font-bold text-slate-900">Lich hoc cua ban</h2>
                   </div>
                   <button
                     onClick={() => onNavigate('timetable')}
-                    className="text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
+                    className="text-sm font-bold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
                   >
                     Xem thời khóa biểu
                   </button>
@@ -206,36 +206,36 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
 
                 {schedulePreview.length === 0 ? (
                   <div className="p-8 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                    <p className="text-xs text-slate-500">
+                    <p className="text-sm text-slate-500">
                       Bạn chưa có lịch học từ các môn đăng ký đang hiệu lực.
                     </p>
                   </div>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {schedulePreview.map(({ course, schedule }) => (
                       <div
                         key={`${course.id}-${schedule.dayOfWeek}-${schedule.startTime ?? schedule.periods}`}
-                        className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-white hover:shadow-sm transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                        className="p-5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-white hover:shadow-sm transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-5"
                       >
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
-                            <span className="px-2 py-0.5 text-[10px] font-bold bg-blue-100 text-blue-700 rounded">
+                            <span className="px-2.5 py-1 text-xs font-bold bg-blue-100 text-blue-700 rounded">
                               {course.code}
                             </span>
-                            <span className="text-xs font-bold text-slate-900">{course.name}</span>
+                            <span className="text-sm font-bold text-slate-900">{course.name}</span>
                           </div>
-                          <p className="text-xs text-slate-600 flex items-center gap-2">
+                          <p className="text-sm text-slate-600 flex items-center gap-2">
                             <User className="w-3.5 h-3.5 text-slate-400" />
                             <span>{course.lecturer}</span>
                           </p>
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-3 text-xs shrink-0">
-                          <div className="flex items-center gap-1.5 text-slate-700 font-medium bg-white px-2.5 py-1 rounded-lg border border-slate-200">
+                        <div className="flex flex-wrap items-center gap-3 text-sm shrink-0">
+                          <div className="flex items-center gap-1.5 text-slate-700 font-semibold bg-white px-3 py-1.5 rounded-lg border border-slate-200">
                             <Clock className="w-3.5 h-3.5 text-blue-600" />
                             <span>{schedule.dayLabel ?? `Thu ${schedule.dayOfWeek}`}, {schedule.periods}</span>
                           </div>
-                          <div className="flex items-center gap-1.5 text-slate-700 font-medium bg-white px-2.5 py-1 rounded-lg border border-slate-200">
+                          <div className="flex items-center gap-1.5 text-slate-700 font-semibold bg-white px-3 py-1.5 rounded-lg border border-slate-200">
                             <MapPin className="w-3.5 h-3.5 text-emerald-600" />
                             <span>{schedule.room}</span>
                           </div>
@@ -246,9 +246,9 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                 )}
               </div>
 
-              <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                <h2 className="text-base font-bold text-slate-900">Thao tác nhanh</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="bg-white p-7 rounded-2xl border border-slate-200 shadow-sm space-y-5">
+                <h2 className="text-lg font-bold text-slate-900">Thao tác nhanh</h2>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   <QuickAction label="Đăng ký môn" description="Tra cứu học phần" icon={<BookCheck className="w-4 h-4" />} onClick={() => onNavigate('courses')} />
                   <QuickAction label="Thời khóa biểu" description="Xem lịch tuần" icon={<CalendarCheck2 className="w-4 h-4" />} onClick={() => onNavigate('timetable')} />
                   <QuickAction label="Đã đăng ký" description="Quản lý học phần" icon={<GraduationCap className="w-4 h-4" />} onClick={() => onNavigate('registered')} />
@@ -258,21 +258,21 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
             </div>
 
             <div className="space-y-6">
-              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-                <h2 className="text-base font-bold text-slate-900">Tổng quan đăng ký</h2>
+              <div className="bg-white p-7 rounded-2xl border border-slate-200 shadow-sm space-y-5">
+                <h2 className="text-lg font-bold text-slate-900">Tổng quan đăng ký</h2>
                 {registeredCourses.length === 0 ? (
                   <div className="p-5 rounded-xl bg-slate-50 border border-dashed border-slate-200">
-                    <p className="text-xs text-slate-500">Bạn chưa đăng ký môn học nào.</p>
+                    <p className="text-sm text-slate-500">Bạn chưa đăng ký môn học nào.</p>
                   </div>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {registeredCourses.slice(0, 4).map((course) => (
-                      <div key={course.id} className="flex items-center justify-between gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+                      <div key={course.id} className="flex items-center justify-between gap-3 p-4 rounded-xl bg-slate-50 border border-slate-100">
                         <div>
-                          <p className="text-xs font-bold text-slate-900">{course.code}</p>
-                          <p className="text-[11px] text-slate-500 line-clamp-1">{course.name}</p>
+                          <p className="text-sm font-bold text-slate-900">{course.code}</p>
+                          <p className="text-xs text-slate-500 line-clamp-1">{course.name}</p>
                         </div>
-                        <span className="text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded border border-blue-100">
+                        <span className="text-xs font-bold text-blue-700 bg-blue-50 px-2.5 py-1.5 rounded border border-blue-100">
                           {course.credits} TC
                         </span>
                       </div>
@@ -281,15 +281,15 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                 )}
               </div>
 
-              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+              <div className="bg-white p-7 rounded-2xl border border-slate-200 shadow-sm space-y-5">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-base font-bold text-slate-900">Thông báo</h2>
-                    <p className="text-[11px] text-slate-500 mt-1">Thông báo chỉ lưu trong phiên giao diện.</p>
+                    <h2 className="text-lg font-bold text-slate-900">Thông báo</h2>
+                    <p className="text-xs text-slate-500 mt-1">Thông báo chỉ lưu trong phiên giao diện.</p>
                   </div>
                   <button
                     onClick={() => onNavigate('notifications')}
-                    className="text-xs font-semibold text-blue-600 hover:underline cursor-pointer"
+                    className="text-sm font-bold text-blue-600 hover:underline cursor-pointer"
                   >
                     Tat ca
                   </button>
@@ -297,17 +297,17 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
 
                 <div className="divide-y divide-slate-100">
                   {notifications.slice(0, 3).map((notification) => (
-                    <div key={notification.id} className="py-3 first:pt-0 last:pb-0 space-y-1">
+                    <div key={notification.id} className="py-4 first:pt-0 last:pb-0 space-y-1.5">
                       <div className="flex items-center justify-between">
-                        <span className="px-2 py-0.5 text-[9px] font-bold bg-slate-100 text-slate-600 rounded">
+                        <span className="px-2 py-0.5 text-[10px] font-bold bg-slate-100 text-slate-600 rounded">
                           {notification.category}
                         </span>
-                        <span className="text-[10px] text-slate-400">{notification.createdAt}</span>
+                        <span className="text-xs text-slate-400">{notification.createdAt}</span>
                       </div>
-                      <h3 className="text-xs font-semibold text-slate-900 line-clamp-1">
+                      <h3 className="text-sm font-bold text-slate-900 line-clamp-1">
                         {notification.title}
                       </h3>
-                      <p className="text-[11px] text-slate-500 line-clamp-2">{notification.summary}</p>
+                      <p className="text-xs text-slate-500 line-clamp-2">{notification.summary}</p>
                     </div>
                   ))}
                 </div>
@@ -339,10 +339,10 @@ function MetricCard({
   };
 
   return (
-    <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 min-h-[170px]">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{label}</span>
-        <div className={`w-10 h-10 rounded-xl border flex items-center justify-center ${toneClasses[tone]}`}>
+        <span className="text-sm font-bold text-slate-500 uppercase tracking-wide">{label}</span>
+        <div className={`w-12 h-12 rounded-xl border flex items-center justify-center ${toneClasses[tone]}`}>
           {icon}
         </div>
       </div>
@@ -365,14 +365,14 @@ function QuickAction({
   return (
     <button
       onClick={onClick}
-      className="p-4 rounded-lg bg-white border border-slate-200 hover:border-slate-300 hover:shadow-sm text-slate-700 transition-all text-left space-y-3 cursor-pointer group"
+      className="p-5 rounded-xl bg-white border border-slate-200 hover:border-slate-300 hover:shadow-sm text-slate-700 transition-all text-left space-y-4 cursor-pointer group min-h-[130px]"
     >
-      <div className="w-8 h-8 rounded bg-slate-100 text-slate-700 flex items-center justify-center group-hover:bg-blue-50 group-hover:text-blue-700 transition-colors">
+      <div className="w-10 h-10 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center group-hover:bg-blue-50 group-hover:text-blue-700 transition-colors">
         {icon}
       </div>
       <div>
-        <p className="text-xs font-bold text-slate-900 group-hover:text-blue-700 transition-colors">{label}</p>
-        <p className="text-[10px] text-slate-500 mt-0.5">{description}</p>
+        <p className="text-sm font-bold text-slate-900 group-hover:text-blue-700 transition-colors">{label}</p>
+        <p className="text-xs text-slate-500 mt-1">{description}</p>
       </div>
     </button>
   );

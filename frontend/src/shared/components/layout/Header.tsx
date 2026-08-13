@@ -93,10 +93,10 @@ export const Header: React.FC<HeaderProps> = ({
   const studentFaculty = student.faculty ?? 'Chưa đồng bộ khoa';
 
   return (
-    <header className="sticky top-0 z-30 h-16 bg-white border-b border-slate-200 px-4 lg:px-8 flex items-center justify-between shadow-2xs">
-      <div className="flex items-center gap-4 flex-1 max-w-lg relative" ref={searchRef}>
+    <header className="sticky top-0 z-30 h-[72px] bg-white border-b border-slate-200 px-4 sm:px-6 lg:px-10 xl:px-12 flex items-center justify-between shadow-2xs">
+      <div className="flex items-center gap-4 flex-1 max-w-2xl relative" ref={searchRef}>
         <div className="relative w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
           <input
             type="text"
             placeholder="Tìm kiếm môn học, mã HP, giảng viên..."
@@ -106,7 +106,7 @@ export const Header: React.FC<HeaderProps> = ({
               onSearchChange(e.target.value);
               setIsSearchFocused(true);
             }}
-            className="w-full pl-9 pr-8 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all"
+            className="w-full pl-11 pr-9 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all"
           />
 
           {searchQuery && (
@@ -203,7 +203,7 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="relative">
           <button
             onClick={() => setShowSemesterMenu(!showSemesterMenu)}
-            className="inline-flex items-center gap-2 px-3 py-1.5 text-xs lg:text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-lg transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2 text-xs lg:text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-lg transition-colors cursor-pointer"
           >
             <Calendar className="w-4 h-4 text-blue-600" />
             <span className="max-w-[160px] lg:max-w-none truncate">{currentSemester}</span>
@@ -240,7 +240,7 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="relative">
           <button
             onClick={() => setShowNotifications(!showNotifications)}
-            className="relative p-2 text-slate-600 hover:text-blue-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+            className="relative p-2.5 text-slate-600 hover:text-blue-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
             aria-label="Thông báo"
           >
             <Bell className="w-5 h-5" />

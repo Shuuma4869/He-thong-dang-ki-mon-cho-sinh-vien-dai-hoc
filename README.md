@@ -123,6 +123,16 @@ cd he-thong-dang-ky-mon-hoc
 
 Nên clone vào thư mục không dấu tiếng Việt để giảm rủi ro lỗi classpath trên Windows.
 
+Chạy toàn bộ dự án bằng một lệnh:
+
+```powershell
+scripts\chay-du-an.bat
+```
+
+Script sẽ kiểm tra/build frontend, package backend, mở backend, mở frontend và mở trình duyệt tại `http://localhost:3000`.
+
+Nếu muốn chạy từng phần:
+
 Chạy backend:
 
 ```powershell
