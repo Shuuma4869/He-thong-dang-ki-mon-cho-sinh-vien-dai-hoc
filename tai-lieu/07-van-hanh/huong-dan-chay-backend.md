@@ -22,7 +22,7 @@ Từ root repository:
 scripts\chay-backend.bat
 ```
 
-Script này xử lý tốt hơn khi project nằm trong đường dẫn Windows có dấu tiếng Việt bằng cách map sang drive-letter tạm.
+Script này chạy JAR đã package của backend. Nếu chưa có JAR trong `backend/target`, script sẽ tự chạy `mvnw.cmd -DskipTests package` trước khi mở backend. Cách chạy qua JAR giúp giảm lỗi classpath trên Windows khi project nằm trong đường dẫn có dấu tiếng Việt.
 
 Backend chạy tại:
 
@@ -30,10 +30,22 @@ Backend chạy tại:
 http://localhost:8080
 ```
 
+Nếu `8080` đang bị ứng dụng khác chiếm, `scripts\chay-backend.bat` sẽ tự chuyển backend sang:
+
+```text
+http://localhost:18080
+```
+
 API base:
 
 ```text
 http://localhost:8080/api
+```
+
+Khi dùng port dự phòng, API base là:
+
+```text
+http://localhost:18080/api
 ```
 
 Root `/` có thể trả 404. Kiểm tra API bằng:

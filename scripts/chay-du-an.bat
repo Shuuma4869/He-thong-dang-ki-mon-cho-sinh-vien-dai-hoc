@@ -4,6 +4,7 @@ setlocal
 set "PROJECT_ROOT=%~dp0.."
 set "SCRIPT_DIR=%~dp0"
 set "EXPECTED_BACKEND_PORT=8080"
+set "EXPECTED_BACKEND_API=http://localhost:8080/api"
 set "BACKEND_ALREADY_RUNNING=0"
 set "FRONTEND_ALREADY_RUNNING=0"
 
@@ -12,9 +13,35 @@ echo  HE THONG DANG KY MON HOC - CHAY TOAN BO DU AN
 echo ==================================================
 echo.
 
+where java >nul 2>nul
+if errorlevel 1 (
+  echo Khong tim thay Java. Vui long cai JDK 21 va mo terminal moi.
+  pause
+  exit /b 1
+)
+
+where node >nul 2>nul
+if errorlevel 1 (
+  echo Khong tim thay Node.js. Vui long cai Node.js 20 tro len.
+  pause
+  exit /b 1
+)
+
 where npm >nul 2>nul
 if errorlevel 1 (
   echo Khong tim thay npm. Vui long cai Node.js 20 tro len.
+  pause
+  exit /b 1
+)
+
+if not exist "%PROJECT_ROOT%\frontend\package.json" (
+  echo Khong tim thay frontend\package.json. Vui long chay script tu dung thu muc repository.
+  pause
+  exit /b 1
+)
+
+if not exist "%PROJECT_ROOT%\backend\mvnw.cmd" (
+  echo Khong tim thay backend\mvnw.cmd. Vui long kiem tra cau truc du an.
   pause
   exit /b 1
 )
@@ -23,7 +50,11 @@ echo [1/4] Kiem tra va build frontend...
 cd /d "%PROJECT_ROOT%\frontend"
 if not exist node_modules (
   echo Dang cai dependency frontend...
-  call npm install
+  if exist package-lock.json (
+    call npm ci
+  ) else (
+    call npm install
+  )
   if errorlevel 1 goto :failed
 )
 
@@ -81,6 +112,7 @@ if "%EXPECTED_BACKEND_PORT%"=="8080" (
 ) else (
   echo Backend se chay tai http://localhost:18080
 )
+set "EXPECTED_BACKEND_API=http://localhost:%EXPECTED_BACKEND_PORT%/api"
 
 echo.
 echo [4/4] Mo backend va frontend...
@@ -105,7 +137,7 @@ if not errorlevel 1 (
 )
 
 if "%FRONTEND_ALREADY_RUNNING%"=="0" (
-  start "Course Registration Frontend" cmd /k ""%SCRIPT_DIR%chay-frontend.bat""
+  start "Course Registration Frontend" cmd /k ""%SCRIPT_DIR%chay-frontend.bat" %EXPECTED_BACKEND_PORT%"
   call :wait_frontend
   if errorlevel 1 goto :failed
 ) else (
@@ -120,6 +152,7 @@ echo  DA KHOI DONG DU AN
 echo ==================================================
 echo Frontend: http://localhost:3000
 echo Backend:  http://localhost:%EXPECTED_BACKEND_PORT%
+echo API:      %EXPECTED_BACKEND_API%
 echo.
 echo Neu frontend chua hien ngay, doi vai giay roi bam Ctrl + F5.
 echo Khong dong cua so Backend/Frontend khi dang demo.

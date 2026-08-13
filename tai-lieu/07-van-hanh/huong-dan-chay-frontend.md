@@ -36,6 +36,12 @@ API runtime mặc định:
 http://localhost:8080/api
 ```
 
+Khi chạy bằng script tổng `scripts\chay-du-an.bat`, frontend sẽ tự nhận `VITE_API_BASE_URL` theo port backend thực tế. Nếu `8080` bị chiếm và backend phải chạy ở `18080`, script tổng sẽ truyền:
+
+```text
+VITE_API_BASE_URL=http://localhost:18080/api
+```
+
 Nếu cần override:
 
 ```powershell

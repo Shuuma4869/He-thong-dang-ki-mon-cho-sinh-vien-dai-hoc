@@ -133,6 +133,8 @@ scripts\chay-du-an.bat
 
 Script sẽ kiểm tra/build frontend, package backend, mở backend, mở frontend và mở trình duyệt tại `http://localhost:3000`.
 
+Nếu port `8080` đang bị ứng dụng khác chiếm, script sẽ tự chạy backend ở `18080` và truyền `VITE_API_BASE_URL=http://localhost:18080/api` cho frontend.
+
 Nếu muốn chạy từng phần:
 
 Chạy backend:
@@ -159,6 +161,12 @@ Backend mặc định chạy tại:
 
 ```text
 http://localhost:8080
+```
+
+Khi port `8080` bận, script `.bat` dùng port dự phòng:
+
+```text
+http://localhost:18080
 ```
 
 API base:

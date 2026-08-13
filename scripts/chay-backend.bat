@@ -1,8 +1,20 @@
 @echo off
 setlocal
 set "PROJECT_ROOT=%~dp0.."
-set "RUN_DRIVE="
+set "BACKEND_DIR=%PROJECT_ROOT%\backend"
+set "BACKEND_JAR=target\course-registration-0.0.1-SNAPSHOT.jar"
 set "BACKEND_PORT=8080"
+
+where java >nul 2>nul
+if errorlevel 1 (
+  echo Khong tim thay Java. Vui long cai JDK 21 va mo terminal moi.
+  exit /b 1
+)
+
+if not exist "%BACKEND_DIR%\mvnw.cmd" (
+  echo Khong tim thay backend\mvnw.cmd. Vui long kiem tra cau truc du an.
+  exit /b 1
+)
 
 call :backend_healthy 8080
 if not errorlevel 1 (
@@ -31,42 +43,17 @@ if "%BACKEND_PORT%"=="18080" (
   )
 )
 
-for %%D in (Z Y X W V U T S R Q P O N M L K J I H G F E) do (
-  call :drive_available %%D
-  if errorlevel 1 (
-    set "RUN_DRIVE=%%D:"
-    goto :drive_found
-  )
+cd /d "%BACKEND_DIR%"
+if not exist "%BACKEND_JAR%" (
+  echo Chua co backend JAR. Dang package backend...
+  call mvnw.cmd -DskipTests package
+  if errorlevel 1 exit /b 1
 )
 
-echo Khong tim thay drive-letter trong de chay backend.
-exit /b 1
-
-:drive_found
-subst %RUN_DRIVE% "%PROJECT_ROOT%"
-if errorlevel 1 goto :run_without_subst
-
-cd /d %RUN_DRIVE%\backend
 set "SERVER_PORT=%BACKEND_PORT%"
 echo Backend URL: http://localhost:%BACKEND_PORT%
-call mvnw.cmd spring-boot:run
-set "EXIT_CODE=%ERRORLEVEL%"
-
-cd /d "%PROJECT_ROOT%"
-subst %RUN_DRIVE% /D
-exit /b %EXIT_CODE%
-
-:run_without_subst
-echo Khong tao duoc drive tam bang subst. Chay backend bang duong dan hien tai.
-cd /d "%PROJECT_ROOT%\backend"
-set "SERVER_PORT=%BACKEND_PORT%"
-echo Backend URL: http://localhost:%BACKEND_PORT%
-call mvnw.cmd spring-boot:run
+java -jar "%BACKEND_JAR%" --server.port=%BACKEND_PORT%
 exit /b %ERRORLEVEL%
-
-:drive_available
-if exist "%~1:\nul" exit /b 0
-exit /b 1
 
 :backend_healthy
 curl.exe --max-time 3 -s "http://localhost:%~1/api/students/23010690" | findstr /C:"23010690" >nul

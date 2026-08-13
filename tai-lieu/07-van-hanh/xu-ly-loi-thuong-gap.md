@@ -23,6 +23,14 @@ Nếu backend chưa chạy, mở terminal ở root:
 scripts\chay-backend.bat
 ```
 
+Nếu chạy toàn hệ thống bằng `scripts\chay-du-an.bat`, script sẽ tự dùng port `18080` khi `8080` đang bị chiếm và tự truyền `VITE_API_BASE_URL=http://localhost:18080/api` cho frontend.
+
+Nếu chạy frontend thủ công khi backend đang ở `18080`, tạo `frontend/.env.local` từ `frontend/.env.example` và sửa:
+
+```text
+VITE_API_BASE_URL=http://localhost:18080/api
+```
+
 ## Login 23010690 báo lỗi
 
 Kiểm tra `data/students.json` có sinh viên `23010690`. Auth hiện là demo identification, backend chỉ kiểm tra `studentId` tồn tại.
@@ -48,7 +56,12 @@ Lần chạy đầu `backend\mvnw.cmd` sẽ tải Maven và dependency vào cach
 scripts\chay-backend.bat
 ```
 
-Script map project sang drive-letter tạm để giảm lỗi classpath trên Windows.
+Script chạy backend bằng JAR đã package để giảm lỗi classpath trên Windows. Nếu vẫn gặp `ClassNotFoundException`, chạy lại:
+
+```powershell
+backend\mvnw.cmd clean package
+scripts\chay-backend.bat
+```
 
 ## `npm run build` lỗi `spawn EPERM`
 
