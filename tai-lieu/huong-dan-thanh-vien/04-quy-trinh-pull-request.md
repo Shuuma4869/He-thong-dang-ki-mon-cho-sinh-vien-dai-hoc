@@ -1,5 +1,12 @@
 # Quy trình Pull Request
 
+## Moc kiem tra truoc PR
+
+- PR khong duoc lam giam dataset 40 hoc phan.
+- PR khong duoc doi sinh vien demo `23010690` neu khong co dong y cua truong nhom.
+- PR lien quan course phai chup/ghi ro pagination 10 mon/trang va search toan bo 40 mon.
+- PR lien quan registration phai ghi ro cac case `UX205`, `OOP101`, `AI301`, `NET203`, `CLOUD301`.
+
 Tài liệu này dùng chung cho cả ba thành viên. Mỗi thành viên chỉ push feature branch của mình và tạo Pull Request vào `develop`.
 
 ## 1. Trước khi push

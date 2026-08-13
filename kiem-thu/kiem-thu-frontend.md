@@ -11,7 +11,7 @@ npm run dev
 
 Checklist manual:
 
-- Login `SV001` thành công.
+- Login `23010690` thành công.
 - Login `SV999` hiển thị lỗi và dừng loading.
 - Khi backend không chạy, nút login không treo vô hạn.
 - Dashboard hiển thị số liệu từ API.

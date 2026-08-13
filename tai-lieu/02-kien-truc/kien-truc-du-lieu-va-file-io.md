@@ -47,6 +47,9 @@ Controller, service, model và frontend không đọc file trực tiếp.
 
 Quy tắc dữ liệu:
 
+- `data/courses.json` baseline co dung 40 hoc phan.
+- `data/lecturers.json` baseline co 10 giang vien.
+- Sinh vien demo chinh la `23010690`, co 5 mon baseline tong 15/18 tin chi.
 - Mỗi `Course.lecturerId` phải resolve được sang `Lecturer.id`.
 - Mỗi `Registration.studentId` phải resolve được sang `Student.id`.
 - Mỗi `RegistrationDetail.courseId` phải resolve được sang `Course.courseId`.

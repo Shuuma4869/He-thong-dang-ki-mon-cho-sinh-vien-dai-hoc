@@ -23,9 +23,9 @@ Nếu backend chưa chạy, mở terminal ở root:
 scripts\chay-backend.bat
 ```
 
-## Login SV001 báo lỗi
+## Login 23010690 báo lỗi
 
-Kiểm tra `data/students.json` có sinh viên `SV001`. Auth hiện là demo identification, backend chỉ kiểm tra `studentId` tồn tại.
+Kiểm tra `data/students.json` có sinh viên `23010690`. Auth hiện là demo identification, backend chỉ kiểm tra `studentId` tồn tại.
 
 ## Java không phải version 21
 

@@ -37,6 +37,7 @@ Core:
 - Đăng nhập demo bằng mã sinh viên.
 - Xem thông tin sinh viên.
 - Xem danh sách, tìm kiếm và xem chi tiết môn học.
+- Danh sach hoc phan demo co 40 mon, phan trang frontend toi da 10 mon/trang.
 - Đăng ký môn học.
 - Hủy đăng ký môn học.
 - Kiểm tra trùng môn, đầy sĩ số, vượt số tín chỉ và trùng lịch.
@@ -168,8 +169,10 @@ http://localhost:8080/api
 
 ## Demo account
 
-- Mã sinh viên: `SV001`
+- Mã sinh viên: `23010690`
 - Mật khẩu: nhập chuỗi bất kỳ không rỗng trên giao diện
+
+Baseline demo cua `23010690`: `OOP101`, `WEB201`, `DSA102`, `DBS202`, `SE204`, tong 15/18 tin chi. Case dang ky thanh cong nen demo bang `UX205`; cac case loi giu nguyen la `OOP101` duplicate, `AI301` day si so, `NET203` trung lich, `CLOUD301` vuot tin chi.
 
 Authentication hiện là demo identification cho đồ án: backend kiểm tra `studentId` có tồn tại trong `StudentRepository`. Backend không xác thực mật khẩu thật, không tạo JWT và frontend không lưu password.
 
@@ -199,7 +202,7 @@ scripts\kiem-tra-du-an.bat
 
 Kết quả kiểm thử gần nhất của bản tham chiếu local:
 
-- Backend: 98 tests pass, 0 failures, 0 errors, 0 skipped.
+- Backend: 99 tests pass, 0 failures, 0 errors, 0 skipped.
 - Backend package: pass.
 - Frontend typecheck: pass.
 - Frontend build: pass khi chạy ngoài sandbox nếu môi trường chặn Vite/esbuild bằng `spawn EPERM`.

@@ -1,5 +1,13 @@
 # Thành viên 2 - Course, Lecturer, Schedule và Timetable
 
+## Moc nen Course/Pagination da khoa
+
+- `data/courses.json` co dung 40 hoc phan va `data/lecturers.json` co 10 giang vien.
+- Danh sach hoc phan frontend phan trang 10 mon/trang, co nut Truoc/Sau va trang 1-4.
+- Search/filter phai ap dung tren toan bo ket qua API, sau do moi slice theo trang hien tai.
+- Khong duoc lam frontend doc truc tiep `data/courses.json`; course runtime phai qua Course API.
+- `UX205` la course thanh cong cho demo, `AI301` day si so, `NET203` trung lich voi `OOP101`.
+
 Đọc trước:
 
 - [Hướng dẫn chung](00-doc-truoc-khi-bat-dau.md)

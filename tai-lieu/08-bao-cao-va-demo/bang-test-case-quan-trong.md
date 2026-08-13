@@ -2,7 +2,7 @@
 
 | Test case | Kết quả mong muốn |
 |---|---|
-| Login `SV001` | Thành công |
+| Login `23010690` | Thành công |
 | Login `SV999` | `STUDENT_NOT_FOUND` |
 | Đăng ký môn hợp lệ | Thêm registration, tăng sĩ số |
 | Đăng ký trùng môn | `DUPLICATE_REGISTRATION` |

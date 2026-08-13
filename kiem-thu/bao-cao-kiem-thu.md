@@ -16,7 +16,7 @@ Không công bố coverage phần trăm vì dự án chưa cấu hình công c�
 Backend:
 
 ```text
-Tests run: 98, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 99, Failures: 0, Errors: 0, Skipped: 0
 BUILD SUCCESS
 ```
 

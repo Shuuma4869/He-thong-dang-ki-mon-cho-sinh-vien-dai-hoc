@@ -1,5 +1,14 @@
 # Checklist trưởng nhóm review
 
+## Moc review du lieu demo
+
+- [ ] `data/courses.json` van dung 40 hoc phan.
+- [ ] `data/lecturers.json` van co 10 giang vien va moi `lecturerId` trong course deu hop le.
+- [ ] Sinh vien demo `23010690` van co maxCredits = 18.
+- [ ] Baseline `23010690` van la 5 mon, tong 15 tin chi, khong trung lich.
+- [ ] Course list frontend van phan trang 10 mon/trang va search khong bi gioi han trong trang hien tai.
+- [ ] `DemoDataIntegrityTest` pass.
+
 Tài liệu này dành cho trưởng nhóm khi review Pull Request của các thành viên.
 
 ## 1. Review chung

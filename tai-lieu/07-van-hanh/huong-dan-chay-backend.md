@@ -49,7 +49,7 @@ backend\mvnw.cmd clean test
 backend\mvnw.cmd clean package
 ```
 
-Kết quả regression gần nhất: 98 tests pass.
+Kết quả regression gần nhất: 99 tests pass.
 
 ## Cấu hình
 

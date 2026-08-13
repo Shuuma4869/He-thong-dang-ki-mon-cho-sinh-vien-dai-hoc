@@ -44,6 +44,8 @@ Có thể override bằng `VITE_API_BASE_URL`.
 - Timetable: `timetableApi.getTimetable`.
 - Dashboard: tổng hợp dữ liệu từ state/API đã có, không gọi backend endpoint riêng.
 
+Course list hien dung dataset 40 hoc phan tu Course API. Search/filter ap dung tren toan bo ket qua API, sau do frontend phan trang toi da 10 hoc phan/trang. Backend chua co server-side pagination.
+
 ## Quy tắc frontend
 
 - Page/component không gọi `fetch` trực tiếp cho flow đã có feature API.

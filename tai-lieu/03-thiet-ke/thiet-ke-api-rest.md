@@ -41,7 +41,7 @@ Request:
 
 ```json
 {
-  "studentId": "SV001",
+  "studentId": "23010690",
   "password": "demo"
 }
 ```
@@ -55,11 +55,11 @@ Response:
   "success": true,
   "message": "Dang nhap thanh cong.",
   "data": {
-    "studentId": "SV001",
-    "fullName": "Nguyen Minh An",
-    "className": "CNTT-K16A",
+    "studentId": "23010690",
+    "fullName": "Nguyen Trong Tuan",
+    "className": "CNTT",
     "major": "Cong nghe thong tin",
-    "maxCredits": 10
+    "maxCredits": 18
   }
 }
 ```
@@ -82,11 +82,11 @@ Response:
   "success": true,
   "message": "Lay thong tin sinh vien thanh cong.",
   "data": {
-    "studentId": "SV001",
-    "fullName": "Nguyen Minh An",
-    "className": "CNTT-K16A",
+    "studentId": "23010690",
+    "fullName": "Nguyen Trong Tuan",
+    "className": "CNTT",
     "major": "Cong nghe thong tin",
-    "maxCredits": 10
+    "maxCredits": 18
   }
 }
 ```
@@ -100,6 +100,8 @@ Error code chính:
 ### GET `/api/courses`
 
 Trả danh sách `CourseResponse`.
+
+Dataset demo hien co 40 hoc phan. Backend tra danh sach day du; frontend chiu trach nhiem sort va phan trang toi da 10 mon/trang.
 
 ### GET `/api/courses/{courseId}`
 
@@ -155,14 +157,16 @@ Response:
   "success": true,
   "message": "Lay danh sach dang ky hoc phan thanh cong.",
   "data": {
-    "registrationId": "REG-SV001-DEMO",
-    "studentId": "SV001",
+    "registrationId": "REG-23010690-DEMO",
+    "studentId": "23010690",
     "status": "ACTIVE",
     "registeredAt": "2026-08-05T08:15:00",
     "details": [
-      {
-        "courseId": "OOP101"
-      }
+      { "courseId": "OOP101" },
+      { "courseId": "WEB201" },
+      { "courseId": "DSA102" },
+      { "courseId": "DBS202" },
+      { "courseId": "SE204" }
     ],
     "courses": [
       {
@@ -187,7 +191,7 @@ Response:
         ]
       }
     ],
-    "totalCredits": 3
+    "totalCredits": 15
   }
 }
 ```
@@ -198,7 +202,7 @@ Request:
 
 ```json
 {
-  "courseId": "DBS202"
+  "courseId": "UX205"
 }
 ```
 

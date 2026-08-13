@@ -2,7 +2,7 @@
 
 | Requirement | Class/API | Test | Demo scenario |
 |---|---|---|---|
-| FR-01 Login | `POST /api/auth/login`, `AuthService` | `AuthServiceTest`, `AuthControllerTest` | Đăng nhập `SV001`, thử `SV999` |
+| FR-01 Login | `POST /api/auth/login`, `AuthService` | `AuthServiceTest`, `AuthControllerTest` | Đăng nhập `23010690`, thử `SV999` |
 | FR-02 Profile | `GET /api/students/{studentId}` | `StudentServiceTest`, `StudentControllerTest` | Mở Hồ sơ sinh viên |
 | FR-03 Course list | `GET /api/courses` | `CourseServiceTest`, `CourseControllerTest` | Mở Đăng ký môn học |
 | FR-04 Course search | `GET /api/courses/search` | `CourseServiceTest`, `CourseControllerTest` | Tìm `OOP`, tìm chuỗi rỗng |

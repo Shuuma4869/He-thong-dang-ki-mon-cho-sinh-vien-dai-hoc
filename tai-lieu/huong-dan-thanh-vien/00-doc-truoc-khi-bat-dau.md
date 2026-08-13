@@ -1,5 +1,14 @@
 # Hướng dẫn chung trước khi làm
 
+## Moc nen du lieu da khoa
+
+- Tai khoan demo chung: `23010690` - Nguyen Trong Tuan.
+- Dataset course co dung 40 hoc phan, frontend phan trang toi da 10 mon/trang.
+- Baseline dang ky cua `23010690`: `OOP101`, `WEB201`, `DSA102`, `DBS202`, `SE204`, tong 15/18 tin chi.
+- Case thanh cong uu tien: dang ky `UX205` de tang 15 -> 17 tin chi.
+- Case loi can giu: `OOP101` duplicate, `AI301` full, `NET203` trung lich, `CLOUD301` vuot tin chi.
+- Khong doc truc tiep `data/*.json` o frontend; moi du lieu runtime phai di qua API backend.
+
 Tài liệu này dùng cho các thành viên bắt đầu triển khai phần việc của mình trên nhánh riêng. Bạn làm lần lượt các bước dưới đây, chạy kiểm tra trước khi commit và chỉ tạo Pull Request khi phần của mình đã ổn.
 
 ## 1. Cách nhóm làm việc

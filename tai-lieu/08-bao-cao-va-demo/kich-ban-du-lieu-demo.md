@@ -1,73 +1,71 @@
 # Kịch bản dữ liệu demo
 
-Tài liệu này mô tả baseline trong `data/*.json`.
+Tài liệu này mô tả baseline trong `data/*.json` sau khi mở rộng dữ liệu lên 40 học phần.
 
 ## Students
 
 | Student | Mục đích demo | Max credits | Baseline |
 |---|---|---:|---|
-| SV001 - Nguyễn Minh An | Sinh viên chính để demo validator | 10 | OOP101 + WEB201 |
+| 23010690 - Nguyễn Trọng Tuấn | Sinh viên chính để demo validator | 18 | OOP101 + WEB201 + DSA102 + DBS202 + SE204 |
 | SV002 - Trần Hoàng Nam | Empty registration/timetable/dashboard | 18 | Chưa có registration |
 | SV003 - Lê Thu Hà | Sinh viên phụ có registration độc lập | 9 | MATH110 |
 
 ## Lecturers
 
-| Lecturer | Faculty | Course |
-|---|---|---|
-| GV001 - TS. Phạm Quốc Bảo | Khoa Công nghệ thông tin | OOP101, CLOUD301, SE204 |
-| GV002 - ThS. Nguyễn Thùy Linh | Khoa Công nghệ thông tin | WEB201, DBS202, UX205 |
-| GV003 - TS. Đặng Minh Khoa | Khoa Khoa học cơ bản | DSA102, MATH110 |
-| GV004 - PGS. TS. Lê Hải Yến | Khoa Công nghệ thông tin | NET203, AI301 |
+Dataset hiện có 10 giảng viên `GV001` đến `GV010`. Mỗi `course.lecturerId` phải tham chiếu đúng một giảng viên trong `data/lecturers.json`.
 
 ## Courses
 
+Dataset hiện có đúng 40 học phần. Danh sách học phần trên frontend hiển thị 10 môn/trang, có 4 trang, và search chạy trên toàn bộ 40 môn trước khi phân trang kết quả.
+
+Các học phần khóa case demo:
+
 | Course | Credits | Capacity | Schedule | Purpose |
 |---|---:|---:|---|---|
-| OOP101 | 3 | 42/60 | MONDAY 07:30-09:30 | SV001 đã đăng ký, duplicate case |
-| WEB201 | 3 | 37/55 | TUESDAY 07:30-09:30 | SV001 đã đăng ký, search by name |
-| DBS202 | 3 | 28/50 | WEDNESDAY 09:45-11:45 | Register success cho SV001 |
+| OOP101 | 3 | 42/60 | MONDAY 07:30-09:30 | 23010690 đã đăng ký, duplicate case |
+| WEB201 | 3 | 37/55 | TUESDAY 07:30-09:30 | 23010690 đã đăng ký, search by name |
+| DSA102 | 3 | 52/70 | SATURDAY 07:30-10:30 | Baseline, không trùng lịch |
+| DBS202 | 3 | 28/50 | WEDNESDAY 09:45-11:45 | Baseline, kiểm tra timetable/dashboard |
+| SE204 | 3 | 33/50 | THURSDAY 07:30-09:30; FRIDAY 09:45-11:45 | Baseline nhiều lịch |
 | NET203 | 2 | 31/45 | MONDAY 08:30-10:30 | Schedule conflict với OOP101 |
 | AI301 | 2 | 40/40 | THURSDAY 13:00-15:00 | COURSE_FULL |
-| CLOUD301 | 5 | 20/45 | FRIDAY 13:00-16:00 | CREDIT_LIMIT_EXCEEDED với SV001 |
-| DSA102 | 4 | 52/70 | SATURDAY 07:30-10:30 | Search/extra course |
-| SE204 | 3 | 33/50 | THURSDAY 07:30-09:30; FRIDAY 09:45-11:45 | Multi-schedule course |
-| MATH110 | 2 | 45/80 | WEDNESDAY 13:00-15:00 | SV003 đã đăng ký |
-| UX205 | 2 | 18/35 | SUNDAY 08:00-10:00 | Extra course |
+| CLOUD301 | 5 | 20/45 | FRIDAY 13:00-16:00 | CREDIT_LIMIT_EXCEEDED với 23010690 |
+| UX205 | 2 | 18/35 | SUNDAY 08:00-10:00 | Register success, không trùng lịch |
 
 ## Registration baseline
 
 | Student | Registration | Status | Courses | Total credits |
 |---|---|---|---|---:|
-| SV001 | REG-SV001-DEMO | ACTIVE | OOP101, WEB201 | 6 |
+| 23010690 | REG-23010690-DEMO | ACTIVE | OOP101, WEB201, DSA102, DBS202, SE204 | 15 |
 | SV002 | none | none | none | 0 |
 | SV003 | REG-SV003-DEMO | ACTIVE | MATH110 | 2 |
 
 ## Credit math
 
-SV001 baseline:
+23010690 baseline:
 
 ```text
-OOP101 3 + WEB201 3 = 6 credits
-SV001 maxCredits = 10
+OOP101 3 + WEB201 3 + DSA102 3 + DBS202 3 + SE204 3 = 15 credits
+23010690 maxCredits = 18
 ```
 
 Register success:
 
 ```text
-6 + DBS202 3 = 9 <= 10
+15 + UX205 2 = 17 <= 18
 Expected: success
 ```
 
 Credit limit:
 
 ```text
-6 + CLOUD301 5 = 11 > 10
+15 + CLOUD301 5 = 20 > 18
 Expected: CREDIT_LIMIT_EXCEEDED
 ```
 
 ## Schedule conflict formula
 
-SV001 baseline có OOP101:
+23010690 baseline có OOP101:
 
 ```text
 OOP101: MONDAY 07:30-09:30
@@ -102,23 +100,25 @@ newEnd == existingStart
 
 | Scenario | Student | Course/Keyword | Expected result |
 |---|---|---|---|
-| LOGIN_SUCCESS | SV001 | password bất kỳ | success |
+| LOGIN_SUCCESS | 23010690 | password bất kỳ | success |
 | EMPTY_REGISTRATION | SV002 | none | `courses: []`, `totalCredits: 0` |
 | SEARCH_BY_ID | none | OOP | OOP101 |
-| SEARCH_BY_NAME | none | Web | WEB201 |
-| REGISTER_SUCCESS | SV001 | DBS202 | success, totalCredits 6 -> 9 |
-| COURSE_FULL | SV001 | AI301 | `COURSE_FULL` |
-| DUPLICATE_REGISTRATION | SV001 | OOP101 | `DUPLICATE_REGISTRATION` |
-| CREDIT_LIMIT_EXCEEDED | SV001 | CLOUD301 | `CREDIT_LIMIT_EXCEEDED` |
-| SCHEDULE_CONFLICT | SV001 baseline | NET203 | `SCHEDULE_CONFLICT` |
-| CANCEL_SUCCESS | SV001 | DBS202 sau khi register | success, totalCredits 9 -> 6 |
-| TIMETABLE_UPDATE | SV001 | DBS202 | timetable thêm/xóa DBS202 |
+| SEARCH_ALL_DATA | none | UX205 hoặc CLOUD301 | tìm trên toàn bộ 40 môn |
+| PAGINATION | none | page 1-4 | mỗi trang tối đa 10 môn |
+| REGISTER_SUCCESS | 23010690 | UX205 | success, totalCredits 15 -> 17 |
+| COURSE_FULL | 23010690 | AI301 | `COURSE_FULL` |
+| DUPLICATE_REGISTRATION | 23010690 | OOP101 | `DUPLICATE_REGISTRATION` |
+| CREDIT_LIMIT_EXCEEDED | 23010690 | CLOUD301 | `CREDIT_LIMIT_EXCEEDED` |
+| SCHEDULE_CONFLICT | 23010690 baseline | NET203 | `SCHEDULE_CONFLICT` |
+| CANCEL_SUCCESS | 23010690 | UX205 sau khi register | success, totalCredits 17 -> 15 |
+| TIMETABLE_BASELINE | 23010690 | baseline | timetable có 5 môn đã đăng ký |
 
 ## Search
 
 - `OOP` -> OOP101.
 - `Web` -> WEB201.
-- `AI` -> AI301.
+- `UX205` -> UX205.
+- `Cloud` -> CLOUD301.
 
 Search là lowercase contains theo JVM locale root, không cam kết bỏ dấu tiếng Việt.
 
@@ -126,6 +126,7 @@ Search là lowercase contains theo JVM locale root, không cam kết bỏ dấu 
 
 Sau khi demo mutation, restore baseline:
 
-- SV001 chỉ có OOP101 + WEB201.
+- 23010690 chỉ có OOP101 + WEB201 + DSA102 + DBS202 + SE204.
 - DBS202 `currentCapacity = 28`.
-- `git diff -- data/` phải rỗng.
+- UX205 `currentCapacity = 18`.
+- `git diff -- data/` phải rỗng nếu demo đã restore đúng.

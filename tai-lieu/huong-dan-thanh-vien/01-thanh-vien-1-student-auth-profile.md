@@ -1,5 +1,11 @@
 # Thành viên 1 - Student, đăng nhập và hồ sơ sinh viên
 
+## Moc nen Student/Auth/Profile da khoa
+
+- Sinh vien demo chinh la `23010690`, ho ten Nguyen Trong Tuan, lop `CNTT`, nganh Cong nghe thong tin, gioi han 18 tin chi.
+- Auth demo chi kiem tra `studentId` ton tai, khong luu password, khong JWT, khong Spring Security.
+- Profile va dashboard phai lay du lieu sinh vien qua Student API, khong hard-code ten sinh vien trong component.
+
 Đọc trước:
 
 - [Hướng dẫn chung](00-doc-truoc-khi-bat-dau.md)
@@ -150,11 +156,11 @@ Response thành công nằm trong envelope:
   "success": true,
   "message": "...",
   "data": {
-    "studentId": "SV001",
+    "studentId": "23010690",
     "fullName": "...",
     "className": "...",
     "major": "...",
-    "maxCredits": 10
+    "maxCredits": 18
   }
 }
 ```
@@ -173,7 +179,7 @@ Request:
 
 ```json
 {
-  "studentId": "SV001",
+  "studentId": "23010690",
   "password": "..."
 }
 ```
@@ -559,7 +565,7 @@ Các file READ ONLY trong phần này gồm `backend/src/main/java/vn/edu/phenik
 **Mục tiêu:** đăng nhập xong vào dashboard bằng Student thật.
 **Cần làm:** lưu current student trong state, truyền xuống Header/Profile, xử lý logout.
 **Luồng xử lý:** LoginPage success -> App set student -> render dashboard.
-**Không được làm:** không hard-code `SV001` làm nguồn chính, không đổi routing thủ công ngoài phạm vi.
+**Không được làm:** không hard-code `23010690` làm nguồn chính, không đổi routing thủ công ngoài phạm vi.
 **Test:** TypeScript compile.
 **Lệnh kiểm tra:** từ `frontend`: `npm run typecheck`.
 **Kết quả cần đạt:** Kết thúc bước này bạn phải có flow login -> dashboard chạy bằng state thật.

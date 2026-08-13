@@ -3,7 +3,7 @@
 Luồng E2E cần kiểm tra sau khi chạy backend và frontend:
 
 1. Mở `http://localhost:3000`.
-2. Đăng nhập `SV001`.
+2. Đăng nhập `23010690`.
 3. Xem Dashboard.
 4. Mở Hồ sơ sinh viên.
 5. Mở Đăng ký môn học, tìm kiếm môn.

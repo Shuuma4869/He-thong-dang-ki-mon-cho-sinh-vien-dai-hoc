@@ -21,5 +21,13 @@ File: `data/courses.json`
 }
 ```
 
-Baseline hiện có 10 môn học. `DBS202.currentCapacity` ở baseline là `28`.
+Baseline hien co dung 40 mon hoc. Frontend hien thi toi da 10 mon/trang, nen dataset nay tao 4 trang.
+
+Cac case khoa:
+
+- `AI301.currentCapacity == AI301.maxCapacity`, dung cho `COURSE_FULL`.
+- `NET203` trung lich voi `OOP101`, dung cho `SCHEDULE_CONFLICT`.
+- `CLOUD301` co 5 tin chi, dung cho `CREDIT_LIMIT_EXCEEDED` voi baseline 15/18.
+- `UX205` dung cho dang ky thanh cong.
+- `DBS202.currentCapacity` o baseline la `28`.
 

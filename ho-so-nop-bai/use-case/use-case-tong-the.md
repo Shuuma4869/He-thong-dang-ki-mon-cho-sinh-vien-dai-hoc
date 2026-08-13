@@ -7,6 +7,7 @@ flowchart LR
   Profile["Xem hồ sơ"]
   CourseList["Xem danh sách môn"]
   Search["Tìm kiếm môn"]
+  Pagination["Phân trang danh sách"]
   Detail["Xem chi tiết môn"]
   Register["Đăng ký môn"]
   Cancel["Hủy đăng ký"]
@@ -19,6 +20,7 @@ flowchart LR
   Student --> Profile
   Student --> CourseList
   Student --> Search
+  Student --> Pagination
   Student --> Detail
   Student --> Register
   Student --> Cancel

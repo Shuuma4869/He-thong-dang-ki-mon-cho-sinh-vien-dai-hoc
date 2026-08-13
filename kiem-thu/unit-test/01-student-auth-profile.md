@@ -10,7 +10,7 @@ Test class:
 
 Case chính:
 
-- `SV001` đăng nhập thành công.
+- `23010690` đăng nhập thành công.
 - `SV999` không tồn tại.
 - `studentId` rỗng bị validation.
 - Lấy profile thành công.

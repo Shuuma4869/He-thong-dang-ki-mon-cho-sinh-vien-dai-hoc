@@ -52,7 +52,7 @@ Không commit `.env.local`.
 
 ## Demo account
 
-- Mã sinh viên: `SV001`
+- Mã sinh viên: `23010690`
 - Mật khẩu: bất kỳ chuỗi không rỗng
 
 Backend chỉ định danh sinh viên bằng `studentId`, không xác thực mật khẩu thật.

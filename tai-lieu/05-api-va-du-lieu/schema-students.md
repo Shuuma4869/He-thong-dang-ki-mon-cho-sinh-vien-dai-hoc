@@ -4,13 +4,13 @@ File: `data/students.json`
 
 ```json
 {
-  "id": "SV001",
+  "id": "23010690",
   "fullName": "Nguyen Minh An",
-  "className": "CNTT-K16A",
+  "className": "CNTT",
   "major": "Cong nghe thong tin",
-  "maxCredits": 10
+  "maxCredits": 18
 }
 ```
 
-Baseline hiện có 3 sinh viên: `SV001`, `SV002`, `SV003`.
+Baseline hiện có 3 sinh viên: `23010690`, `SV002`, `SV003`.
 

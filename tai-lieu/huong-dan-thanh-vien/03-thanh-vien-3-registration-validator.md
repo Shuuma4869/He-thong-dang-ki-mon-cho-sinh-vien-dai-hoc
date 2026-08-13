@@ -1,5 +1,14 @@
 # Thành viên 3 - Registration và Validator
 
+## Moc nen Registration/Validator da khoa
+
+- Baseline `23010690` dang ky 5 mon: `OOP101`, `WEB201`, `DSA102`, `DBS202`, `SE204`, tong 15/18 tin chi.
+- Dang ky `UX205` phai thanh cong va tang tong tin chi 15 -> 17.
+- Dang ky `OOP101` phai tra `DUPLICATE_REGISTRATION`.
+- Dang ky `AI301` phai tra `COURSE_FULL`.
+- Dang ky `NET203` phai tra `SCHEDULE_CONFLICT` vi trung lich voi `OOP101`.
+- Dang ky `CLOUD301` phai tra `CREDIT_LIMIT_EXCEEDED` vi 15 + 5 > 18.
+
 Đọc trước:
 
 - [Hướng dẫn chung](00-doc-truoc-khi-bat-dau.md)

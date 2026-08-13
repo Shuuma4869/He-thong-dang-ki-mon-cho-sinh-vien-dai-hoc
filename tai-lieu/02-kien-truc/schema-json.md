@@ -9,11 +9,11 @@ Root là array.
 ```json
 [
   {
-    "id": "SV001",
+    "id": "23010690",
     "fullName": "Nguyen Minh An",
-    "className": "CNTT-K16A",
+    "className": "CNTT",
     "major": "Cong nghe thong tin",
-    "maxCredits": 10
+    "maxCredits": 18
   }
 ]
 ```
@@ -88,8 +88,8 @@ Field:
 ```json
 [
   {
-    "registrationId": "REG-SV001-DEMO",
-    "studentId": "SV001",
+    "registrationId": "REG-23010690-DEMO",
+    "studentId": "23010690",
     "status": "ACTIVE",
     "registeredAt": "2026-08-05T08:15:00",
     "details": [

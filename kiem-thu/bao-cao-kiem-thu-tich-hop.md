@@ -30,7 +30,7 @@ Trước thao tác ghi, backup:
 
 Sau kiểm thử, restore baseline:
 
-- SV001: OOP101 + WEB201, tổng 6 tín chỉ.
+- 23010690: OOP101 + WEB201 + DSA102 + DBS202 + SE204, tổng 15 tín chỉ.
 - SV002: không có registration active.
 - SV003: MATH110.
 - DBS202: `currentCapacity = 28`.
@@ -39,34 +39,34 @@ Sau kiểm thử, restore baseline:
 
 | Nhóm | Scenario | Kết quả |
 |---|---|---|
-| Auth | Login demo SV001 với mật khẩu bất kỳ | PASS |
+| Auth | Login demo 23010690 với mật khẩu bất kỳ | PASS |
 | Auth | Login SV999 | PASS, backend trả `STUDENT_NOT_FOUND` |
 | Auth | Logout | PASS |
-| Dashboard | SV001 hiển thị baseline 2 môn, 6/10 tín chỉ | PASS |
-| Course | Danh sách hiển thị 10 môn | PASS |
+| Dashboard | 23010690 hiển thị baseline 5 môn, 15/18 tín chỉ | PASS |
+| Course | Danh sách hiển thị 40 môn, tối đa 10 môn/trang | PASS |
 | Course | Search `DBS202` | PASS |
 | Course | Search keyword không tồn tại | PASS, empty state |
 | Course | Course detail | PASS |
-| Registration | Đăng ký DBS202 cho SV001 | PASS, tổng tín chỉ 6 -> 9 |
+| Registration | Đăng ký UX205 cho 23010690 | PASS, tổng tín chỉ 15 -> 17 |
 | Registration | Duplicate course | PASS, `DUPLICATE_REGISTRATION` |
 | Registration | Course full AI301 | PASS, `COURSE_FULL` |
-| Registration | Schedule conflict NET203 trên baseline SV001 | PASS, `SCHEDULE_CONFLICT` |
+| Registration | Schedule conflict NET203 trên baseline 23010690 | PASS, `SCHEDULE_CONFLICT` |
 | Registration | Credit exceeded CLOUD301 | PASS, `CREDIT_LIMIT_EXCEEDED` |
-| Registration | Hủy DBS202 | PASS, tổng tín chỉ 9 -> 6 |
+| Registration | Hủy UX205 | PASS, tổng tín chỉ 17 -> 15 |
 | Persistence | Restart backend sau mutation | PASS, JSON persistence hoạt động |
 | Timetable | Timetable cập nhật khi đăng ký/hủy | PASS |
-| Profile | Hồ sơ SV001 hiển thị đúng dữ liệu API | PASS |
+| Profile | Hồ sơ 23010690 hiển thị đúng dữ liệu API | PASS |
 | Notifications | Demo/local render, mark read/all read | PASS |
-| Multi-user | SV002 empty state, không lẫn dữ liệu SV001 | PASS |
+| Multi-user | SV002 empty state, không lẫn dữ liệu 23010690 | PASS |
 | Responsive | Desktop/mobile smoke | PASS |
 
 ## Negative APIs
 
 | API | Kết quả |
 |---|---|
-| `POST /api/students/SV001/registrations` với course đã đăng ký | `400 DUPLICATE_REGISTRATION` |
-| `POST /api/students/SV001/registrations` với `AI301` | `400 COURSE_FULL` |
-| `POST /api/students/SV001/registrations` với `CLOUD301` | `400 CREDIT_LIMIT_EXCEEDED` |
+| `POST /api/students/23010690/registrations` với course đã đăng ký | `400 DUPLICATE_REGISTRATION` |
+| `POST /api/students/23010690/registrations` với `AI301` | `400 COURSE_FULL` |
+| `POST /api/students/23010690/registrations` với `CLOUD301` | `400 CREDIT_LIMIT_EXCEEDED` |
 | `GET /api/students/SV999/registrations` | `400 STUDENT_NOT_FOUND` |
 
 Các negative case không mutate `courses.json` hoặc `registrations.json`.
