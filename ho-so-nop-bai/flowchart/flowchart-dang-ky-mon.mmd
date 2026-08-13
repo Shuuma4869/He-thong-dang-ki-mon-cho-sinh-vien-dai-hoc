@@ -1,0 +1,15 @@
+flowchart TD
+  Start["Sinh viên chọn môn"] --> Exists{"Course tồn tại?"}
+  Exists -- Không --> CourseNotFound["COURSE_NOT_FOUND"]
+  Exists -- Có --> Duplicate{"Đã đăng ký?"}
+  Duplicate -- Có --> DuplicateError["DUPLICATE_REGISTRATION"]
+  Duplicate -- Không --> Capacity{"Còn sĩ số?"}
+  Capacity -- Không --> Full["COURSE_FULL"]
+  Capacity -- Có --> Credit{"Vượt tín chỉ?"}
+  Credit -- Có --> CreditError["CREDIT_LIMIT_EXCEEDED"]
+  Credit -- Không --> Conflict{"Trùng lịch?"}
+  Conflict -- Có --> ConflictError["SCHEDULE_CONFLICT"]
+  Conflict -- Không --> Save["Lưu registration"]
+  Save --> Increase["Tăng currentCapacity"]
+  Increase --> Success["Trả RegistrationResponse"]
+
