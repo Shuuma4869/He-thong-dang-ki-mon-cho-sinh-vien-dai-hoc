@@ -4,6 +4,13 @@ package vn.edu.phenikaa.courseregistration.model;
 public class RegistrationDetail {
     private String courseId;
 
+    public RegistrationDetail() {
+    }
+
+    public RegistrationDetail(String courseId) {
+        this.courseId = courseId;
+    }
+
     public String getCourseId() {
         return courseId;
     }

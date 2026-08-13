@@ -12,14 +12,12 @@ import vn.edu.phenikaa.courseregistration.exception.LecturerNotFoundException;
 import vn.edu.phenikaa.courseregistration.exception.StudentNotFoundException;
 import vn.edu.phenikaa.courseregistration.model.Course;
 import vn.edu.phenikaa.courseregistration.model.Lecturer;
-import vn.edu.phenikaa.courseregistration.model.Registration;
 import vn.edu.phenikaa.courseregistration.model.RegistrationDetail;
 import vn.edu.phenikaa.courseregistration.model.Schedule;
 import vn.edu.phenikaa.courseregistration.model.TimetableEntry;
 import vn.edu.phenikaa.courseregistration.model.enums.RegistrationStatus;
 import vn.edu.phenikaa.courseregistration.repository.CourseRepository;
 import vn.edu.phenikaa.courseregistration.repository.LecturerRepository;
-import vn.edu.phenikaa.courseregistration.repository.RegistrationRepository;
 import vn.edu.phenikaa.courseregistration.repository.StudentRepository;
 
 /** Service doc thoi khoa bieu tu dang ky active cua sinh vien. */
