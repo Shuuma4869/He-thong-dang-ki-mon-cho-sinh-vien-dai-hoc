@@ -81,7 +81,8 @@ Frontend không đọc trực tiếp `data/*.json`. Controller, service và mode
 +-- frontend/          # React + TypeScript + Vite
 +-- backend/           # Spring Boot backend
 +-- data/              # students, lecturers, courses, registrations
-+-- tai-lieu/          # Tài liệu phân tích, kiến trúc, thiết kế, vận hành, kiểm thử
++-- tai-lieu/          # Tài liệu phân tích, kiến trúc, thiết kế, vận hành, báo cáo
++-- kiem-thu/          # Tài liệu kiểm thử, ma trận test case, kết quả kiểm thử
 +-- thiet-ke/          # Tài nguyên thiết kế và thư mục UML
 +-- ho-so-nop-bai/     # Hồ sơ nộp bài và ảnh demo đã chọn
 +-- scripts/           # Script chạy backend/frontend/kiểm tra
@@ -227,8 +228,8 @@ Chi tiết xem `tai-lieu/04-quy-trinh-nhom/phan-cong-thanh-vien.md`.
 - `tai-lieu/03-thiet-ke/thiet-ke-lop-va-doi-tuong.md`
 - `tai-lieu/03-thiet-ke/thiet-ke-api-rest.md`
 - `tai-lieu/03-thiet-ke/thiet-ke-validator.md`
-- `tai-lieu/06-kiem-thu/bao-cao-kiem-thu.md`
-- `tai-lieu/06-kiem-thu/bao-cao-kiem-thu-tich-hop.md`
+- `kiem-thu/bao-cao-kiem-thu.md`
+- `kiem-thu/bao-cao-kiem-thu-tich-hop.md`
 - `tai-lieu/07-van-hanh/huong-dan-chay-backend.md`
 - `tai-lieu/07-van-hanh/huong-dan-chay-frontend.md`
 - `tai-lieu/08-bao-cao-va-demo/kich-ban-du-lieu-demo.md`

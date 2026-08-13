@@ -8,7 +8,6 @@ Nên đọc tài liệu theo thứ tự:
 4. `03-thiet-ke`: xem thiết kế lớp, service, repository, validator và API.
 5. `04-quy-trinh-nhom`: quy trình làm việc nhóm.
 6. `05-api-va-du-lieu`: endpoint và schema JSON.
-7. `06-kiem-thu`: chiến lược và kết quả kiểm thử.
+7. `../../kiem-thu`: chiến lược và kết quả kiểm thử.
 8. `07-van-hanh`: cài đặt, chạy và xử lý lỗi.
 9. `08-bao-cao-va-demo`: kịch bản demo và nguồn viết báo cáo.
-

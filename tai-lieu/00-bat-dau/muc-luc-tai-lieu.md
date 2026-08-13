@@ -75,21 +75,21 @@
 
 ## Kiểm thử
 
-- `../06-kiem-thu/bao-cao-kiem-thu.md`
-- `../06-kiem-thu/bao-cao-kiem-thu-tich-hop.md`
-- `../06-kiem-thu/chien-luoc-kiem-thu.md`
-- `../06-kiem-thu/ma-tran-test-case.md`
-- `../06-kiem-thu/kiem-thu-api.md`
-- `../06-kiem-thu/kiem-thu-frontend.md`
-- `../06-kiem-thu/kiem-thu-e2e.md`
-- `../06-kiem-thu/unit-test/00-tong-quan-unit-test.md`
-- `../06-kiem-thu/unit-test/01-student-auth-profile.md`
-- `../06-kiem-thu/unit-test/02-course-lecturer.md`
-- `../06-kiem-thu/unit-test/03-registration-validator.md`
-- `../06-kiem-thu/unit-test/04-timetable.md`
-- `../06-kiem-thu/unit-test/05-json-file-io.md`
-- `../06-kiem-thu/unit-test/06-cach-chay-test.md`
-- `../06-kiem-thu/unit-test/07-ket-qua-kiem-thu.md`
+- `../../kiem-thu/bao-cao-kiem-thu.md`
+- `../../kiem-thu/bao-cao-kiem-thu-tich-hop.md`
+- `../../kiem-thu/chien-luoc-kiem-thu.md`
+- `../../kiem-thu/ma-tran-test-case.md`
+- `../../kiem-thu/kiem-thu-api.md`
+- `../../kiem-thu/kiem-thu-frontend.md`
+- `../../kiem-thu/kiem-thu-e2e.md`
+- `../../kiem-thu/unit-test/00-tong-quan-unit-test.md`
+- `../../kiem-thu/unit-test/01-student-auth-profile.md`
+- `../../kiem-thu/unit-test/02-course-lecturer.md`
+- `../../kiem-thu/unit-test/03-registration-validator.md`
+- `../../kiem-thu/unit-test/04-timetable.md`
+- `../../kiem-thu/unit-test/05-json-file-io.md`
+- `../../kiem-thu/unit-test/06-cach-chay-test.md`
+- `../../kiem-thu/unit-test/07-ket-qua-kiem-thu.md`
 
 ## Vận hành
 
