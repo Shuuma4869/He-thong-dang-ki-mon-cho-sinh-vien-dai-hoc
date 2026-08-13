@@ -69,6 +69,6 @@ if exist "%~1:\nul" exit /b 0
 exit /b 1
 
 :backend_healthy
-curl.exe --max-time 3 -s "http://localhost:%~1/api/students/SV001" | findstr /C:"SV001" >nul
+curl.exe --max-time 3 -s "http://localhost:%~1/api/students/23010690" | findstr /C:"23010690" >nul
 if errorlevel 1 exit /b 1
 exit /b 0

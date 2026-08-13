@@ -1,15 +1,24 @@
 [
   {
-    "registrationId": "REG-SV001-DEMO",
-    "studentId": "SV001",
+    "registrationId": "REG-23010690-DEMO",
+    "studentId": "23010690",
     "status": "ACTIVE",
-    "registeredAt": "2026-08-05T08:15:00",
+    "registeredAt": "2026-08-01T08:00:00",
     "details": [
       {
         "courseId": "OOP101"
       },
       {
         "courseId": "WEB201"
+      },
+      {
+        "courseId": "DSA102"
+      },
+      {
+        "courseId": "DBS202"
+      },
+      {
+        "courseId": "SE204"
       }
     ]
   },
@@ -17,7 +26,7 @@
     "registrationId": "REG-SV003-DEMO",
     "studentId": "SV003",
     "status": "ACTIVE",
-    "registeredAt": "2026-08-05T09:00:00",
+    "registeredAt": "2026-08-02T09:15:00",
     "details": [
       {
         "courseId": "MATH110"
