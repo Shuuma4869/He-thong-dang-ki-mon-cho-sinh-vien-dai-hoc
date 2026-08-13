@@ -1,8 +1,11 @@
 package vn.edu.phenikaa.courseregistration.dto.request;
 
-/** DTO request skeleton cho thao tác đăng ký môn học. */
+import jakarta.validation.constraints.NotBlank;
+
+/** DTO request cho thao tác đăng ký môn học. */
 public class RegistrationRequest {
     private String studentId;
+    @NotBlank(message = "Ma hoc phan khong duoc de trong")
     private String courseId;
 
     public String getStudentId() {
