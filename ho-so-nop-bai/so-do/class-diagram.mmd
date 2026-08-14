@@ -1,0 +1,82 @@
+classDiagram
+  class User {
+    <<abstract>>
+    -String id
+    -String fullName
+  }
+  class Student {
+    -String className
+    -String major
+    -int maxCredits
+  }
+  class Lecturer {
+    -String faculty
+  }
+  class Course {
+    -String courseId
+    -String courseName
+    -int credits
+    -String lecturerId
+    -int maxCapacity
+    -int currentCapacity
+    -List~Schedule~ schedules
+  }
+  class Schedule {
+    -DayOfWeek dayOfWeek
+    -LocalTime startTime
+    -LocalTime endTime
+    -String room
+  }
+  class Registration {
+    -String registrationId
+    -String studentId
+    -RegistrationStatus status
+    -LocalDateTime registeredAt
+    -List~RegistrationDetail~ details
+  }
+  class RegistrationDetail {
+    -String courseId
+  }
+  class Registrable {
+    <<interface>>
+    +register(studentId, courseId)
+  }
+  class CourseValidator {
+    <<interface>>
+    +validate(context)
+  }
+  class RegistrationService
+  class CourseExistenceValidator
+  class DuplicateCourseValidator
+  class CapacityValidator
+  class CreditLimitValidator
+  class ScheduleConflictValidator
+  class JsonFileUtils
+  class StudentRepository {
+    <<interface>>
+  }
+  class CourseRepository {
+    <<interface>>
+  }
+  class RegistrationRepository {
+    <<interface>>
+  }
+
+  User <|-- Student
+  User <|-- Lecturer
+  Course "1" o-- "*" Schedule
+  Registration "1" o-- "*" RegistrationDetail
+  Registrable <|.. RegistrationService
+  CourseValidator <|.. CourseExistenceValidator
+  CourseValidator <|.. DuplicateCourseValidator
+  CourseValidator <|.. CapacityValidator
+  CourseValidator <|.. CreditLimitValidator
+  CourseValidator <|.. ScheduleConflictValidator
+  RegistrationService --> CourseValidator
+  RegistrationService --> StudentRepository
+  RegistrationService --> CourseRepository
+  RegistrationService --> RegistrationRepository
+  StudentRepository --> JsonFileUtils
+  CourseRepository --> JsonFileUtils
+  RegistrationRepository --> JsonFileUtils
+

@@ -1,0 +1,26 @@
+# Sequence đăng ký môn
+
+```mermaid
+sequenceDiagram
+  actor Student
+  participant Frontend
+  participant RegistrationController
+  participant RegistrationService
+  participant Validators as List<CourseValidator>
+  participant RegistrationRepository
+  participant CourseRepository
+  participant JsonFileUtils
+  participant JSON as data/*.json
+
+  Student->>Frontend: Xác nhận đăng ký môn
+  Frontend->>RegistrationController: POST /api/students/{studentId}/registrations
+  RegistrationController->>RegistrationService: registerCourseSummary(studentId, courseId)
+  RegistrationService->>CourseRepository: findById(courseId)
+  RegistrationService->>RegistrationRepository: findByStudentId(studentId)
+  RegistrationService->>Validators: validate(context)
+  Validators-->>RegistrationService: pass hoặc BusinessException
+  RegistrationService->>RegistrationRepository: save(registration)
+  RegistrationService->>CourseRepository: save(course tăng sĩ số)
+  RegistrationController-->>Frontend: ApiResponse<RegistrationResponse>
+```
+

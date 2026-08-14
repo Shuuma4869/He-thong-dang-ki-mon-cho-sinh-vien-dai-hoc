@@ -2,21 +2,13 @@
 
 Đồ án cuối kỳ OOP nhóm 2 - Đại học Phenikaa.
 
-Đây là starter project cho hệ thống đăng ký môn học theo cấu trúc monorepo. Frontend đã có giao diện React chạy bằng mock data. Backend hiện là Spring Boot skeleton để nhóm tiếp tục phát triển model, service, validator, repository JSON File IO và REST API ở các phase sau.
+Dự án là một hệ thống đăng ký môn học dạng full-stack local. Frontend React hiển thị dashboard sinh viên, danh sách môn học, đăng ký/hủy đăng ký, thời khóa biểu và hồ sơ. Backend Spring Boot cung cấp REST API, kiểm tra nghiệp vụ đăng ký bằng validator chain và lưu dữ liệu bằng JSON File IO.
 
-Project chưa production-ready.
-
-## Trạng thái hiện tại
-
-- Frontend: đã có UI đăng nhập demo, dashboard, danh sách môn học, môn đã đăng ký, thời khóa biểu, thông báo và hồ sơ sinh viên.
-- Backend: skeleton compile được, có Spring context test tối thiểu.
-- File IO: mới ở mức starter/skeleton, chưa triển khai đầy đủ.
-- REST API: chưa hoàn thiện và chưa kết nối frontend.
-- Database/JPA/Hibernate/Spring Security/JWT: chưa sử dụng trong starter này.
+Dự án phục vụ học tập/demo OOP, chưa phải hệ thống production.
 
 ## Công nghệ
 
-### Frontend
+Frontend:
 
 - React 19
 - TypeScript 5.8
@@ -25,69 +17,133 @@ Project chưa production-ready.
 - lucide-react
 - npm
 
-### Backend
+Backend:
 
 - Java 21
 - Spring Boot 3.3.5
-- Maven Wrapper 3.3.4, tải Maven 3.9.9
-- JSON File IO định hướng cho phase sau
-- JUnit 5
-- Mockito, thông qua `spring-boot-starter-test`
+- Maven Wrapper
+- Jackson JSON
+- JUnit 5, Mockito, MockMvc
+
+Lưu trữ:
+
+- JSON File IO trong `data/*.json`
+- Không dùng database, JPA, Hibernate, Spring Security hoặc JWT
+
+## Chức năng
+
+Core:
+
+- Đăng nhập demo bằng mã sinh viên.
+- Xem thông tin sinh viên.
+- Xem danh sách, tìm kiếm và xem chi tiết môn học.
+- Danh sach hoc phan demo co 40 mon, phan trang frontend toi da 10 mon/trang.
+- Đăng ký môn học.
+- Hủy đăng ký môn học.
+- Kiểm tra trùng môn, đầy sĩ số, vượt số tín chỉ và trùng lịch.
+- Xem môn đã đăng ký và tổng số tín chỉ.
+- Xem thời khóa biểu được tính từ đăng ký hiện tại.
+
+Support:
+
+- Dashboard tổng quan ở frontend.
+- Thông báo demo/local ở frontend.
+- Hồ sơ sinh viên.
+
+## Kiến trúc
+
+Luồng backend bắt buộc:
+
+```text
+Controller
+-> Service
+-> Validator nếu có
+-> Repository Interface
+-> Json Repository
+-> JsonFileUtils
+-> data/*.json
+```
+
+Frontend gọi backend qua shared API layer:
+
+```text
+React Page/Component
+-> feature api
+-> shared requestApi/httpClient
+-> REST API
+```
+
+Frontend không đọc trực tiếp `data/*.json`. Controller, service và model backend không tự mở file JSON.
+
+## Cấu trúc thư mục
+
+```text
+.
++-- frontend/          # React + TypeScript + Vite
++-- backend/           # Spring Boot backend
++-- data/              # students, lecturers, courses, registrations
++-- tai-lieu/          # Tài liệu phân tích, kiến trúc, thiết kế, vận hành, báo cáo
++-- kiem-thu/          # Tài liệu kiểm thử, ma trận test case, kết quả kiểm thử
++-- thiet-ke/          # Tài nguyên thiết kế và thư mục UML
++-- ho-so-nop-bai/     # Hồ sơ nộp bài và ảnh demo đã chọn
++-- scripts/           # Script chạy backend/frontend/kiểm tra
++-- .github/           # Mẫu GitHub
++-- .env.example       # Ghi chú cấu hình môi trường cấp root
++-- frontend/.env.example
++-- README.md
+```
 
 ## Yêu cầu môi trường
 
 - Git
+- JDK 21
 - Node.js 20 trở lên
 - npm 10 trở lên
-- JDK 21
 
-Thành viên khác không bắt buộc cài Maven hệ thống vì project đã có Maven Wrapper trong `backend/`.
+Không cần cài Maven hệ thống vì backend dùng Maven Wrapper.
 
 Kiểm tra nhanh:
 
 ```powershell
-node -v
-npm -v
+git --version
 java -version
 javac -version
+node -v
+npm -v
 ```
 
-## Clone dự án
+## Cách chạy nhanh
+
+Clone repository:
 
 ```powershell
-cd D:\Projects
-git clone https://github.com/Shuuma4869/He-thong-dang-ki-mon-.git he-thong-dang-ky-mon-hoc
+mkdir projects
+cd projects
+git clone https://github.com/Shuuma4869/He-thong-dang-ki-mon-cho-sinh-vien-dai-hoc.git he-thong-dang-ky-mon-hoc
 cd he-thong-dang-ky-mon-hoc
 ```
 
-Nên clone vào thư mục không dấu tiếng Việt, ví dụ `D:\Projects\he-thong-dang-ky-mon-hoc`, để tránh lỗi classpath Maven/Spring Boot trên Windows.
+Nên clone vào thư mục không dấu tiếng Việt để giảm rủi ro lỗi classpath trên Windows.
 
-Không cần tạo file secret để build starter.
-
-## Cấu hình môi trường
-
-Root hiện chưa có biến môi trường bắt buộc. File mẫu nằm ở:
-
-```text
-.env.example
-```
-
-Frontend có file mẫu riêng:
-
-```text
-frontend/.env.example
-```
-
-Nếu cần cấu hình frontend local:
+Chạy toàn bộ dự án bằng một lệnh:
 
 ```powershell
-cd frontend
-copy .env.example .env.local
+scripts\chay-du-an.bat
 ```
 
-Không commit `.env`, `.env.local` hoặc secret thật lên GitHub.
+Script sẽ kiểm tra/build frontend, package backend, mở backend, mở frontend và mở trình duyệt tại `http://localhost:3000`.
 
-## Chạy frontend
+Nếu port `8080` đang bị ứng dụng khác chiếm, script sẽ tự chạy backend ở `18080` và truyền `VITE_API_BASE_URL=http://localhost:18080/api` cho frontend.
+
+Nếu muốn chạy từng phần:
+
+Chạy backend:
+
+```powershell
+scripts\chay-backend.bat
+```
+
+Chạy frontend ở terminal khác:
 
 ```powershell
 cd frontend
@@ -95,133 +151,108 @@ npm install
 npm run dev
 ```
 
-Vite mặc định chạy tại:
+Frontend mặc định chạy tại:
 
 ```text
 http://localhost:3000
 ```
 
-Kiểm tra frontend:
+Backend mặc định chạy tại:
 
-```powershell
-cd frontend
-npm run typecheck
-npm run build
+```text
+http://localhost:8080
 ```
 
-## Chạy backend
+Khi port `8080` bận, script `.bat` dùng port dự phòng:
 
-Từ root repository:
-
-```powershell
-scripts\chay-backend.bat
+```text
+http://localhost:18080
 ```
 
-Kiểm tra backend:
+API base:
+
+```text
+http://localhost:8080/api
+```
+
+## Demo account
+
+- Mã sinh viên: `23010690`
+- Mật khẩu: nhập chuỗi bất kỳ không rỗng trên giao diện
+
+Baseline demo cua `23010690`: `OOP101`, `WEB201`, `DSA102`, `DBS202`, `SE204`, tong 15/18 tin chi. Case dang ky thanh cong nen demo bang `UX205`; cac case loi giu nguyen la `OOP101` duplicate, `AI301` day si so, `NET203` trung lich, `CLOUD301` vuot tin chi.
+
+Authentication hiện là demo identification cho đồ án: backend kiểm tra `studentId` có tồn tại trong `StudentRepository`. Backend không xác thực mật khẩu thật, không tạo JWT và frontend không lưu password.
+
+## Kiểm thử
+
+Chạy kiểm tra backend:
 
 ```powershell
 backend\mvnw.cmd clean test
 backend\mvnw.cmd clean package
 ```
 
-Backend dự kiến chạy tại:
+Chạy kiểm tra frontend:
 
-```text
-http://localhost:8080
+```powershell
+cd frontend
+npm run typecheck
+npm run build
+cd ..
 ```
 
-Root `/` có thể trả 404 trong starter vì API thật chưa được triển khai.
-
-Nếu chạy trực tiếp `backend\mvnw.cmd spring-boot:run` trong một đường dẫn Windows có dấu tiếng Việt và gặp lỗi classpath, hãy dùng `scripts\chay-backend.bat`. Script này tự map project sang một drive-letter tạm thời rồi gỡ ra khi dừng server.
-
-## Chạy toàn bộ kiểm tra
+Chạy toàn bộ:
 
 ```powershell
 scripts\kiem-tra-du-an.bat
 ```
 
-Script này chạy frontend typecheck, frontend build, backend test và backend package. Script dừng ngay khi có bước lỗi.
+Kết quả kiểm thử gần nhất của bản tham chiếu local:
 
-## Cấu trúc thư mục
+- Backend: 99 tests pass, 0 failures, 0 errors, 0 skipped.
+- Backend package: pass.
+- Frontend typecheck: pass.
+- Frontend build: pass khi chạy ngoài sandbox nếu môi trường chặn Vite/esbuild bằng `spawn EPERM`.
+- Kiểm thử tích hợp trình duyệt: pass.
 
-```text
-.
-+-- frontend/          # React + TypeScript + Vite
-+-- backend/           # Spring Boot starter
-+-- data/              # JSON data starter
-+-- tai-lieu/          # Tài liệu phân tích, thiết kế, quy trình, vận hành
-+-- thiet-ke/          # Tài nguyên thiết kế và ghi chú asset
-+-- ho-so-nop-bai/     # Hồ sơ nộp bài
-+-- scripts/           # Script hỗ trợ chạy/kiểm tra
-+-- .github/           # Issue template và pull request template
-+-- .env.example       # Env template cấp root
-+-- .gitattributes     # Quy tắc line ending
-+-- .editorconfig      # Quy tắc editor
-+-- LICENSE
-+-- pom.xml            # Maven aggregator để chạy wrapper từ root
-+-- README.md
-```
+## Phân công tổng quan
 
-## Tài liệu liên quan
+Nhóm có thể chia theo module:
+
+- Frontend UI và API client.
+- Backend model/service/validator.
+- Repository JSON File IO.
+- REST API/DTO/controller.
+- Kiểm thử, tài liệu và demo.
+
+Chi tiết xem `tai-lieu/04-quy-trinh-nhom/phan-cong-thanh-vien.md`.
+
+## Tài liệu chi tiết
 
 - `tai-lieu/00-bat-dau/muc-luc-tai-lieu.md`
 - `tai-lieu/00-bat-dau/gioi-thieu-du-an.md`
 - `tai-lieu/02-kien-truc/kien-truc-tong-the.md`
-- `tai-lieu/04-quy-trinh-nhom/quy-trinh-git-github.md`
-- `tai-lieu/07-van-hanh/huong-dan-chay-frontend.md`
+- `tai-lieu/02-kien-truc/kien-truc-frontend.md`
+- `tai-lieu/02-kien-truc/kien-truc-backend.md`
+- `tai-lieu/02-kien-truc/kien-truc-du-lieu-va-file-io.md`
+- `tai-lieu/03-thiet-ke/thiet-ke-lop-va-doi-tuong.md`
+- `tai-lieu/03-thiet-ke/thiet-ke-api-rest.md`
+- `tai-lieu/03-thiet-ke/thiet-ke-validator.md`
+- `kiem-thu/bao-cao-kiem-thu.md`
+- `kiem-thu/bao-cao-kiem-thu-tich-hop.md`
 - `tai-lieu/07-van-hanh/huong-dan-chay-backend.md`
-- `tai-lieu/07-van-hanh/xu-ly-loi-thuong-gap.md`
+- `tai-lieu/07-van-hanh/huong-dan-chay-frontend.md`
+- `tai-lieu/08-bao-cao-va-demo/kich-ban-du-lieu-demo.md`
+- `tai-lieu/08-bao-cao-va-demo/kich-ban-demo-he-thong.md`
+- `tai-lieu/08-bao-cao-va-demo/cau-hoi-bao-ve.md`
 
-## Tính năng đã có trong frontend mock
+## Giới hạn hiện tại
 
-- Đăng nhập demo bằng mã sinh viên.
-- Dashboard tổng quan.
-- Tìm kiếm và lọc môn học.
-- Xem chi tiết môn học.
-- Đăng ký/hủy đăng ký ở mock state.
-- Xem môn học đã đăng ký.
-- Xem thời khóa biểu tuần.
-- Xem và đánh dấu thông báo.
-- Xem hồ sơ sinh viên.
+- JSON File IO phù hợp demo/đồ án, không có transaction hoặc xử lý concurrency như database.
+- Auth là demo identification, không phải xác thực bảo mật.
+- Notifications chỉ là state local ở frontend.
+- Chưa có portal quản trị hoặc giảng viên.
+- Chưa có phân quyền production.
 
-## Phần chưa triển khai
-
-- Business logic đăng ký môn học thật ở backend.
-- JSON File IO hoàn chỉnh.
-- REST API thật.
-- Kết nối frontend với backend.
-- Unit test nghiệp vụ.
-- Phân quyền/xác thực thật.
-- Trang quản trị/giảng viên.
-
-## Quy trình Git cho nhóm
-
-Không code trực tiếp trên `main`.
-
-Quy trình đề xuất:
-
-```powershell
-git switch main
-git pull
-git switch -c feature/<ten-module>
-```
-
-Sau khi code:
-
-```powershell
-scripts\kiem-tra-du-an.bat
-git status
-git add .
-git commit -m "feat(module): mo ta ngan gon"
-git push -u origin feature/<ten-module>
-```
-
-Sau đó tạo Pull Request về `main`.
-
-Trước khi mở Pull Request, cần kiểm tra:
-
-- Không commit `.env.local`.
-- Không commit `node_modules/`, `dist/`, `target/`.
-- Không thêm secret.
-- Không đổi API hoặc kiến trúc trái tài liệu nếu chưa thống nhất.
-- Nếu sửa frontend, bổ sung ảnh giao diện trong Pull Request.
+Hướng phát triển sau đồ án: database, transaction, Spring Security, phân quyền role, notification backend, portal quản trị/giảng viên và kiểm thử mở rộng.
