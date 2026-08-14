@@ -10,6 +10,8 @@ import {
   AlertTriangle,
   RotateCcw,
   BookOpen,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { Course, CourseFilterState } from '@/features/courses/types/course.types';
 import { courseApi } from '@/features/courses/api/courseApi';
@@ -24,6 +26,8 @@ interface CourseListPageProps {
   onCoursesLoaded: (courses: Course[]) => void;
 }
 
+const COURSE_PAGE_SIZE = 10;
+
 export const CourseListPage: React.FC<CourseListPageProps> = ({
   registeredCourseIds,
   onOpenCourseDetail,
@@ -33,9 +37,13 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
   onCoursesLoaded,
 }) => {
   const [courses, setCourses] = useState<Course[]>([]);
+  const [courseCatalog, setCourseCatalog] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
   const requestSeqRef = useRef(0);
+  const listTopRef = useRef<HTMLDivElement | null>(null);
+  const courseCatalogRef = useRef<Course[]>([]);
   const [filters, setFilters] = useState<CourseFilterState>({
     searchQuery: searchQuery,
     dayOfWeek: 'Tất cả các ngày',
@@ -56,14 +64,20 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
     setErrorMessage('');
 
     try {
-      const loadedCourses = normalizedKeyword
-        ? await courseApi.searchCourses(normalizedKeyword)
-        : await courseApi.getCourses();
+      const cachedCatalog = courseCatalogRef.current;
+      const [loadedCourses, loadedCatalog] = normalizedKeyword
+        ? await Promise.all([
+          courseApi.searchCourses(normalizedKeyword),
+          cachedCatalog.length > 0 ? Promise.resolve(cachedCatalog) : courseApi.getCourses(),
+        ])
+        : await courseApi.getCourses().then((allCourses) => [allCourses, allCourses] as const);
 
       if (requestSeqRef.current !== requestId) return;
 
+      courseCatalogRef.current = loadedCatalog;
+      setCourseCatalog(loadedCatalog);
       setCourses(loadedCourses);
-      onCoursesLoaded(loadedCourses);
+      onCoursesLoaded(loadedCatalog);
     } catch (error) {
       if (requestSeqRef.current !== requestId) return;
 
@@ -76,8 +90,7 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
       }
     }
   }, [onCoursesLoaded]);
-
-  useEffect(() => {
+useEffect(() => {
     const timeoutId = window.setTimeout(() => {
       void loadCourses(filters.searchQuery);
     }, 250);
@@ -85,9 +98,13 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
     return () => window.clearTimeout(timeoutId);
   }, [filters.searchQuery, loadCourses]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters.searchQuery, filters.dayOfWeek, filters.status, filters.minCredits]);
+
   const registeredCoursesList = useMemo(() => {
-    return courses.filter((c) => registeredCourseIds.includes(c.id));
-  }, [courses, registeredCourseIds]);
+    return courseCatalog.filter((c) => registeredCourseIds.includes(c.id));
+  }, [courseCatalog, registeredCourseIds]);
 
   const registeredScheduleSlots = useMemo(() => {
     const slots: { day: number; periods: number[] }[] = [];
@@ -95,7 +112,7 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
       c.schedules.forEach((s) => {
         slots.push({ day: s.dayOfWeek, periods: s.periodNumbers });
       });
-});
+    });
     return slots;
   }, [registeredCoursesList]);
 
@@ -116,7 +133,9 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
   const filteredCourses = useMemo(() => {
     return courses.filter((course) => {
       if (filters.dayOfWeek !== 'Tất cả các ngày') {
-        const dayNum = parseInt(filters.dayOfWeek.replace('Thứ ', ''));
+        const dayNum = filters.dayOfWeek === 'Chủ nhật'
+          ? 8
+          : parseInt(filters.dayOfWeek.replace('Thứ ', ''));
         const matchesDay = course.schedules.some((s) => s.dayOfWeek === dayNum);
         if (!matchesDay) return false;
       }
@@ -139,7 +158,36 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
     });
   }, [courses, filters, registeredCourseIds, registeredScheduleSlots]);
 
+  const totalPages = Math.max(1, Math.ceil(filteredCourses.length / COURSE_PAGE_SIZE));
+
+  const visibleCourses = useMemo(() => {
+    const safePage = Math.min(currentPage, totalPages);
+    const startIndex = (safePage - 1) * COURSE_PAGE_SIZE;
+    return filteredCourses.slice(startIndex, startIndex + COURSE_PAGE_SIZE);
+  }, [currentPage, filteredCourses, totalPages]);
+
+  const pageNumbers = useMemo(() => {
+return Array.from({ length: totalPages }, (_, index) => index + 1);
+  }, [totalPages]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
+  const handlePageChange = (page: number) => {
+    const nextPage = Math.min(Math.max(page, 1), totalPages);
+    if (nextPage === currentPage) return;
+
+    setCurrentPage(nextPage);
+    window.requestAnimationFrame(() => {
+      listTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  };
+
   const handleResetFilters = () => {
+    setCurrentPage(1);
     setFilters({
       searchQuery: '',
       dayOfWeek: 'Tất cả các ngày',
@@ -170,7 +218,7 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
       </div>
 
       <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-<div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2 text-xs font-bold text-slate-800 uppercase tracking-wider">
             <Filter className="w-4 h-4 text-blue-600" />
             <span>Bộ Lọc Nâng Cao</span>
@@ -193,7 +241,7 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {/* Search Field */}
           <div className="space-y-1">
-            <label className="block text-[11px] font-semibold text-slate-600">Tìm kiếm</label>
+<label className="block text-[11px] font-semibold text-slate-600">Tìm kiếm</label>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
@@ -201,6 +249,7 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
                 placeholder="Mã/Tên môn/Giảng viên..."
                 value={filters.searchQuery}
                 onChange={(e) => {
+                  setCurrentPage(1);
                   setFilters({ ...filters, searchQuery: e.target.value });
                   onSearchChange(e.target.value);
                 }}
@@ -214,7 +263,10 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
             <label className="block text-[11px] font-semibold text-slate-600">Ngày học</label>
             <select
               value={filters.dayOfWeek}
-              onChange={(e) => setFilters({ ...filters, dayOfWeek: e.target.value })}
+              onChange={(e) => {
+                setCurrentPage(1);
+                setFilters({ ...filters, dayOfWeek: e.target.value });
+              }}
               className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all cursor-pointer"
             >
               <option value="Tất cả các ngày">Tất cả các ngày</option>
@@ -224,15 +276,19 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
               <option value="Thứ 5">Thứ 5</option>
               <option value="Thứ 6">Thứ 6</option>
               <option value="Thứ 7">Thứ 7</option>
+              <option value="Chủ nhật">Chủ nhật</option>
             </select>
           </div>
 
           {/* Status Filter */}
           <div className="space-y-1">
-<label className="block text-[11px] font-semibold text-slate-600">Trạng thái đăng ký</label>
+            <label className="block text-[11px] font-semibold text-slate-600">Trạng thái đăng ký</label>
             <select
               value={filters.status}
-              onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+              onChange={(e) => {
+                setCurrentPage(1);
+                setFilters({ ...filters, status: e.target.value });
+              }}
               className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all cursor-pointer"
             >
               <option value="Tất cả trạng thái">Tất cả trạng thái</option>
@@ -244,11 +300,14 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
           </div>
 
           {/* Credits Filter */}
-          <div className="space-y-1">
+<div className="space-y-1">
             <label className="block text-[11px] font-semibold text-slate-600">Số tín chỉ</label>
             <select
               value={filters.minCredits}
-              onChange={(e) => setFilters({ ...filters, minCredits: e.target.value })}
+              onChange={(e) => {
+                setCurrentPage(1);
+                setFilters({ ...filters, minCredits: e.target.value });
+              }}
               className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all cursor-pointer"
             >
               <option value="Tất cả tín chỉ">Tất cả tín chỉ</option>
@@ -260,7 +319,7 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
+      <div ref={listTopRef} className="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[900px]">
             <thead>
@@ -280,7 +339,7 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
               {isLoading ? (
                 <tr>
                   <td colSpan={9} className="py-12 text-center text-slate-500">
-<div className="font-bold text-slate-700 text-sm">Đang tải danh sách môn học...</div>
+                    <div className="font-bold text-slate-700 text-sm">Đang tải danh sách môn học...</div>
                   </td>
                 </tr>
               ) : errorMessage ? (
@@ -291,7 +350,7 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
                       <p className="text-xs text-slate-500">{errorMessage}</p>
                       <button
                         onClick={() => void loadCourses(filters.searchQuery)}
-                        className="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors cursor-pointer"
+className="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors cursor-pointer"
                       >
                         Thử lại
                       </button>
@@ -324,7 +383,7 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
                   </td>
                 </tr>
               ) : (
-                filteredCourses.map((course) => {
+                visibleCourses.map((course) => {
                   const isRegistered = registeredCourseIds.includes(course.id);
                   const isFull = course.enrolled >= course.capacity;
                   const hasConflict = checkHasScheduleConflict(course);
@@ -338,7 +397,7 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
                       }`}
                     >
                       {/* Mã môn */}
-<td className="py-4 px-4 font-bold text-blue-700 font-mono">
+                      <td className="py-4 px-4 font-bold text-blue-700 font-mono">
                         {course.code}
                       </td>
 
@@ -351,7 +410,7 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
                           {course.name}
                         </button>
                         <span className="text-[10px] text-slate-500 block mt-0.5">
-                          Mã giảng viên: {course.lecturerId ?? 'Chưa đồng bộ'}
+Mã giảng viên: {course.lecturerId ?? 'Chưa đồng bộ'}
                         </span>
                       </td>
 
@@ -401,7 +460,7 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
                               className={`h-full rounded-full ${
                                 isFull ? 'bg-red-500' : 'bg-blue-600'
                               }`}
-style={{ width: `${(course.enrolled / course.capacity) * 100}%` }}
+                              style={{ width: `${(course.enrolled / course.capacity) * 100}%` }}
                             />
                           </div>
                         </div>
@@ -412,7 +471,7 @@ style={{ width: `${(course.enrolled / course.capacity) * 100}%` }}
                         {isRegistered ? (
                           <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-blue-100 text-blue-800 rounded-full border border-blue-200">
                             <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
-                            <span>Đã đăng ký</span>
+<span>Đã đăng ký</span>
                           </span>
                         ) : isFull ? (
                           <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-red-100 text-red-800 rounded-full border border-red-200">
@@ -452,7 +511,7 @@ style={{ width: `${(course.enrolled / course.capacity) * 100}%` }}
                             </button>
                           ) : (
                             <button
-onClick={() => onRequestRegister(course)}
+                              onClick={() => onRequestRegister(course)}
                               disabled={isFull}
                               className={`px-3.5 py-1.5 font-bold rounded-lg text-xs transition-all shadow-xs cursor-pointer ${
                                 isFull
@@ -460,7 +519,7 @@ onClick={() => onRequestRegister(course)}
                                   : hasConflict
                                   ? 'bg-amber-600 hover:bg-amber-700 text-white shadow-amber-600/20'
                                   : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-600/20'
-                              }`}
+}`}
                             >
                               {hasConflict ? 'Xem trùng' : 'Đăng ký'}
                             </button>
@@ -474,6 +533,57 @@ onClick={() => onRequestRegister(course)}
             </tbody>
           </table>
         </div>
+        {!isLoading && !errorMessage && filteredCourses.length > 0 && (
+          <div className="flex flex-col gap-3 border-t border-slate-100 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs font-semibold text-slate-500">
+              Trang <span className="font-bold text-slate-800">{currentPage}</span> / {totalPages} - hiển thị{' '}
+              <span className="font-bold text-slate-800">{visibleCourses.length}</span> môn trong tổng số{' '}
+              <span className="font-bold text-slate-800">{filteredCourses.length}</span> kết quả
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="inline-flex h-9 items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 text-xs font-bold text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-45"
+                aria-label="Trang trước"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                <span>Trước</span>
+              </button>
+
+              <div className="flex items-center gap-1">
+                {pageNumbers.map((page) => (
+                  <button
+                    key={page}
+                    type="button"
+                    onClick={() => handlePageChange(page)}
+                    aria-current={page === currentPage ? 'page' : undefined}
+                    className={`h-9 w-9 rounded-lg border text-xs font-extrabold transition-colors ${
+                      page === currentPage
+                        ? 'border-blue-600 bg-blue-600 text-white shadow-sm shadow-blue-600/20'
+                        : 'border-slate-200 bg-white text-slate-700 hover:bg-blue-50 hover:text-blue-700'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="inline-flex h-9 items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 text-xs font-bold text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-45"
+                aria-label="Trang tiếp theo"
+              >
+                <span>Sau</span>
+                <ChevronRight className="h-4 w-4" />
+</button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
