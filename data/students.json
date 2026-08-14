@@ -1,1 +1,23 @@
-[]
+[
+  {
+    "id": "23010690",
+    "fullName": "Nguyễn Trọng Tuấn",
+    "className": "CNTT7 - K17",
+    "major": "Công nghệ thông tin",
+    "maxCredits": 18
+  },
+  {
+    "id": "SV002",
+    "fullName": "Nguyễn Thành Trung",
+    "className": "CNTT1.1 - K18",
+    "major": "Khoa học máy tính",
+    "maxCredits": 18
+  },
+  {
+    "id": "SV003",
+    "fullName": "Nguyễn Xuân Tùng",
+    "className": "KTPM - K18A",
+    "major": "Kỹ thuật phần mềm",
+    "maxCredits": 9
+  }
+]

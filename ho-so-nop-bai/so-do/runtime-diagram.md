@@ -1,0 +1,14 @@
+# Runtime diagram
+
+```mermaid
+flowchart LR
+  Browser["Browser"]
+  Frontend["localhost:3000\nVite dev server"]
+  Backend["localhost:8080\nSpring Boot"]
+  Data["data/*.json"]
+
+  Browser --> Frontend
+  Frontend -->|REST /api| Backend
+  Backend --> Data
+```
+
