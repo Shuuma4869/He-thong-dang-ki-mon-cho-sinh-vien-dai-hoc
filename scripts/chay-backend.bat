@@ -1,26 +1,61 @@
 @echo off
 setlocal
 set "PROJECT_ROOT=%~dp0.."
-set "RUN_DRIVE="
+set "BACKEND_DIR=%PROJECT_ROOT%\backend"
+set "BACKEND_JAR=target\course-registration-0.0.1-SNAPSHOT.jar"
+set "BACKEND_PORT=8080"
 
-for %%D in (Z Y X W V U T S R Q P O N M L K J I H G F E) do (
-  if not exist %%D:\nul (
-    set "RUN_DRIVE=%%D:"
-    goto :drive_found
+where java >nul 2>nul
+if errorlevel 1 (
+  echo Khong tim thay Java. Vui long cai JDK 21 va mo terminal moi.
+  exit /b 1
+)
+
+if not exist "%BACKEND_DIR%\mvnw.cmd" (
+  echo Khong tim thay backend\mvnw.cmd. Vui long kiem tra cau truc du an.
+  exit /b 1
+)
+
+call :backend_healthy 8080
+if not errorlevel 1 (
+  echo Backend dang chay tai http://localhost:8080
+  exit /b 0
+)
+
+call :backend_healthy 18080
+if not errorlevel 1 (
+  echo Backend dang chay tai http://localhost:18080
+  exit /b 0
+)
+
+netstat -ano | findstr /R /C:":8080 .*LISTENING" >nul
+if not errorlevel 1 (
+  echo Port 8080 dang ban. Backend se chay tam tren port 18080.
+  set "BACKEND_PORT=18080"
+)
+
+if "%BACKEND_PORT%"=="18080" (
+  netstat -ano | findstr /R /C:":18080 .*LISTENING" >nul
+  if not errorlevel 1 (
+    echo Port 18080 cung dang ban va khong phan hoi nhu backend cua du an.
+    echo Vui long dong ung dung dang chiem 18080 hoac cau hinh cong khac.
+    exit /b 1
   )
 )
 
-echo Khong tim thay drive-letter trong de chay backend.
-exit /b 1
+cd /d "%BACKEND_DIR%"
+if not exist "%BACKEND_JAR%" (
+  echo Chua co backend JAR. Dang package backend...
+  call mvnw.cmd -DskipTests package
+  if errorlevel 1 exit /b 1
+)
 
-:drive_found
-subst %RUN_DRIVE% "%PROJECT_ROOT%"
+set "SERVER_PORT=%BACKEND_PORT%"
+echo Backend URL: http://localhost:%BACKEND_PORT%
+java -jar "%BACKEND_JAR%" --server.port=%BACKEND_PORT%
+exit /b %ERRORLEVEL%
+
+:backend_healthy
+curl.exe --max-time 3 -s "http://localhost:%~1/api/students/23010690" | findstr /C:"23010690" >nul
 if errorlevel 1 exit /b 1
-
-cd /d %RUN_DRIVE%\backend
-call mvnw.cmd spring-boot:run
-set "EXIT_CODE=%ERRORLEVEL%"
-
-cd /d "%PROJECT_ROOT%"
-subst %RUN_DRIVE% /D
-exit /b %EXIT_CODE%
+exit /b 0
