@@ -1,0 +1,30 @@
+# Sequence course list
+
+```mermaid
+sequenceDiagram
+  actor Student as Sinh viên
+  participant Page as CourseListPage
+  participant Api as courseApi
+  participant Http as requestApi
+  participant Controller as CourseController
+  participant Service as CourseService
+  participant Repo as JsonCourseRepository
+  participant File as data/courses.json
+
+  Student->>Page: Mở tab Đăng ký môn học
+  Page->>Api: getCourses()
+  Api->>Http: GET /api/courses
+  Http->>Controller: HTTP request
+  Controller->>Service: findAllCourses()
+  Service->>Repo: findAll()
+  Repo->>File: JsonFileUtils.readList("courses.json")
+  File-->>Repo: 40 course records
+  Repo-->>Service: List<Course>
+  Service-->>Controller: Course responses
+  Controller-->>Http: ApiResponse success
+  Http-->>Api: data
+  Api-->>Page: mapped + sorted courses
+  Page->>Page: filter/search toàn bộ kết quả
+  Page->>Page: slice 10 môn theo currentPage
+  Page-->>Student: Bảng môn học + pagination
+```

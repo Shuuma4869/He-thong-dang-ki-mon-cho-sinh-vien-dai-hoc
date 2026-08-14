@@ -1,0 +1,29 @@
+# Sequence login
+
+```mermaid
+sequenceDiagram
+  actor Student
+  participant LoginPage
+  participant authApi
+  participant AuthController
+  participant AuthService
+  participant StudentRepository
+  participant JsonFileUtils
+  participant StudentsJson as data/students.json
+
+  Student->>LoginPage: Nhập 23010690 và mật khẩu demo
+  LoginPage->>authApi: login(request)
+  authApi->>AuthController: POST /api/auth/login
+  AuthController->>AuthService: login(request)
+  AuthService->>StudentRepository: findById(studentId)
+  StudentRepository->>JsonFileUtils: readList(students.json)
+  JsonFileUtils->>StudentsJson: đọc UTF-8
+  StudentsJson-->>JsonFileUtils: danh sách Student
+  JsonFileUtils-->>StudentRepository: List<Student>
+  StudentRepository-->>AuthService: Optional<Student>
+  AuthService-->>AuthController: StudentResponse
+  AuthController-->>authApi: ApiResponse<StudentResponse>
+  authApi-->>LoginPage: Student
+  LoginPage-->>Student: Vào dashboard
+```
+
