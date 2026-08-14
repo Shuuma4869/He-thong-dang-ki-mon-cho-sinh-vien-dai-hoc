@@ -1,1 +1,52 @@
-[]
+[
+  {
+    "id": "GV001",
+    "fullName": "TS. Phạm Quốc Bảo",
+    "faculty": "Khoa Công nghệ thông tin"
+  },
+  {
+    "id": "GV002",
+    "fullName": "ThS. Nguyễn Thùy Linh",
+    "faculty": "Khoa Công nghệ thông tin"
+  },
+  {
+    "id": "GV003",
+    "fullName": "TS. Đặng Minh Khoa",
+    "faculty": "Khoa Khoa học cơ bản"
+  },
+  {
+    "id": "GV004",
+    "fullName": "PGS. TS. Lê Hải Yến",
+    "faculty": "Khoa Công nghệ thông tin"
+  },
+  {
+    "id": "GV005",
+    "fullName": "ThS. Hoàng Anh Đức",
+    "faculty": "Khoa Công nghệ thông tin"
+  },
+  {
+    "id": "GV006",
+    "fullName": "TS. Vũ Mai Hương",
+    "faculty": "Khoa Công nghệ thông tin"
+  },
+  {
+    "id": "GV007",
+    "fullName": "ThS. Bùi Khánh Linh",
+    "faculty": "Khoa Kinh tế và Quản trị"
+  },
+  {
+    "id": "GV008",
+    "fullName": "TS. Nguyễn Hải Nam",
+    "faculty": "Khoa Điện - Điện tử"
+  },
+  {
+    "id": "GV009",
+    "fullName": "ThS. Phan Minh Quân",
+    "faculty": "Khoa Ngoại ngữ"
+  },
+  {
+    "id": "GV010",
+    "fullName": "TS. Trịnh Thu Trang",
+    "faculty": "Khoa Công nghệ thông tin"
+  }
+]
