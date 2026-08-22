@@ -86,7 +86,8 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({
             <X className="w-5 h-5" />
           </button>
         </div>
-<div className="p-6 overflow-y-auto space-y-6 text-sm text-slate-700">
+
+        <div className="p-6 overflow-y-auto space-y-6 text-sm text-slate-700">
           {isLoadingDetail && (
             <div className="p-3.5 bg-blue-50 rounded-xl border border-blue-100 text-xs font-semibold text-blue-700">
               Đang tải chi tiết môn học...
@@ -141,7 +142,8 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({
               <span>Mã giảng viên: <strong>{activeCourse.lecturerId ?? 'Chưa đồng bộ'}</strong></span>
             </div>
           </div>
-<div className="space-y-2">
+
+          <div className="space-y-2">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
               <Clock className="w-4 h-4 text-blue-600" />
               <span>Thời Gian & Địa Điểm Học</span>
@@ -198,7 +200,7 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({
         <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
           <button
             onClick={onClose}
-className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-800 bg-white border border-slate-200 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
+            className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-800 bg-white border border-slate-200 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
           >
             Đóng
           </button>

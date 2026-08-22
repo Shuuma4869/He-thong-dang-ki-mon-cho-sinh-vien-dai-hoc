@@ -5,7 +5,6 @@ import {
   ChevronDown,
   User,
   LogOut,
-  Palette,
   CheckCircle2,
   Calendar,
   BookOpen,
@@ -30,7 +29,6 @@ interface HeaderProps {
   onMarkNotificationRead: (id: string) => void;
   onNavigate: (tab: NavigationTab) => void;
   onLogout: () => void;
-  onOpenDesignSystem: () => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
   courses?: Course[];
@@ -46,7 +44,6 @@ export const Header: React.FC<HeaderProps> = ({
   onMarkNotificationRead,
   onNavigate,
   onLogout,
-  onOpenDesignSystem,
   searchQuery,
   onSearchChange,
   courses = [],
@@ -62,7 +59,6 @@ export const Header: React.FC<HeaderProps> = ({
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
-  // Filter matching course suggestions dynamically
   const matchingCourses = React.useMemo(() => {
     if (!searchQuery.trim() || !courses.length) return [];
     const q = searchQuery.toLowerCase().trim();
@@ -70,12 +66,10 @@ export const Header: React.FC<HeaderProps> = ({
       (c) =>
         c.code.toLowerCase().includes(q) ||
         c.name.toLowerCase().includes(q) ||
-        c.lecturer.toLowerCase().includes(q) ||
-        c.faculty.toLowerCase().includes(q)
-    ).slice(0, 6); // Top 6 matching items for smooth dropdown
+        c.lecturer.toLowerCase().includes(q)
+    ).slice(0, 6);
   }, [searchQuery, courses]);
 
-  // Click outside listener to close search dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
@@ -95,12 +89,14 @@ export const Header: React.FC<HeaderProps> = ({
     }
   };
 
+  const studentEmail = student.email ?? 'Chưa đồng bộ email';
+  const studentFaculty = student.faculty ?? 'Chưa đồng bộ khoa';
+
   return (
-    <header className="sticky top-0 z-30 h-16 bg-white border-b border-slate-200 px-4 lg:px-8 flex items-center justify-between shadow-2xs">
-      {/* Left Area: Global Search with Live Autocomplete Suggestions */}
-      <div className="flex items-center gap-4 flex-1 max-w-lg relative" ref={searchRef}>
+    <header className="sticky top-0 z-30 h-[72px] bg-white border-b border-slate-200 px-4 sm:px-6 lg:px-10 xl:px-12 flex items-center justify-between shadow-2xs">
+      <div className="flex items-center gap-4 flex-1 max-w-2xl relative" ref={searchRef}>
         <div className="relative w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
           <input
             type="text"
             placeholder="Tìm kiếm môn học, mã HP, giảng viên..."
@@ -110,7 +106,7 @@ export const Header: React.FC<HeaderProps> = ({
               onSearchChange(e.target.value);
               setIsSearchFocused(true);
             }}
-            className="w-full pl-9 pr-8 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all"
+            className="w-full pl-11 pr-9 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all"
           />
 
           {searchQuery && (
@@ -126,7 +122,6 @@ export const Header: React.FC<HeaderProps> = ({
           )}
         </div>
 
-        {/* Live Search Autocomplete Dropdown List */}
         {isSearchFocused && searchQuery.trim().length > 0 && (
           <div className="absolute left-0 right-0 top-12 bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150">
             <div className="px-4 py-2.5 bg-slate-50 border-b border-slate-100 flex items-center justify-between text-xs font-bold text-slate-500 uppercase tracking-wider">
@@ -162,7 +157,7 @@ export const Header: React.FC<HeaderProps> = ({
                         <p className="text-[11px] text-slate-500 truncate flex items-center gap-2">
                           <span>{course.lecturer}</span>
                           <span>•</span>
-                          <span>{course.faculty}</span>
+                          <span>{course.lecturerId ?? 'Chưa đồng bộ'}</span>
                         </p>
                       </div>
 
@@ -204,23 +199,11 @@ export const Header: React.FC<HeaderProps> = ({
         )}
       </div>
 
-      {/* Right Area: Controls & Profile */}
       <div className="flex items-center gap-3">
-        {/* Figma Design System Inspector Toggle */}
-        <button
-          onClick={onOpenDesignSystem}
-          className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer"
-          title="Xem Hệ thống Thiết kế Figma (Design System Tokens & Components)"
-        >
-          <Palette className="w-3.5 h-3.5 text-blue-600" />
-          <span>Figma System</span>
-        </button>
-
-        {/* Semester Selector Dropdown */}
         <div className="relative">
           <button
             onClick={() => setShowSemesterMenu(!showSemesterMenu)}
-            className="inline-flex items-center gap-2 px-3 py-1.5 text-xs lg:text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-lg transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2 text-xs lg:text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-lg transition-colors cursor-pointer"
           >
             <Calendar className="w-4 h-4 text-blue-600" />
             <span className="max-w-[160px] lg:max-w-none truncate">{currentSemester}</span>
@@ -254,11 +237,10 @@ export const Header: React.FC<HeaderProps> = ({
           )}
         </div>
 
-        {/* Notification Bell */}
         <div className="relative">
           <button
             onClick={() => setShowNotifications(!showNotifications)}
-            className="relative p-2 text-slate-600 hover:text-blue-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+            className="relative p-2.5 text-slate-600 hover:text-blue-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
             aria-label="Thông báo"
           >
             <Bell className="w-5 h-5" />
@@ -330,7 +312,6 @@ export const Header: React.FC<HeaderProps> = ({
 
         <div className="h-6 w-px bg-slate-200 mx-1" />
 
-        {/* Student Profile Dropdown */}
         <div className="relative">
           <button
             onClick={() => setShowProfileMenu(!showProfileMenu)}
@@ -358,9 +339,9 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <div className="px-4 py-3 border-b border-slate-100">
                 <p className="text-sm font-bold text-slate-900">{student.name}</p>
-                <p className="text-xs text-slate-500 mt-0.5">{student.email}</p>
+                <p className="text-xs text-slate-500 mt-0.5">{studentEmail}</p>
                 <div className="mt-2 inline-flex items-center px-2 py-0.5 text-[10px] font-semibold bg-blue-50 text-blue-700 rounded border border-blue-200">
-                  {student.className} - {student.faculty}
+                  {student.className} - {studentFaculty}
                 </div>
               </div>
 
