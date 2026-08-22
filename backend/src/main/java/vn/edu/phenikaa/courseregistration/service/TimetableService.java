@@ -12,12 +12,14 @@ import vn.edu.phenikaa.courseregistration.exception.LecturerNotFoundException;
 import vn.edu.phenikaa.courseregistration.exception.StudentNotFoundException;
 import vn.edu.phenikaa.courseregistration.model.Course;
 import vn.edu.phenikaa.courseregistration.model.Lecturer;
+import vn.edu.phenikaa.courseregistration.model.Registration;
 import vn.edu.phenikaa.courseregistration.model.RegistrationDetail;
 import vn.edu.phenikaa.courseregistration.model.Schedule;
 import vn.edu.phenikaa.courseregistration.model.TimetableEntry;
 import vn.edu.phenikaa.courseregistration.model.enums.RegistrationStatus;
 import vn.edu.phenikaa.courseregistration.repository.CourseRepository;
 import vn.edu.phenikaa.courseregistration.repository.LecturerRepository;
+import vn.edu.phenikaa.courseregistration.repository.RegistrationRepository;
 import vn.edu.phenikaa.courseregistration.repository.StudentRepository;
 
 /** Service doc thoi khoa bieu tu dang ky active cua sinh vien. */
@@ -29,10 +31,10 @@ public class TimetableService {
     private final LecturerRepository lecturerRepository;
 
     public TimetableService(
-        StudentRepository studentRepository,
-        RegistrationRepository registrationRepository,
-        CourseRepository courseRepository,
-        LecturerRepository lecturerRepository
+            StudentRepository studentRepository,
+            RegistrationRepository registrationRepository,
+            CourseRepository courseRepository,
+            LecturerRepository lecturerRepository
     ) {
         this.studentRepository = studentRepository;
         this.registrationRepository = registrationRepository;
@@ -42,51 +44,51 @@ public class TimetableService {
 
     public List<Course> findRegisteredCourses(String studentId) {
         studentRepository.findById(studentId)
-            .orElseThrow(() -> new StudentNotFoundException(studentId));
+                .orElseThrow(() -> new StudentNotFoundException(studentId));
 
         return registrationRepository.findByStudentId(studentId).stream()
-            .filter(registration -> RegistrationStatus.ACTIVE == registration.getStatus())
-            .flatMap(registration -> safeDetails(registration).stream())
-            .map(RegistrationDetail::getCourseId)
-            .map(courseRepository::findById)
-            .flatMap(Optional::stream)
-            .toList();
+                .filter(registration -> RegistrationStatus.ACTIVE == registration.getStatus())
+                .flatMap(registration -> safeDetails(registration).stream())
+                .map(RegistrationDetail::getCourseId)
+                .map(courseRepository::findById)
+                .flatMap(Optional::stream)
+                .toList();
     }
 
     public List<TimetableEntry> findTimetableEntries(String studentId) {
         studentRepository.findById(studentId)
-            .orElseThrow(() -> new StudentNotFoundException(studentId));
+                .orElseThrow(() -> new StudentNotFoundException(studentId));
 
         List<String> registeredCourseIds = registrationRepository.findByStudentId(studentId).stream()
-            .filter(registration -> RegistrationStatus.ACTIVE == registration.getStatus())
-            .flatMap(registration -> safeDetails(registration).stream())
-            .map(RegistrationDetail::getCourseId)
-            .toList();
+                .filter(registration -> RegistrationStatus.ACTIVE == registration.getStatus())
+                .flatMap(registration -> safeDetails(registration).stream())
+                .map(RegistrationDetail::getCourseId)
+                .toList();
 
         if (registeredCourseIds.isEmpty()) {
             return List.of();
         }
 
         Map<String, Course> coursesById = courseRepository.findAll().stream()
-            .collect(Collectors.toMap(
-                course -> normalizeId(course.getCourseId()),
-                Function.identity(),
-                (first, ignored) -> first
-            ));
+                .collect(Collectors.toMap(
+                        course -> normalizeId(course.getCourseId()),
+                        Function.identity(),
+                        (first, ignored) -> first
+                ));
 
         Map<String, Lecturer> lecturersById = lecturerRepository.findAll().stream()
-            .collect(Collectors.toMap(
-                lecturer -> normalizeId(lecturer.getId()),
-                Function.identity(),
-                (first, ignored) -> first
-            ));
+                .collect(Collectors.toMap(
+                        lecturer -> normalizeId(lecturer.getId()),
+                        Function.identity(),
+                        (first, ignored) -> first
+                ));
 
         return registeredCourseIds.stream()
-            .map(courseId -> findCourse(courseId, coursesById))
-            .flatMap(course -> schedulesOf(course).stream()
-                .map(schedule -> new TimetableEntry(course, findLecturer(course, lecturersById), schedule)))
-            .sorted((first, second) -> compareEntries(first, second))
-            .toList();
+                .map(courseId -> findCourse(courseId, coursesById))
+                .flatMap(course -> schedulesOf(course).stream()
+                        .map(schedule -> new TimetableEntry(course, findLecturer(course, lecturersById), schedule)))
+                .sorted((first, second) -> compareEntries(first, second))
+                .toList();
     }
 
     private List<RegistrationDetail> safeDetails(Registration registration) {

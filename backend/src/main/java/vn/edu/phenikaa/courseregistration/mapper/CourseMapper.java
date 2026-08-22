@@ -18,43 +18,43 @@ public class CourseMapper {
     public CourseResponse toResponse(CourseWithLecturer courseWithLecturer) {
         Course course = courseWithLecturer.course();
         return new CourseResponse(
-            course.getCourseId(),
-            course.getCourseName(),
-            course.getCredits(),
-            course.getLecturerId(),
-            toLecturerResponse(courseWithLecturer.lecturer()),
-            course.getMaxCapacity(),
-            course.getCurrentCapacity(),
-            toScheduleResponses(course.getSchedules())
+                course.getCourseId(),
+                course.getCourseName(),
+                course.getCredits(),
+                course.getLecturerId(),
+                toLecturerResponse(courseWithLecturer.lecturer()),
+                course.getMaxCapacity(),
+                course.getCurrentCapacity(),
+                toScheduleResponses(course.getSchedules())
         );
     }
 
     public List<CourseResponse> toResponses(List<CourseWithLecturer> courses) {
         return courses.stream()
-            .map(this::toResponse)
-            .toList();
+                .map(this::toResponse)
+                .toList();
     }
 
     public LecturerResponse toLecturerResponse(Lecturer lecturer) {
         return new LecturerResponse(
-            lecturer.getId(),
-            lecturer.getFullName(),
-            lecturer.getFaculty()
+                lecturer.getId(),
+                lecturer.getFullName(),
+                lecturer.getFaculty()
         );
     }
 
     public ScheduleResponse toScheduleResponse(Schedule schedule) {
         return new ScheduleResponse(
-            schedule.getDayOfWeek(),
-            schedule.getStartTime(),
-            schedule.getEndTime(),
-            schedule.getRoom()
+                schedule.getDayOfWeek(),
+                schedule.getStartTime(),
+                schedule.getEndTime(),
+                schedule.getRoom()
         );
     }
 
     public List<ScheduleResponse> toScheduleResponses(List<Schedule> schedules) {
         return schedules.stream()
-            .map(this::toScheduleResponse)
-            .toList();
+                .map(this::toScheduleResponse)
+                .toList();
     }
 }

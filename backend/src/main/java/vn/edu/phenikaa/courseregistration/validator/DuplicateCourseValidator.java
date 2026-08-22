@@ -14,8 +14,8 @@ public class DuplicateCourseValidator implements CourseValidator {
     @Override
     public void validate(RegistrationValidationContext context) {
         boolean alreadyRegistered = context.getRegisteredCourses().stream()
-            .map(Course::getCourseId)
-            .anyMatch(courseId -> Objects.equals(courseId, context.getRequestedCourseId()));
+                .map(Course::getCourseId)
+                .anyMatch(courseId -> Objects.equals(courseId, context.getRequestedCourseId()));
 
         if (alreadyRegistered) {
             throw new DuplicateRegistrationException(context.getRequestedCourseId());

@@ -18,14 +18,14 @@ public class TimetableSlotResponse {
     }
 
     public TimetableSlotResponse(
-        String courseId,
-        String courseName,
-        int credits,
-        String lecturerName,
-        DayOfWeek dayOfWeek,
-        LocalTime startTime,
-        LocalTime endTime,
-        String room
+            String courseId,
+            String courseName,
+            int credits,
+            String lecturerName,
+            DayOfWeek dayOfWeek,
+            LocalTime startTime,
+            LocalTime endTime,
+            String room
     ) {
         this.courseId = courseId;
         this.courseName = courseName;

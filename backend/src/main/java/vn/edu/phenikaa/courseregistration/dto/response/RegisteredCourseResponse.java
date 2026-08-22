@@ -20,14 +20,14 @@ public class RegisteredCourseResponse {
     }
 
     public RegisteredCourseResponse(
-        String courseId,
-        String courseName,
-        int credits,
-        String lecturerId,
-        LecturerResponse lecturer,
-        int maxCapacity,
-        int currentCapacity,
-        List<ScheduleResponse> schedules
+            String courseId,
+            String courseName,
+            int credits,
+            String lecturerId,
+            LecturerResponse lecturer,
+            int maxCapacity,
+            int currentCapacity,
+            List<ScheduleResponse> schedules
     ) {
         this.courseId = courseId;
         this.courseName = courseName;

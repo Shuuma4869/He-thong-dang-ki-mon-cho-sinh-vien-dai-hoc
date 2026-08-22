@@ -29,30 +29,30 @@ public class RegistrationController {
     @GetMapping
     public ApiResponse<RegistrationResponse> findByStudentId(@PathVariable String studentId) {
         return ApiResponse.success(
-            "Lay danh sach dang ky hoc phan thanh cong.",
-            registrationMapper.toResponse(registrationService.findActiveRegistrationSummary(studentId))
+                "Lay danh sach dang ky hoc phan thanh cong.",
+                registrationMapper.toResponse(registrationService.findActiveRegistrationSummary(studentId))
         );
     }
 
     @PostMapping
     public ApiResponse<RegistrationResponse> register(
-        @PathVariable String studentId,
-        @Valid @RequestBody RegistrationRequest request
+            @PathVariable String studentId,
+            @Valid @RequestBody RegistrationRequest request
     ) {
         return ApiResponse.success(
-            "Dang ky hoc phan thanh cong.",
-            registrationMapper.toResponse(registrationService.registerCourseSummary(studentId, request.getCourseId()))
+                "Dang ky hoc phan thanh cong.",
+                registrationMapper.toResponse(registrationService.registerCourseSummary(studentId, request.getCourseId()))
         );
     }
 
     @DeleteMapping("/{courseId}")
     public ApiResponse<RegistrationResponse> cancel(
-        @PathVariable String studentId,
-        @PathVariable String courseId
+            @PathVariable String studentId,
+            @PathVariable String courseId
     ) {
         return ApiResponse.success(
-            "Huy dang ky hoc phan thanh cong.",
-            registrationMapper.toResponse(registrationService.cancelCourseSummary(studentId, courseId))
+                "Huy dang ky hoc phan thanh cong.",
+                registrationMapper.toResponse(registrationService.cancelCourseSummary(studentId, courseId))
         );
     }
 }

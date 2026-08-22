@@ -3,9 +3,8 @@ package vn.edu.phenikaa.courseregistration.interfaces;
 /**
  * Contract dùng chung cho nghiệp vụ có khả năng thực hiện đăng ký học phần.
  *
- * <p>Interface này chỉ mô tả hành vi ở mức hợp đồng. Việc kiểm tra sinh viên,
- * học phần, sức chứa, tín chỉ và trùng lịch phải được triển khai trong service
- * và validator cụ thể ở các phase nghiệp vụ sau.</p>
+ * <p>Interface này chỉ mô tả hành vi chung. Các kiểm tra về sinh viên, học phần,
+ * sức chứa, tín chỉ và trùng lịch được xử lý trong service và validator.</p>
  */
 public interface Registrable {
     /**

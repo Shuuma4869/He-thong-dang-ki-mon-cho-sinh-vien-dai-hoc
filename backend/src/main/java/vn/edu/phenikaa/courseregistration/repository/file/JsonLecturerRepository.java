@@ -24,8 +24,8 @@ public class JsonLecturerRepository implements LecturerRepository {
     @Override
     public Optional<Lecturer> findById(String lecturerId) {
         return findAll().stream()
-            .filter(lecturer -> lecturer.getId().equalsIgnoreCase(lecturerId))
-            .findFirst();
+                .filter(lecturer -> lecturer.getId().equalsIgnoreCase(lecturerId))
+                .findFirst();
     }
 
     @Override

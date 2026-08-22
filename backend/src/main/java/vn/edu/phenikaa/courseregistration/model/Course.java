@@ -17,13 +17,13 @@ public class Course {
     }
 
     public Course(
-        String courseId,
-        String courseName,
-        int credits,
-        String lecturerId,
-        int maxCapacity,
-        int currentCapacity,
-        List<Schedule> schedules
+            String courseId,
+            String courseName,
+            int credits,
+            String lecturerId,
+            int maxCapacity,
+            int currentCapacity,
+            List<Schedule> schedules
     ) {
         this.courseId = courseId;
         this.courseName = courseName;

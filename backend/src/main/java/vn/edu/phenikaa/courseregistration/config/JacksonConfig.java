@@ -2,7 +2,7 @@ package vn.edu.phenikaa.courseregistration.config;
 
 import org.springframework.context.annotation.Configuration;
 
-/** Cấu hình JSON sẽ được bổ sung khi khóa schema dữ liệu. */
+/** Cấu hình Jackson dùng chung cho REST API và JSON File IO. */
 @Configuration
 public class JacksonConfig {
 }

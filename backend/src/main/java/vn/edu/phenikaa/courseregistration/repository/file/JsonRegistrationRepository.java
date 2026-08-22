@@ -26,15 +26,15 @@ public class JsonRegistrationRepository implements RegistrationRepository {
     @Override
     public List<Registration> findByStudentId(String studentId) {
         return findAll().stream()
-            .filter(registration -> registration.getStudentId().equals(studentId))
-            .toList();
+                .filter(registration -> registration.getStudentId().equals(studentId))
+                .toList();
     }
 
     @Override
     public Optional<Registration> findByStudentAndCourse(String studentId, String courseId) {
         return findByStudentId(studentId).stream()
-            .filter(registration -> hasCourse(registration, courseId))
-            .findFirst();
+                .filter(registration -> hasCourse(registration, courseId))
+                .findFirst();
     }
 
     @Override
@@ -73,6 +73,7 @@ public class JsonRegistrationRepository implements RegistrationRepository {
 
     private boolean hasCourse(Registration registration, String courseId) {
         return registration.getDetails().stream()
-            .map(RegistrationDetail::getCourseId).anyMatch(courseId::equals);
+                .map(RegistrationDetail::getCourseId)
+                .anyMatch(courseId::equals);
     }
 }

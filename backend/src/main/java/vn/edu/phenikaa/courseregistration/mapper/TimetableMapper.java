@@ -12,42 +12,42 @@ import vn.edu.phenikaa.courseregistration.model.TimetableEntry;
 public class TimetableMapper {
     public List<TimetableSlotResponse> toResponses(List<Course> courses) {
         return courses.stream()
-            .flatMap(course -> schedulesOf(course).stream()
-                .map(schedule -> toResponse(course, schedule)))
-            .toList();
+                .flatMap(course -> schedulesOf(course).stream()
+                        .map(schedule -> toResponse(course, schedule)))
+                .toList();
     }
 
     public List<TimetableSlotResponse> toEntryResponses(List<TimetableEntry> entries) {
         return entries.stream()
-            .map(this::toEntryResponse)
-            .toList();
+                .map(this::toEntryResponse)
+                .toList();
     }
 
     private TimetableSlotResponse toEntryResponse(TimetableEntry entry) {
         Course course = entry.course();
         Schedule schedule = entry.schedule();
         return new TimetableSlotResponse(
-            course.getCourseId(),
-            course.getCourseName(),
-            course.getCredits(),
-            entry.lecturer().getFullName(),
-            schedule.getDayOfWeek(),
-            schedule.getStartTime(),
-            schedule.getEndTime(),
-            schedule.getRoom()
+                course.getCourseId(),
+                course.getCourseName(),
+                course.getCredits(),
+                entry.lecturer().getFullName(),
+                schedule.getDayOfWeek(),
+                schedule.getStartTime(),
+                schedule.getEndTime(),
+                schedule.getRoom()
         );
     }
 
     private TimetableSlotResponse toResponse(Course course, Schedule schedule) {
         return new TimetableSlotResponse(
-            course.getCourseId(),
-            course.getCourseName(),
-            course.getCredits(),
-            null,
-            schedule.getDayOfWeek(),
-            schedule.getStartTime(),
-            schedule.getEndTime(),
-            schedule.getRoom()
+                course.getCourseId(),
+                course.getCourseName(),
+                course.getCredits(),
+                null,
+                schedule.getDayOfWeek(),
+                schedule.getStartTime(),
+                schedule.getEndTime(),
+                schedule.getRoom()
         );
     }
 
