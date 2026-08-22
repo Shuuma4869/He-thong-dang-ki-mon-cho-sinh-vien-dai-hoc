@@ -28,18 +28,18 @@ class JsonStudentRepositoryTest {
         repository.save(student);
 
         assertThat(repository.findById("SV001"))
-            .get()
-            .extracting(Student::getFullName)
-            .isEqualTo("Nguyen Van A");
+                .get()
+                .extracting(Student::getFullName)
+                .isEqualTo("Nguyen Van A");
 
         student.setFullName("Nguyen Van A Updated");
         repository.save(student);
 
         assertThat(repository.findAll()).hasSize(1);
         assertThat(repository.findById("SV001"))
-            .get()
-            .extracting(Student::getFullName)
-            .isEqualTo("Nguyen Van A Updated");
+                .get()
+                .extracting(Student::getFullName)
+                .isEqualTo("Nguyen Van A Updated");
     }
 
     private JsonStudentRepository createRepository() {

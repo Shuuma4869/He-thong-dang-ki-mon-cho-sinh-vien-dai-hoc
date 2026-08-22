@@ -19,7 +19,7 @@ class DuplicateCourseValidatorTest {
         Course requestedCourse = course("OOP101");
 
         assertThatCode(() -> validator.validate(context(requestedCourse, List.of(course("MAT101")))))
-            .doesNotThrowAnyException();
+                .doesNotThrowAnyException();
     }
 
     @Test
@@ -27,15 +27,15 @@ class DuplicateCourseValidatorTest {
         Course requestedCourse = course("OOP101");
 
         assertThatThrownBy(() -> validator.validate(context(requestedCourse, List.of(course("OOP101")))))
-            .isInstanceOf(DuplicateRegistrationException.class);
+                .isInstanceOf(DuplicateRegistrationException.class);
     }
 
     private RegistrationValidationContext context(Course requestedCourse, List<Course> registeredCourses) {
         return new RegistrationValidationContext(
-            new Student("SV001", "Nguyen Van A", "K16-CNTT", "CNTT", 20),
-            requestedCourse.getCourseId(),
-            Optional.of(requestedCourse),
-            registeredCourses
+                new Student("SV001", "Nguyen Van A", "K16-CNTT", "CNTT", 20),
+                requestedCourse.getCourseId(),
+                Optional.of(requestedCourse),
+                registeredCourses
         );
     }
 

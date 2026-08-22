@@ -56,9 +56,9 @@ class DemoDataIntegrityTest {
         });
 
         Student demoStudent = students.stream()
-            .filter(student -> DEMO_STUDENT_ID.equals(student.getId()))
-            .findFirst()
-            .orElseThrow();
+                .filter(student -> DEMO_STUDENT_ID.equals(student.getId()))
+                .findFirst()
+                .orElseThrow();
 
         assertThat(demoStudent.getFullName()).isEqualTo("Nguyễn Trọng Tuấn");
         assertThat(demoStudent.getClassName()).isEqualTo("CNTT7 - K17");
@@ -66,22 +66,22 @@ class DemoDataIntegrityTest {
         assertThat(demoStudent.getMaxCredits()).isEqualTo(18);
 
         Map<String, Course> courseById = courses.stream()
-            .collect(Collectors.toMap(Course::getCourseId, Function.identity()));
+                .collect(Collectors.toMap(Course::getCourseId, Function.identity()));
         Registration demoRegistration = registrations.stream()
-            .filter(registration -> DEMO_STUDENT_ID.equals(registration.getStudentId()))
-            .filter(registration -> registration.getStatus() == RegistrationStatus.ACTIVE)
-            .findFirst()
-            .orElseThrow();
+                .filter(registration -> DEMO_STUDENT_ID.equals(registration.getStudentId()))
+                .filter(registration -> registration.getStatus() == RegistrationStatus.ACTIVE)
+                .findFirst()
+                .orElseThrow();
 
         List<String> registeredCourseIds = demoRegistration.getDetails().stream()
-            .map(detail -> detail.getCourseId())
-            .toList();
+                .map(detail -> detail.getCourseId())
+                .toList();
         assertThat(registeredCourseIds).containsExactlyElementsOf(BASELINE_COURSES);
 
         int totalCredits = registeredCourseIds.stream()
-            .map(courseById::get)
-            .mapToInt(Course::getCredits)
-            .sum();
+                .map(courseById::get)
+                .mapToInt(Course::getCredits)
+                .sum();
 
         assertThat(totalCredits).isEqualTo(15);
         assertThatNoScheduleConflict(registeredCourseIds, courseById);
@@ -117,9 +117,9 @@ class DemoDataIntegrityTest {
     }
 
     private static boolean hasConflict(
-        Course requestedCourse,
-        List<String> registeredCourseIds,
-        Map<String, Course> courseById
+            Course requestedCourse,
+            List<String> registeredCourseIds,
+            Map<String, Course> courseById
     ) {
         for (String courseId : registeredCourseIds) {
             Course registeredCourse = courseById.get(courseId);

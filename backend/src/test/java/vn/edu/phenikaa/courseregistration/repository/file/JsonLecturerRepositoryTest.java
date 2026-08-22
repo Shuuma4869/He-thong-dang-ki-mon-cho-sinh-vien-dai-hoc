@@ -21,9 +21,9 @@ class JsonLecturerRepositoryTest {
         repository.save(lecturer);
 
         assertThat(repository.findById("GV001"))
-            .get()
-            .extracting(Lecturer::getFullName)
-            .isEqualTo("Tran Thi B");
+                .get()
+                .extracting(Lecturer::getFullName)
+                .isEqualTo("Tran Thi B");
     }
 
     private JsonLecturerRepository createRepository() {

@@ -34,10 +34,10 @@ class CourseServiceTest {
         CourseService service = new CourseService(courseRepository, lecturerRepository);
 
         assertThat(service.findById("OOP101"))
-            .satisfies(result -> {
-                assertThat(result.course()).isSameAs(course);
-                assertThat(result.lecturer()).isSameAs(lecturer);
-            });
+                .satisfies(result -> {
+                    assertThat(result.course()).isSameAs(course);
+                    assertThat(result.lecturer()).isSameAs(lecturer);
+                });
     }
 
     @Test
@@ -46,8 +46,8 @@ class CourseServiceTest {
         CourseService service = new CourseService(courseRepository, lecturerRepository);
 
         assertThatThrownBy(() -> service.findById("MISSING"))
-            .isInstanceOf(CourseNotFoundException.class)
-            .hasMessageContaining("MISSING");
+                .isInstanceOf(CourseNotFoundException.class)
+                .hasMessageContaining("MISSING");
     }
 
     @Test
@@ -59,11 +59,11 @@ class CourseServiceTest {
         CourseService service = new CourseService(courseRepository, lecturerRepository);
 
         assertThat(service.search("oop"))
-            .singleElement()
-            .satisfies(result -> {
-                assertThat(result.course()).isSameAs(course);
-                assertThat(result.lecturer()).isSameAs(lecturer);
-            });
+                .singleElement()
+                .satisfies(result -> {
+                    assertThat(result.course()).isSameAs(course);
+                    assertThat(result.lecturer()).isSameAs(lecturer);
+                });
     }
 
     @Test
@@ -77,8 +77,8 @@ class CourseServiceTest {
         CourseService service = new CourseService(courseRepository, lecturerRepository);
 
         assertThat(service.findAll())
-            .extracting(result -> result.lecturer().getFullName())
-            .containsExactly("Tran Thi B", "Le Van C");
+                .extracting(result -> result.lecturer().getFullName())
+                .containsExactly("Tran Thi B", "Le Van C");
     }
 
     @Test
@@ -89,7 +89,7 @@ class CourseServiceTest {
         CourseService service = new CourseService(courseRepository, lecturerRepository);
 
         assertThatThrownBy(() -> service.findById("OOP101"))
-            .isInstanceOf(LecturerNotFoundException.class)
-            .hasMessageContaining("GV404");
+                .isInstanceOf(LecturerNotFoundException.class)
+                .hasMessageContaining("GV404");
     }
 }

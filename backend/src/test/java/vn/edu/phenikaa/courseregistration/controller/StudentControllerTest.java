@@ -31,13 +31,13 @@ class StudentControllerTest {
         when(studentService.findById("SV001")).thenReturn(student);
 
         mockMvc.perform(get("/api/students/SV001"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.success").value(true))
-            .andExpect(jsonPath("$.data.studentId").value("SV001"))
-            .andExpect(jsonPath("$.data.fullName").value("Nguyen Van A"))
-            .andExpect(jsonPath("$.data.className").value("CNTT1"))
-            .andExpect(jsonPath("$.data.major").value("Cong nghe thong tin"))
-            .andExpect(jsonPath("$.data.maxCredits").value(18));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.studentId").value("SV001"))
+                .andExpect(jsonPath("$.data.fullName").value("Nguyen Van A"))
+                .andExpect(jsonPath("$.data.className").value("CNTT1"))
+                .andExpect(jsonPath("$.data.major").value("Cong nghe thong tin"))
+                .andExpect(jsonPath("$.data.maxCredits").value(18));
     }
 
     @Test
@@ -45,8 +45,8 @@ class StudentControllerTest {
         when(studentService.findById("SV999")).thenThrow(new StudentNotFoundException("SV999"));
 
         mockMvc.perform(get("/api/students/SV999"))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.success").value(false))
-            .andExpect(jsonPath("$.errorCode").value("STUDENT_NOT_FOUND"));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value("STUDENT_NOT_FOUND"));
     }
 }

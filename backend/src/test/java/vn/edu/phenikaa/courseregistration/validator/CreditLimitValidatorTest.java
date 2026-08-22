@@ -20,7 +20,7 @@ class CreditLimitValidatorTest {
         List<Course> registeredCourses = List.of(course("MAT101", 3), course("PHY101", 3));
 
         assertThatCode(() -> validator.validate(context(10, requestedCourse, registeredCourses)))
-            .doesNotThrowAnyException();
+                .doesNotThrowAnyException();
     }
 
     @Test
@@ -29,7 +29,7 @@ class CreditLimitValidatorTest {
         List<Course> registeredCourses = List.of(course("MAT101", 4), course("PHY101", 3));
 
         assertThatCode(() -> validator.validate(context(10, requestedCourse, registeredCourses)))
-            .doesNotThrowAnyException();
+                .doesNotThrowAnyException();
     }
 
     @Test
@@ -38,15 +38,15 @@ class CreditLimitValidatorTest {
         List<Course> registeredCourses = List.of(course("MAT101", 4), course("PHY101", 4));
 
         assertThatThrownBy(() -> validator.validate(context(10, requestedCourse, registeredCourses)))
-            .isInstanceOf(CreditLimitExceededException.class);
+                .isInstanceOf(CreditLimitExceededException.class);
     }
 
     private RegistrationValidationContext context(int maxCredits, Course requestedCourse, List<Course> registeredCourses) {
         return new RegistrationValidationContext(
-            new Student("SV001", "Nguyen Van A", "K16-CNTT", "CNTT", maxCredits),
-            requestedCourse.getCourseId(),
-            Optional.of(requestedCourse),
-            registeredCourses
+                new Student("SV001", "Nguyen Van A", "K16-CNTT", "CNTT", maxCredits),
+                requestedCourse.getCourseId(),
+                Optional.of(requestedCourse),
+                registeredCourses
         );
     }
 

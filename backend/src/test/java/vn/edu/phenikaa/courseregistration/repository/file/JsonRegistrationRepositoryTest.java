@@ -24,8 +24,8 @@ class JsonRegistrationRepositoryTest {
         repository.save(registration("REG002", "SV002", "DBI101"));
 
         assertThat(repository.findByStudentId("SV001"))
-            .extracting(Registration::getRegistrationId)
-            .containsExactly("REG001");
+                .extracting(Registration::getRegistrationId)
+                .containsExactly("REG001");
     }
 
     @Test
@@ -34,9 +34,9 @@ class JsonRegistrationRepositoryTest {
         repository.save(registration("REG001", "SV001", "OOP101"));
 
         assertThat(repository.findByStudentAndCourse("SV001", "OOP101"))
-            .get()
-            .extracting(Registration::getRegistrationId)
-            .isEqualTo("REG001");
+                .get()
+                .extracting(Registration::getRegistrationId)
+                .isEqualTo("REG001");
     }
 
     @Test
@@ -66,11 +66,11 @@ class JsonRegistrationRepositoryTest {
 
     private Registration registration(String registrationId, String studentId, String courseId) {
         return new Registration(
-            registrationId,
-            studentId,
-            RegistrationStatus.ACTIVE,
-            LocalDateTime.of(2026, 8, 8, 19, 40),
-            List.of(new RegistrationDetail(courseId))
+                registrationId,
+                studentId,
+                RegistrationStatus.ACTIVE,
+                LocalDateTime.of(2026, 8, 8, 19, 40),
+                List.of(new RegistrationDetail(courseId))
         );
     }
 

@@ -16,13 +16,13 @@ class RegistrationValidatorOrderTest {
     @Test
     void springInjectsCourseValidatorsInBusinessPriorityOrder() {
         assertThat(validators)
-            .extracting(validator -> validator.getClass().getSimpleName())
-            .containsExactly(
-                "CourseExistenceValidator",
-                "DuplicateCourseValidator",
-                "CapacityValidator",
-                "CreditLimitValidator",
-                "ScheduleConflictValidator"
-            );
+                .extracting(validator -> validator.getClass().getSimpleName())
+                .containsExactly(
+                        "CourseExistenceValidator",
+                        "DuplicateCourseValidator",
+                        "CapacityValidator",
+                        "CreditLimitValidator",
+                        "ScheduleConflictValidator"
+                );
     }
 }

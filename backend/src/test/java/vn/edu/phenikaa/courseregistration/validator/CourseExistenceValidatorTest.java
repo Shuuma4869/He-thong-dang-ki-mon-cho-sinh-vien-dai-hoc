@@ -19,22 +19,22 @@ class CourseExistenceValidatorTest {
         Course course = course("OOP101");
 
         assertThatCode(() -> validator.validate(context("OOP101", Optional.of(course))))
-            .doesNotThrowAnyException();
+                .doesNotThrowAnyException();
     }
 
     @Test
     void failsWhenRequestedCourseDoesNotExist() {
         assertThatThrownBy(() -> validator.validate(context("MISSING", Optional.empty())))
-            .isInstanceOf(CourseNotFoundException.class)
-            .hasMessageContaining("MISSING");
+                .isInstanceOf(CourseNotFoundException.class)
+                .hasMessageContaining("MISSING");
     }
 
     private RegistrationValidationContext context(String requestedCourseId, Optional<Course> requestedCourse) {
         return new RegistrationValidationContext(
-            new Student("SV001", "Nguyen Van A", "K16-CNTT", "CNTT", 20),
-            requestedCourseId,
-            requestedCourse,
-            List.of()
+                new Student("SV001", "Nguyen Van A", "K16-CNTT", "CNTT", 20),
+                requestedCourseId,
+                requestedCourse,
+                List.of()
         );
     }
 
