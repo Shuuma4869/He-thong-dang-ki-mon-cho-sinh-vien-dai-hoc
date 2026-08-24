@@ -31,12 +31,12 @@ class JsonFileUtilsTest {
         jsonFileUtils.writeList("students.json", List.of(student));
 
         assertThat(jsonFileUtils.readList("students.json", Student.class))
-            .singleElement()
-            .satisfies(found -> {
-                assertThat(found.getId()).isEqualTo("SV001");
-                assertThat(found.getFullName()).isEqualTo("Nguyễn Minh An");
-                assertThat(found.getMaxCredits()).isEqualTo(10);
-            });
+                .singleElement()
+                .satisfies(found -> {
+                    assertThat(found.getId()).isEqualTo("SV001");
+                    assertThat(found.getFullName()).isEqualTo("Nguyễn Minh An");
+                    assertThat(found.getMaxCredits()).isEqualTo(10);
+                });
     }
 
     @Test
@@ -62,8 +62,8 @@ class JsonFileUtilsTest {
         JsonFileUtils jsonFileUtils = jsonFileUtils();
 
         assertThatThrownBy(() -> jsonFileUtils.readList("students.json", Student.class))
-            .isInstanceOf(IllegalStateException.class)
-            .hasMessageContaining("students.json");
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("students.json");
     }
 
     @Test
@@ -71,7 +71,7 @@ class JsonFileUtilsTest {
         JsonFileUtils jsonFileUtils = jsonFileUtils();
 
         assertThatThrownBy(() -> jsonFileUtils.readList("../students.json", Student.class))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     private JsonFileUtils jsonFileUtils() {

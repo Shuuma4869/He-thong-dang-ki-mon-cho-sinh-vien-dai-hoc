@@ -1,4 +1,8 @@
-ework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+package vn.edu.phenikaa.courseregistration.controller;
+
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.DayOfWeek;
@@ -30,35 +34,35 @@ class TimetableControllerTest {
     void findByStudentIdReturnsTimetableSlots() throws Exception {
         Course course = oopCourse();
         when(timetableService.findTimetableEntries("SV001"))
-            .thenReturn(List.of(entry(course, lecturer(), course.getSchedules().getFirst())));
+                .thenReturn(List.of(entry(course, lecturer(), course.getSchedules().getFirst())));
 
         mockMvc.perform(get("/api/students/SV001/timetable"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.success").value(true))
-            .andExpect(jsonPath("$.data[0].courseId").value("OOP101"))
-            .andExpect(jsonPath("$.data[0].courseName").value("Lap trinh huong doi tuong"))
-            .andExpect(jsonPath("$.data[0].credits").value(3))
-            .andExpect(jsonPath("$.data[0].lecturerName").value("Tran Thi B"))
-            .andExpect(jsonPath("$.data[0].dayOfWeek").value("MONDAY"))
-            .andExpect(jsonPath("$.data[0].startTime").value("07:30:00"))
-            .andExpect(jsonPath("$.data[0].endTime").value("09:30:00"))
-            .andExpect(jsonPath("$.data[0].room").value("A101"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data[0].courseId").value("OOP101"))
+                .andExpect(jsonPath("$.data[0].courseName").value("Lap trinh huong doi tuong"))
+                .andExpect(jsonPath("$.data[0].credits").value(3))
+                .andExpect(jsonPath("$.data[0].lecturerName").value("Tran Thi B"))
+                .andExpect(jsonPath("$.data[0].dayOfWeek").value("MONDAY"))
+                .andExpect(jsonPath("$.data[0].startTime").value("07:30:00"))
+                .andExpect(jsonPath("$.data[0].endTime").value("09:30:00"))
+                .andExpect(jsonPath("$.data[0].room").value("A101"));
     }
 
     @Test
     void findByStudentIdReturnsOneSlotPerSchedule() throws Exception {
         Course course = courseWithTwoSchedules();
         when(timetableService.findTimetableEntries("SV001"))
-            .thenReturn(List.of(
-                entry(course, lecturer(), course.getSchedules().get(0)),
-                entry(course, lecturer(), course.getSchedules().get(1))
-            ));
+                .thenReturn(List.of(
+                        entry(course, lecturer(), course.getSchedules().get(0)),
+                        entry(course, lecturer(), course.getSchedules().get(1))
+                ));
 
         mockMvc.perform(get("/api/students/SV001/timetable"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.data.length()").value(2))
-            .andExpect(jsonPath("$.data[0].room").value("A101"))
-            .andExpect(jsonPath("$.data[1].room").value("A102"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.length()").value(2))
+                .andExpect(jsonPath("$.data[0].room").value("A101"))
+                .andExpect(jsonPath("$.data[1].room").value("A102"));
     }
 
     @Test
@@ -66,10 +70,10 @@ class TimetableControllerTest {
         when(timetableService.findTimetableEntries("SV001")).thenReturn(List.of());
 
         mockMvc.perform(get("/api/students/SV001/timetable"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.success").value(true))
-            .andExpect(jsonPath("$.data").isArray())
-            .andExpect(jsonPath("$.data.length()").value(0));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data.length()").value(0));
     }
 
     private TimetableEntry entry(Course course, Lecturer lecturer, Schedule schedule) {
@@ -78,28 +82,28 @@ class TimetableControllerTest {
 
     private Course oopCourse() {
         return new Course(
-            "OOP101",
-            "Lap trinh huong doi tuong",
-            3,
-            "GV001",
-            60,
-            20,
-            List.of(new Schedule(DayOfWeek.MONDAY, LocalTime.of(7, 30), LocalTime.of(9, 30), "A101"))
+                "OOP101",
+                "Lap trinh huong doi tuong",
+                3,
+                "GV001",
+                60,
+                20,
+                List.of(new Schedule(DayOfWeek.MONDAY, LocalTime.of(7, 30), LocalTime.of(9, 30), "A101"))
         );
     }
 
     private Course courseWithTwoSchedules() {
         return new Course(
-            "OOP101",
-            "Lap trinh huong doi tuong",
-            3,
-            "GV001",
-            60,
-            20,
-            List.of(
-                new Schedule(DayOfWeek.MONDAY, LocalTime.of(7, 30), LocalTime.of(9, 30), "A101"),
-                new Schedule(DayOfWeek.WEDNESDAY, LocalTime.of(7, 30), LocalTime.of(9, 30), "A102")
-            )
+                "OOP101",
+                "Lap trinh huong doi tuong",
+                3,
+                "GV001",
+                60,
+                20,
+                List.of(
+                        new Schedule(DayOfWeek.MONDAY, LocalTime.of(7, 30), LocalTime.of(9, 30), "A101"),
+                        new Schedule(DayOfWeek.WEDNESDAY, LocalTime.of(7, 30), LocalTime.of(9, 30), "A102")
+                )
         );
     }
 

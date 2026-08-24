@@ -83,7 +83,7 @@ export const TimetableWeeklyPage: React.FC<TimetableWeeklyPageProps> = ({
 
     try {
       const loadedCourses = await timetableApi.getTimetable(studentId);
-setTimetableCourses(loadedCourses);
+      setTimetableCourses(loadedCourses);
     } catch (error) {
       setTimetableCourses([]);
       setErrorMessage(getApiErrorMessage(error));
@@ -176,7 +176,7 @@ setTimetableCourses(loadedCourses);
               Tuan {currentWeek < 10 ? `0${currentWeek}` : currentWeek} (05/08 - 11/08/2026)
             </span>
             <button
-onClick={() => setCurrentWeek(Math.min(weeks[weeks.length - 1], currentWeek + 1))}
+              onClick={() => setCurrentWeek(Math.min(weeks[weeks.length - 1], currentWeek + 1))}
               disabled={currentWeek === weeks[weeks.length - 1]}
               className="p-1 text-slate-600 hover:text-slate-900 disabled:opacity-30 cursor-pointer"
               aria-label="Tuan sau"
@@ -240,7 +240,7 @@ onClick={() => setCurrentWeek(Math.min(weeks[weeks.length - 1], currentWeek + 1)
       )}
 
       {!isLoading && !errorMessage && (
-<div className="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse min-w-[1000px]">
               <thead>
@@ -292,7 +292,7 @@ onClick={() => setCurrentWeek(Math.min(weeks[weeks.length - 1], currentWeek + 1)
                               className={`p-2 border-r border-slate-200 last:border-r-0 align-top ${day.isToday ? 'bg-blue-50/20' : ''}`}
                             >
                               <div
-className={`h-full p-3 rounded-xl border ${theme.bg} ${theme.border} ${theme.text} shadow-xs flex flex-col justify-between space-y-2`}
+                                className={`h-full p-3 rounded-xl border ${theme.bg} ${theme.border} ${theme.text} shadow-xs flex flex-col justify-between space-y-2`}
                               >
                                 <div className="space-y-1">
                                   <div className="flex items-center justify-between">

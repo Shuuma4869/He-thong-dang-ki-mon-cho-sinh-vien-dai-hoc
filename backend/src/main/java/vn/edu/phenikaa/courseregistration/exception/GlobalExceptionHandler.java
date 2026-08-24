@@ -2,6 +2,7 @@ package vn.edu.phenikaa.courseregistration.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import vn.edu.phenikaa.courseregistration.dto.response.ApiErrorResponse;
@@ -12,12 +13,25 @@ import vn.edu.phenikaa.courseregistration.dto.response.ApiErrorResponse;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     private static final String INTERNAL_ERROR_CODE = "INTERNAL_SERVER_ERROR";
+    private static final String VALIDATION_ERROR_CODE = "VALIDATION_ERROR";
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ApiErrorResponse> handleBusinessException(BusinessException exception) {
         return ResponseEntity
                 .badRequest()
                 .body(ApiErrorResponse.of(exception.getMessage(), exception.getErrorCode()));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiErrorResponse> handleValidationException(MethodArgumentNotValidException exception) {
+        String message = exception.getBindingResult().getFieldErrors().stream()
+                .findFirst()
+                .map(fieldError -> fieldError.getDefaultMessage())
+                .orElse("Du lieu request khong hop le.");
+
+        return ResponseEntity
+                .badRequest()
+                .body(ApiErrorResponse.of(message, VALIDATION_ERROR_CODE));
     }
 
     @ExceptionHandler(Exception.class)

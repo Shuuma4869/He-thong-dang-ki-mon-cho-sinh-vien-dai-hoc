@@ -17,11 +17,11 @@ public class Registration {
     }
 
     public Registration(
-        String registrationId,
-        String studentId,
-        RegistrationStatus status,
-        LocalDateTime registeredAt,
-        List<RegistrationDetail> details
+            String registrationId,
+            String studentId,
+            RegistrationStatus status,
+            LocalDateTime registeredAt,
+            List<RegistrationDetail> details
     ) {
         this.registrationId = registrationId;
         this.studentId = studentId;

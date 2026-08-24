@@ -56,7 +56,7 @@ export default function App() {
 
   const [courses, setCourses] = useState<Course[]>([]);
   const [registrationSummary, setRegistrationSummary] = useState<RegistrationSummary | null>(null);
-const [isRegistrationLoading, setIsRegistrationLoading] = useState(false);
+  const [isRegistrationLoading, setIsRegistrationLoading] = useState(false);
   const [registrationErrorMessage, setRegistrationErrorMessage] = useState('');
   const [notifications, setNotifications] = useState<UniversityNotification[]>(NOTIFICATIONS_MOCK);
 
@@ -159,7 +159,8 @@ const [isRegistrationLoading, setIsRegistrationLoading] = useState(false);
 
     void loadRegistrations().catch(() => undefined);
   }, [student?.id, loadRegistrations]);
-const handleLoginSuccess = (loggedInStudent: Student, rememberMe: boolean) => {
+
+  const handleLoginSuccess = (loggedInStudent: Student, rememberMe: boolean) => {
     setStudent(loggedInStudent);
     storeStudentId(loggedInStudent.id, rememberMe);
     setActiveTab('dashboard');
@@ -243,7 +244,7 @@ const handleLoginSuccess = (loggedInStudent: Student, rememberMe: boolean) => {
   const handleMarkNotificationRead = (id: string) => {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
-);
+    );
   };
 
   const handleMarkAllNotificationsRead = () => {
@@ -328,7 +329,7 @@ const handleLoginSuccess = (loggedInStudent: Student, rememberMe: boolean) => {
               registeredCourses={registeredCoursesList}
               totalCredits={currentTotalCredits}
               isRegistrationLoading={isRegistrationLoading}
-registrationErrorMessage={registrationErrorMessage}
+              registrationErrorMessage={registrationErrorMessage}
               onRefreshRegistrations={loadRegistrations}
               notifications={notifications}
               onNavigate={setActiveTab}

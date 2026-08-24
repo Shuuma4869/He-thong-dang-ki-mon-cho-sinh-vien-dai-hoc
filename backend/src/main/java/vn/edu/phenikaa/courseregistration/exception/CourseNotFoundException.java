@@ -1,7 +1,7 @@
 package vn.edu.phenikaa.courseregistration.exception;
 
 /**
- * Lỗi dùng chung khi không tìm thấy học phần.
+ * Lỗi khi không tìm thấy học phần.
  */
 public class CourseNotFoundException extends BusinessException {
     public static final String ERROR_CODE = "COURSE_NOT_FOUND";

@@ -90,7 +90,8 @@ export const CourseListPage: React.FC<CourseListPageProps> = ({
       }
     }
   }, [onCoursesLoaded]);
-useEffect(() => {
+
+  useEffect(() => {
     const timeoutId = window.setTimeout(() => {
       void loadCourses(filters.searchQuery);
     }, 250);
@@ -167,7 +168,7 @@ useEffect(() => {
   }, [currentPage, filteredCourses, totalPages]);
 
   const pageNumbers = useMemo(() => {
-return Array.from({ length: totalPages }, (_, index) => index + 1);
+    return Array.from({ length: totalPages }, (_, index) => index + 1);
   }, [totalPages]);
 
   useEffect(() => {
@@ -241,7 +242,7 @@ return Array.from({ length: totalPages }, (_, index) => index + 1);
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {/* Search Field */}
           <div className="space-y-1">
-<label className="block text-[11px] font-semibold text-slate-600">Tìm kiếm</label>
+            <label className="block text-[11px] font-semibold text-slate-600">Tìm kiếm</label>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
@@ -300,7 +301,7 @@ return Array.from({ length: totalPages }, (_, index) => index + 1);
           </div>
 
           {/* Credits Filter */}
-<div className="space-y-1">
+          <div className="space-y-1">
             <label className="block text-[11px] font-semibold text-slate-600">Số tín chỉ</label>
             <select
               value={filters.minCredits}
@@ -350,7 +351,7 @@ return Array.from({ length: totalPages }, (_, index) => index + 1);
                       <p className="text-xs text-slate-500">{errorMessage}</p>
                       <button
                         onClick={() => void loadCourses(filters.searchQuery)}
-className="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors cursor-pointer"
+                        className="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors cursor-pointer"
                       >
                         Thử lại
                       </button>
@@ -410,7 +411,7 @@ className="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-blue-
                           {course.name}
                         </button>
                         <span className="text-[10px] text-slate-500 block mt-0.5">
-Mã giảng viên: {course.lecturerId ?? 'Chưa đồng bộ'}
+                          Mã giảng viên: {course.lecturerId ?? 'Chưa đồng bộ'}
                         </span>
                       </td>
 
@@ -471,7 +472,7 @@ Mã giảng viên: {course.lecturerId ?? 'Chưa đồng bộ'}
                         {isRegistered ? (
                           <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-blue-100 text-blue-800 rounded-full border border-blue-200">
                             <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
-<span>Đã đăng ký</span>
+                            <span>Đã đăng ký</span>
                           </span>
                         ) : isFull ? (
                           <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-red-100 text-red-800 rounded-full border border-red-200">
@@ -519,7 +520,7 @@ Mã giảng viên: {course.lecturerId ?? 'Chưa đồng bộ'}
                                   : hasConflict
                                   ? 'bg-amber-600 hover:bg-amber-700 text-white shadow-amber-600/20'
                                   : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-600/20'
-}`}
+                              }`}
                             >
                               {hasConflict ? 'Xem trùng' : 'Đăng ký'}
                             </button>
@@ -580,7 +581,7 @@ Mã giảng viên: {course.lecturerId ?? 'Chưa đồng bộ'}
               >
                 <span>Sau</span>
                 <ChevronRight className="h-4 w-4" />
-</button>
+              </button>
             </div>
           </div>
         )}

@@ -20,75 +20,75 @@ class ScheduleConflictValidatorTest {
     @Test
     void passesWhenSchedulesAreOnDifferentDays() {
         assertThatCode(() -> validator.validate(context(
-            course("OOP101", schedule(DayOfWeek.MONDAY, 9, 11)),
-            course("MAT101", schedule(DayOfWeek.TUESDAY, 9, 11))
+                course("OOP101", schedule(DayOfWeek.MONDAY, 9, 11)),
+                course("MAT101", schedule(DayOfWeek.TUESDAY, 9, 11))
         ))).doesNotThrowAnyException();
     }
 
     @Test
     void passesWhenExistingEndEqualsNewStart() {
         assertThatCode(() -> validator.validate(context(
-            course("OOP101", schedule(DayOfWeek.MONDAY, 11, 13)),
-            course("MAT101", schedule(DayOfWeek.MONDAY, 9, 11))
+                course("OOP101", schedule(DayOfWeek.MONDAY, 11, 13)),
+                course("MAT101", schedule(DayOfWeek.MONDAY, 9, 11))
         ))).doesNotThrowAnyException();
     }
 
     @Test
     void passesWhenNewEndEqualsExistingStart() {
         assertThatCode(() -> validator.validate(context(
-            course("OOP101", schedule(DayOfWeek.MONDAY, 7, 9)),
-            course("MAT101", schedule(DayOfWeek.MONDAY, 9, 11))
+                course("OOP101", schedule(DayOfWeek.MONDAY, 7, 9)),
+                course("MAT101", schedule(DayOfWeek.MONDAY, 9, 11))
         ))).doesNotThrowAnyException();
     }
 
     @Test
     void failsWhenSchedulesOverlapInTheMiddle() {
         assertThatThrownBy(() -> validator.validate(context(
-            course("OOP101", schedule(DayOfWeek.MONDAY, 10, 12)),
-            course("MAT101", schedule(DayOfWeek.MONDAY, 9, 11))
+                course("OOP101", schedule(DayOfWeek.MONDAY, 10, 12)),
+                course("MAT101", schedule(DayOfWeek.MONDAY, 9, 11))
         ))).isInstanceOf(ScheduleConflictException.class);
     }
 
     @Test
     void failsWhenNewScheduleOverlapsLeftSideOfExistingSchedule() {
         assertThatThrownBy(() -> validator.validate(context(
-            course("OOP101", schedule(DayOfWeek.MONDAY, 8, 10)),
-            course("MAT101", schedule(DayOfWeek.MONDAY, 9, 11))
+                course("OOP101", schedule(DayOfWeek.MONDAY, 8, 10)),
+                course("MAT101", schedule(DayOfWeek.MONDAY, 9, 11))
         ))).isInstanceOf(ScheduleConflictException.class);
     }
 
     @Test
     void failsWhenSchedulesHaveSameInterval() {
         assertThatThrownBy(() -> validator.validate(context(
-            course("OOP101", schedule(DayOfWeek.MONDAY, 9, 11)),
-            course("MAT101", schedule(DayOfWeek.MONDAY, 9, 11))
+                course("OOP101", schedule(DayOfWeek.MONDAY, 9, 11)),
+                course("MAT101", schedule(DayOfWeek.MONDAY, 9, 11))
         ))).isInstanceOf(ScheduleConflictException.class);
     }
 
     @Test
     void failsWhenNewScheduleContainsExistingSchedule() {
         assertThatThrownBy(() -> validator.validate(context(
-            course("OOP101", schedule(DayOfWeek.MONDAY, 8, 12)),
-            course("MAT101", schedule(DayOfWeek.MONDAY, 9, 11))
+                course("OOP101", schedule(DayOfWeek.MONDAY, 8, 12)),
+                course("MAT101", schedule(DayOfWeek.MONDAY, 9, 11))
         ))).isInstanceOf(ScheduleConflictException.class);
     }
 
     @Test
     void failsWhenNewScheduleIsInsideExistingSchedule() {
         assertThatThrownBy(() -> validator.validate(context(
-            course("OOP101", schedule(DayOfWeek.MONDAY, 10, 11)),
-            course("MAT101", schedule(DayOfWeek.MONDAY, 9, 12))
+                course("OOP101", schedule(DayOfWeek.MONDAY, 10, 11)),
+                course("MAT101", schedule(DayOfWeek.MONDAY, 9, 12))
         ))).isInstanceOf(ScheduleConflictException.class);
     }
 
     @Test
     void failsWhenAnyRegisteredCourseConflicts() {
         assertThatThrownBy(() -> validator.validate(context(
-            course("OOP101", schedule(DayOfWeek.WEDNESDAY, 10, 12)),
-            List.of(
-                course("MAT101", schedule(DayOfWeek.MONDAY, 9, 11)),
-                course("PHY101", schedule(DayOfWeek.WEDNESDAY, 11, 13))
-            )
+                course("OOP101", schedule(DayOfWeek.WEDNESDAY, 10, 12)),
+                List.of(
+                        course("MAT101", schedule(DayOfWeek.MONDAY, 9, 11)),
+                        course("PHY101", schedule(DayOfWeek.WEDNESDAY, 11, 13))
+                )
         ))).isInstanceOf(ScheduleConflictException.class);
     }
 
@@ -98,10 +98,10 @@ class ScheduleConflictValidatorTest {
 
     private RegistrationValidationContext context(Course requestedCourse, List<Course> registeredCourses) {
         return new RegistrationValidationContext(
-            new Student("SV001", "Nguyen Van A", "K16-CNTT", "CNTT", 20),
-            requestedCourse.getCourseId(),
-            Optional.of(requestedCourse),
-            registeredCourses
+                new Student("SV001", "Nguyen Van A", "K16-CNTT", "CNTT", 20),
+                requestedCourse.getCourseId(),
+                Optional.of(requestedCourse),
+                registeredCourses
         );
     }
 

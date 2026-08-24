@@ -10,13 +10,14 @@ import {
   ShieldAlert,
 } from 'lucide-react';
 import { Course } from '@/features/courses/types/course.types';
+import { getApiErrorMessage } from '@/shared/api/apiError';
 
 interface RegisterConfirmModalProps {
   course: Course | null;
   currentTotalCredits: number;
   registeredCourses: Course[];
   onClose: () => void;
-  onConfirmSuccess: (course: Course) => void;
+  onConfirmSuccess: (course: Course) => Promise<void> | void;
 }
 
 export const RegisterConfirmModal: React.FC<RegisterConfirmModalProps> = ({
@@ -54,37 +55,24 @@ export const RegisterConfirmModal: React.FC<RegisterConfirmModalProps> = ({
 
   const isFull = course.enrolled >= course.capacity;
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     setErrorMessage(null);
 
-    // Validate rules
     if (isFull) {
       setErrorMessage('Không thể đăng ký: Môn học đã đủ sĩ số tối đa!');
       return;
     }
 
-    if (hasConflict) {
-      setErrorMessage(
-        `Không thể đăng ký: Lịch học bị trùng với môn "${conflictingCourseName}" đã đăng ký!`
-      );
-      return;
-    }
-
-    if (isExceedLimit) {
-      setErrorMessage(
-        `Không thể đăng ký: Tổng số tín chỉ sau khi đăng ký (${newTotalCredits} TC) vượt quá hạn mức tối đa (${maxLimit} TC)!`
-      );
-      return;
-    }
-
     setIsSubmitting(true);
 
-    // Simulate network latency for academic server processing
-    setTimeout(() => {
-      setIsSubmitting(false);
-      onConfirmSuccess(course);
+    try {
+      await onConfirmSuccess(course);
       onClose();
-    }, 500);
+    } catch (error) {
+      setErrorMessage(getApiErrorMessage(error));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

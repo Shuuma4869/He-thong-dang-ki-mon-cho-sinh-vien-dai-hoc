@@ -41,8 +41,8 @@ class AuthServiceTest {
         when(studentRepository.findById("SV404")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service().login(request("SV404", "anything")))
-            .isInstanceOf(StudentNotFoundException.class)
-            .hasMessageContaining("SV404");
+                .isInstanceOf(StudentNotFoundException.class)
+                .hasMessageContaining("SV404");
         verify(studentRepository).findById("SV404");
         verify(studentRepository, never()).save(any());
     }
@@ -60,8 +60,8 @@ class AuthServiceTest {
     @Test
     void loginThrowsValidationErrorWhenStudentIdIsBlank() {
         assertThatThrownBy(() -> service().login(request("   ", "anything")))
-            .isInstanceOf(BusinessException.class)
-            .hasFieldOrPropertyWithValue("errorCode", "VALIDATION_ERROR");
+                .isInstanceOf(BusinessException.class)
+                .hasFieldOrPropertyWithValue("errorCode", "VALIDATION_ERROR");
         verifyNoInteractions(studentRepository);
     }
 

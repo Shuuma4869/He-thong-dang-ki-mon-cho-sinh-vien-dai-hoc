@@ -32,13 +32,13 @@ class JsonCourseRepositoryTest {
         repository.save(course);
 
         assertThat(repository.findById("OOP101"))
-            .get()
-            .satisfies(found -> {
-                assertThat(found.getCourseName()).isEqualTo("Lap trinh huong doi tuong");
-                assertThat(found.getSchedules()).hasSize(1);
-                assertThat(found.getSchedules().getFirst().getDayOfWeek()).isEqualTo(DayOfWeek.MONDAY);
-                assertThat(found.getSchedules().getFirst().getStartTime()).isEqualTo(LocalTime.of(7, 30));
-            });
+                .get()
+                .satisfies(found -> {
+                    assertThat(found.getCourseName()).isEqualTo("Lap trinh huong doi tuong");
+                    assertThat(found.getSchedules()).hasSize(1);
+                    assertThat(found.getSchedules().getFirst().getDayOfWeek()).isEqualTo(DayOfWeek.MONDAY);
+                    assertThat(found.getSchedules().getFirst().getStartTime()).isEqualTo(LocalTime.of(7, 30));
+                });
     }
 
     @Test
@@ -59,19 +59,19 @@ class JsonCourseRepositoryTest {
         repository.save(new Course("DBI101", "Co so du lieu", 3, "GV002", 50, 0, List.of()));
 
         assertThat(repository.search("   "))
-            .extracting(Course::getCourseId)
-            .containsExactly("OOP101", "DBI101");
+                .extracting(Course::getCourseId)
+                .containsExactly("OOP101", "DBI101");
     }
 
     private Course oopCourse() {
         return new Course(
-            "OOP101",
-            "Lap trinh huong doi tuong",
-            3,
-            "GV001",
-            60,
-            20,
-            List.of(new Schedule(DayOfWeek.MONDAY, LocalTime.of(7, 30), LocalTime.of(9, 30), "A101"))
+                "OOP101",
+                "Lap trinh huong doi tuong",
+                3,
+                "GV001",
+                60,
+                20,
+                List.of(new Schedule(DayOfWeek.MONDAY, LocalTime.of(7, 30), LocalTime.of(9, 30), "A101"))
         );
     }
 

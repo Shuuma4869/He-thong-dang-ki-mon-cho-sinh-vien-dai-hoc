@@ -50,8 +50,8 @@ import vn.edu.phenikaa.courseregistration.validator.ScheduleConflictValidator;
 @ExtendWith(MockitoExtension.class)
 class RegistrationServiceTest {
     private static final Clock CLOCK = Clock.fixed(
-        Instant.parse("2026-08-08T00:00:00Z"),
-        ZoneId.of("UTC")
+            Instant.parse("2026-08-08T00:00:00Z"),
+            ZoneId.of("UTC")
     );
 
     @Mock
@@ -88,7 +88,7 @@ class RegistrationServiceTest {
         when(studentRepository.findById("SV404")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service().registerCourse("SV404", "OOP101"))
-            .isInstanceOf(StudentNotFoundException.class);
+                .isInstanceOf(StudentNotFoundException.class);
         verify(registrationRepository, never()).save(any());
         verify(courseRepository, never()).save(any());
     }
@@ -100,7 +100,7 @@ class RegistrationServiceTest {
         when(registrationRepository.findByStudentId("SV001")).thenReturn(List.of());
 
         assertThatThrownBy(() -> service().registerCourse("SV001", "MISSING"))
-            .isInstanceOf(CourseNotFoundException.class);
+                .isInstanceOf(CourseNotFoundException.class);
         verify(registrationRepository, never()).save(any());
         verify(courseRepository, never()).save(any());
     }
@@ -113,7 +113,7 @@ class RegistrationServiceTest {
         when(registrationRepository.findByStudentId("SV001")).thenReturn(List.of());
 
         assertThatThrownBy(() -> service().registerCourse("SV001", "OOP101"))
-            .isInstanceOf(CourseFullException.class);
+                .isInstanceOf(CourseFullException.class);
         verify(registrationRepository, never()).save(any());
         verify(courseRepository, never()).save(any());
     }
@@ -124,9 +124,10 @@ class RegistrationServiceTest {
         when(studentRepository.findById("SV001")).thenReturn(Optional.of(student(20)));
         when(courseRepository.findById("OOP101")).thenReturn(Optional.of(course));
         when(registrationRepository.findByStudentId("SV001"))
-            .thenReturn(List.of(registration("REG001", "SV001", "OOP101")));
+                .thenReturn(List.of(registration("REG001", "SV001", "OOP101")));
+
         assertThatThrownBy(() -> service().registerCourse("SV001", "OOP101"))
-            .isInstanceOf(DuplicateRegistrationException.class);
+                .isInstanceOf(DuplicateRegistrationException.class);
         verify(registrationRepository, never()).save(any());
         verify(courseRepository, never()).save(any());
     }
@@ -141,11 +142,11 @@ class RegistrationServiceTest {
         when(courseRepository.findById("WEB201")).thenReturn(Optional.of(web));
         when(courseRepository.findById("DBS202")).thenReturn(Optional.of(dbs));
         when(registrationRepository.findByStudentId("SV001"))
-            .thenReturn(List.of(registration("REG001", "SV001", "OOP101", "WEB201", "DBS202")));
+                .thenReturn(List.of(registration("REG001", "SV001", "OOP101", "WEB201", "DBS202")));
 
         assertThatThrownBy(() -> service().registerCourse("SV001", "DBS202"))
-            .isInstanceOf(DuplicateRegistrationException.class)
-            .isNotInstanceOf(CreditLimitExceededException.class);
+                .isInstanceOf(DuplicateRegistrationException.class)
+                .isNotInstanceOf(CreditLimitExceededException.class);
         verify(registrationRepository, never()).save(any());
         verify(courseRepository, never()).save(any());
     }
@@ -156,11 +157,11 @@ class RegistrationServiceTest {
         when(studentRepository.findById("SV001")).thenReturn(Optional.of(student(20)));
         when(courseRepository.findById("OOP101")).thenReturn(Optional.of(course));
         when(registrationRepository.findByStudentId("SV001"))
-            .thenReturn(List.of(registration("REG001", "SV001", "OOP101")));
+                .thenReturn(List.of(registration("REG001", "SV001", "OOP101")));
 
         assertThatThrownBy(() -> service().registerCourse("SV001", "OOP101"))
-            .isInstanceOf(DuplicateRegistrationException.class)
-            .isNotInstanceOf(CourseFullException.class);
+                .isInstanceOf(DuplicateRegistrationException.class)
+                .isNotInstanceOf(CourseFullException.class);
         verify(registrationRepository, never()).save(any());
         verify(courseRepository, never()).save(any());
     }
@@ -173,10 +174,10 @@ class RegistrationServiceTest {
         when(courseRepository.findById("OOP101")).thenReturn(Optional.of(requestedCourse));
         when(courseRepository.findById("MAT101")).thenReturn(Optional.of(registeredCourse));
         when(registrationRepository.findByStudentId("SV001"))
-            .thenReturn(List.of(registration("REG001", "SV001", "MAT101")));
+                .thenReturn(List.of(registration("REG001", "SV001", "MAT101")));
 
         assertThatThrownBy(() -> service().registerCourse("SV001", "OOP101"))
-            .isInstanceOf(CreditLimitExceededException.class);
+                .isInstanceOf(CreditLimitExceededException.class);
         verify(registrationRepository, never()).save(any());
         verify(courseRepository, never()).save(any());
     }
@@ -184,27 +185,27 @@ class RegistrationServiceTest {
     @Test
     void registerFailsWhenScheduleConflict() {
         Course requestedCourse = course(
-            "OOP101",
-            3,
-            60,
-            20,
-            schedule(DayOfWeek.MONDAY, 10, 12)
+                "OOP101",
+                3,
+                60,
+                20,
+                schedule(DayOfWeek.MONDAY, 10, 12)
         );
         Course registeredCourse = course(
-            "MAT101",
-            3,
-            60,
-            20,
-            schedule(DayOfWeek.MONDAY, 9, 11)
+                "MAT101",
+                3,
+                60,
+                20,
+                schedule(DayOfWeek.MONDAY, 9, 11)
         );
         when(studentRepository.findById("SV001")).thenReturn(Optional.of(student(20)));
         when(courseRepository.findById("OOP101")).thenReturn(Optional.of(requestedCourse));
         when(courseRepository.findById("MAT101")).thenReturn(Optional.of(registeredCourse));
         when(registrationRepository.findByStudentId("SV001"))
-            .thenReturn(List.of(registration("REG001", "SV001", "MAT101")));
+                .thenReturn(List.of(registration("REG001", "SV001", "MAT101")));
 
         assertThatThrownBy(() -> service().registerCourse("SV001", "OOP101"))
-            .isInstanceOf(ScheduleConflictException.class);
+                .isInstanceOf(ScheduleConflictException.class);
         verify(registrationRepository, never()).save(any());
         verify(courseRepository, never()).save(any());
     }
@@ -235,7 +236,7 @@ class RegistrationServiceTest {
         when(registrationRepository.findByStudentId("SV001")).thenReturn(List.of(registration));
 
         assertThatThrownBy(() -> service().cancelCourse("SV001", "OOP101"))
-            .isInstanceOf(RegistrationNotFoundException.class);
+                .isInstanceOf(RegistrationNotFoundException.class);
         verify(registrationRepository, never()).save(any());
         verify(courseRepository, never()).save(any());
     }
@@ -259,7 +260,7 @@ class RegistrationServiceTest {
     void calculateTotalCreditsFromActiveRegistration() {
         when(studentRepository.findById("SV001")).thenReturn(Optional.of(student(20)));
         when(registrationRepository.findByStudentId("SV001"))
-            .thenReturn(List.of(registration("REG001", "SV001", "OOP101", "MAT101")));
+                .thenReturn(List.of(registration("REG001", "SV001", "OOP101", "MAT101")));
         when(courseRepository.findById("OOP101")).thenReturn(Optional.of(course("OOP101", 3, 60, 20)));
         when(courseRepository.findById("MAT101")).thenReturn(Optional.of(course("MAT101", 4, 60, 20)));
 
@@ -284,7 +285,7 @@ class RegistrationServiceTest {
         Course math = course("MAT101", 4, 60, 20, schedule(DayOfWeek.TUESDAY, 9, 11));
         when(studentRepository.findById("SV001")).thenReturn(Optional.of(student(20)));
         when(registrationRepository.findByStudentId("SV001"))
-            .thenReturn(List.of(registration("REG001", "SV001", "OOP101", "MAT101")));
+                .thenReturn(List.of(registration("REG001", "SV001", "OOP101", "MAT101")));
         when(courseRepository.findAll()).thenReturn(List.of(oop, math));
         when(lecturerRepository.findAll()).thenReturn(List.of(lecturer("GV001")));
 
@@ -292,9 +293,9 @@ class RegistrationServiceTest {
 
         assertThat(summary.courses()).hasSize(2);
         assertThat(summary.courses()).extracting(item -> item.course().getCourseId())
-            .containsExactly("OOP101", "MAT101");
+                .containsExactly("OOP101", "MAT101");
         assertThat(summary.courses()).extracting(item -> item.lecturer().getFullName())
-            .containsExactly("Giang vien GV001", "Giang vien GV001");
+                .containsExactly("Giang vien GV001", "Giang vien GV001");
         assertThat(summary.courses().stream().mapToInt(item -> item.course().getCredits()).sum()).isEqualTo(7);
         assertThat(summary.courses().getFirst().course().getSchedules()).hasSize(1);
     }
@@ -311,7 +312,7 @@ class RegistrationServiceTest {
         RegistrationSummary summary = service().registerCourseSummary("SV001", "OOP101");
 
         assertThat(summary.registration().getDetails()).extracting(RegistrationDetail::getCourseId)
-            .containsExactly("OOP101");
+                .containsExactly("OOP101");
         assertThat(summary.courses()).hasSize(1);
         assertThat(summary.courses().getFirst().course().getCurrentCapacity()).isEqualTo(21);
     }
@@ -330,29 +331,29 @@ class RegistrationServiceTest {
         RegistrationSummary summary = service().cancelCourseSummary("SV001", "OOP101");
 
         assertThat(summary.registration().getDetails()).extracting(RegistrationDetail::getCourseId)
-            .containsExactly("MAT101");
+                .containsExactly("MAT101");
         assertThat(summary.courses()).extracting(item -> item.course().getCourseId())
-            .containsExactly("MAT101");
+                .containsExactly("MAT101");
     }
 
     private RegistrationService service() {
         return new RegistrationService(
-            studentRepository,
-            courseRepository,
-            lecturerRepository,
-            registrationRepository,
-            validators(),
-            CLOCK
+                studentRepository,
+                courseRepository,
+                lecturerRepository,
+                registrationRepository,
+                validators(),
+                CLOCK
         );
     }
 
     private List<CourseValidator> validators() {
         return List.of(
-            new CourseExistenceValidator(),
-            new DuplicateCourseValidator(),
-            new CapacityValidator(),
-            new CreditLimitValidator(),
-            new ScheduleConflictValidator()
+                new CourseExistenceValidator(),
+                new DuplicateCourseValidator(),
+                new CapacityValidator(),
+                new CreditLimitValidator(),
+                new ScheduleConflictValidator()
         );
     }
 
@@ -363,17 +364,18 @@ class RegistrationServiceTest {
     private Lecturer lecturer(String lecturerId) {
         return new Lecturer(lecturerId, "Giang vien " + lecturerId, "CNTT");
     }
+
     private Registration registration(String registrationId, String studentId, String... courseIds) {
         List<RegistrationDetail> details = new ArrayList<>();
         for (String courseId : courseIds) {
             details.add(new RegistrationDetail(courseId));
         }
         return new Registration(
-            registrationId,
-            studentId,
-            RegistrationStatus.ACTIVE,
-            LocalDateTime.now(CLOCK),
-            details
+                registrationId,
+                studentId,
+                RegistrationStatus.ACTIVE,
+                LocalDateTime.now(CLOCK),
+                details
         );
     }
 
@@ -382,21 +384,21 @@ class RegistrationServiceTest {
     }
 
     private Course course(
-        String courseId,
-        int credits,
-        int maxCapacity,
-        int currentCapacity,
-        Schedule schedule
+            String courseId,
+            int credits,
+            int maxCapacity,
+            int currentCapacity,
+            Schedule schedule
     ) {
         return course(courseId, credits, maxCapacity, currentCapacity, List.of(schedule));
     }
 
     private Course course(
-        String courseId,
-        int credits,
-        int maxCapacity,
-        int currentCapacity,
-        List<Schedule> schedules
+            String courseId,
+            int credits,
+            int maxCapacity,
+            int currentCapacity,
+            List<Schedule> schedules
     ) {
         return new Course(courseId, "Hoc phan " + courseId, credits, "GV001", maxCapacity, currentCapacity, schedules);
     }

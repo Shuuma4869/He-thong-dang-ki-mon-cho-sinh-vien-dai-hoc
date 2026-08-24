@@ -17,27 +17,27 @@ class CapacityValidatorTest {
     @Test
     void passesWhenCurrentCapacityIsLessThanMaxCapacity() {
         assertThatCode(() -> validator.validate(context(course("OOP101", 10, 9))))
-            .doesNotThrowAnyException();
+                .doesNotThrowAnyException();
     }
 
     @Test
     void failsWhenCurrentCapacityEqualsMaxCapacity() {
         assertThatThrownBy(() -> validator.validate(context(course("OOP101", 10, 10))))
-            .isInstanceOf(CourseFullException.class);
+                .isInstanceOf(CourseFullException.class);
     }
 
     @Test
     void failsWhenCurrentCapacityIsGreaterThanMaxCapacity() {
         assertThatThrownBy(() -> validator.validate(context(course("OOP101", 10, 11))))
-            .isInstanceOf(CourseFullException.class);
+                .isInstanceOf(CourseFullException.class);
     }
 
     private RegistrationValidationContext context(Course requestedCourse) {
         return new RegistrationValidationContext(
-            new Student("SV001", "Nguyen Van A", "K16-CNTT", "CNTT", 20),
-            requestedCourse.getCourseId(),
-            Optional.of(requestedCourse),
-            List.of()
+                new Student("SV001", "Nguyen Van A", "K16-CNTT", "CNTT", 20),
+                requestedCourse.getCourseId(),
+                Optional.of(requestedCourse),
+                List.of()
         );
     }
 

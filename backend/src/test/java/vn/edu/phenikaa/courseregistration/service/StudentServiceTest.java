@@ -33,7 +33,7 @@ class StudentServiceTest {
         StudentService service = new StudentService(studentRepository);
 
         assertThatThrownBy(() -> service.findById("SV999"))
-            .isInstanceOf(StudentNotFoundException.class)
-            .hasMessageContaining("SV999");
+                .isInstanceOf(StudentNotFoundException.class)
+                .hasMessageContaining("SV999");
     }
 }

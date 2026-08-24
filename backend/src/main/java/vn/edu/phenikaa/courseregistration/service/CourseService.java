@@ -33,7 +33,7 @@ public class CourseService {
 
     public CourseWithLecturer findById(String courseId) {
         Course course = courseRepository.findById(courseId)
-            .orElseThrow(() -> new CourseNotFoundException(courseId));
+                .orElseThrow(() -> new CourseNotFoundException(courseId));
         return new CourseWithLecturer(course, findLecturerFor(course));
     }
 
@@ -43,20 +43,20 @@ public class CourseService {
 
     private List<CourseWithLecturer> attachLecturers(List<Course> courses) {
         Map<String, Lecturer> lecturersById = lecturerRepository.findAll().stream()
-            .collect(Collectors.toMap(
-                lecturer -> normalizeId(lecturer.getId()),
-                Function.identity(),
-                (first, ignored) -> first
-            ));
+                .collect(Collectors.toMap(
+                        lecturer -> normalizeId(lecturer.getId()),
+                        Function.identity(),
+                        (first, ignored) -> first
+                ));
 
         return courses.stream()
-            .map(course -> new CourseWithLecturer(course, findLecturerFor(course, lecturersById)))
-            .toList();
+                .map(course -> new CourseWithLecturer(course, findLecturerFor(course, lecturersById)))
+                .toList();
     }
 
     private Lecturer findLecturerFor(Course course) {
         return lecturerRepository.findById(course.getLecturerId())
-            .orElseThrow(() -> new LecturerNotFoundException(course.getLecturerId(), course.getCourseId()));
+                .orElseThrow(() -> new LecturerNotFoundException(course.getLecturerId(), course.getCourseId()));
     }
 
     private Lecturer findLecturerFor(Course course, Map<String, Lecturer> lecturersById) {

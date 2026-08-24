@@ -25,8 +25,8 @@ public class JsonCourseRepository implements CourseRepository {
     @Override
     public Optional<Course> findById(String courseId) {
         return findAll().stream()
-            .filter(course -> course.getCourseId().equalsIgnoreCase(courseId))
-            .findFirst();
+                .filter(course -> course.getCourseId().equalsIgnoreCase(courseId))
+                .findFirst();
     }
 
     @Override
@@ -42,9 +42,9 @@ public class JsonCourseRepository implements CourseRepository {
 
         String normalizedKeyword = keyword.toLowerCase(Locale.ROOT).trim();
         return findAll().stream()
-            .filter(course -> containsIgnoreCase(course.getCourseId(), normalizedKeyword)
-                || containsIgnoreCase(course.getCourseName(), normalizedKeyword))
-            .toList();
+                .filter(course -> containsIgnoreCase(course.getCourseId(), normalizedKeyword)
+                        || containsIgnoreCase(course.getCourseName(), normalizedKeyword))
+                .toList();
     }
 
     @Override

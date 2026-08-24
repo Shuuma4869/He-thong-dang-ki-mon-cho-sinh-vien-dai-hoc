@@ -18,13 +18,13 @@ public class RegistrationResponse {
     }
 
     public RegistrationResponse(
-        String registrationId,
-        String studentId,
-        String status,
-        LocalDateTime registeredAt,
-        List<RegistrationDetailResponse> details,
-        List<RegisteredCourseResponse> courses,
-        int totalCredits
+            String registrationId,
+            String studentId,
+            String status,
+            LocalDateTime registeredAt,
+            List<RegistrationDetailResponse> details,
+            List<RegisteredCourseResponse> courses,
+            int totalCredits
     ) {
         this.registrationId = registrationId;
         this.studentId = studentId;

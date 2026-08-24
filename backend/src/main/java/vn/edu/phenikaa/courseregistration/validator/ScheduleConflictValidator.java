@@ -21,8 +21,8 @@ public class ScheduleConflictValidator implements CourseValidator {
                 for (Schedule existingSchedule : schedulesOf(registeredCourse)) {
                     if (isOverlapping(newSchedule, existingSchedule)) {
                         throw new ScheduleConflictException(
-                            requestedCourse.getCourseId(),
-                            registeredCourse.getCourseId()
+                                requestedCourse.getCourseId(),
+                                registeredCourse.getCourseId()
                         );
                     }
                 }
@@ -32,8 +32,8 @@ public class ScheduleConflictValidator implements CourseValidator {
 
     private boolean isOverlapping(Schedule newSchedule, Schedule existingSchedule) {
         return newSchedule.getDayOfWeek() == existingSchedule.getDayOfWeek()
-            && newSchedule.getStartTime().isBefore(existingSchedule.getEndTime())
-            && newSchedule.getEndTime().isAfter(existingSchedule.getStartTime());
+                && newSchedule.getStartTime().isBefore(existingSchedule.getEndTime())
+                && newSchedule.getEndTime().isAfter(existingSchedule.getStartTime());
     }
 
     private List<Schedule> schedulesOf(Course course) {

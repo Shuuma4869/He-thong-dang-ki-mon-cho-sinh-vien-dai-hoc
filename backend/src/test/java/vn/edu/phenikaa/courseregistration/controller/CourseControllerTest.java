@@ -37,12 +37,12 @@ class CourseControllerTest {
         when(courseService.findAll()).thenReturn(List.of(oopCourse()));
 
         mockMvc.perform(get("/api/courses"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.success").value(true))
-            .andExpect(jsonPath("$.data[0].courseId").value("OOP101"))
-            .andExpect(jsonPath("$.data[0].lecturerId").value("GV001"))
-            .andExpect(jsonPath("$.data[0].lecturer.fullName").value("Tran Thi B"))
-            .andExpect(jsonPath("$.data[0].schedules[0].dayOfWeek").value("MONDAY"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data[0].courseId").value("OOP101"))
+                .andExpect(jsonPath("$.data[0].lecturerId").value("GV001"))
+                .andExpect(jsonPath("$.data[0].lecturer.fullName").value("Tran Thi B"))
+                .andExpect(jsonPath("$.data[0].schedules[0].dayOfWeek").value("MONDAY"));
     }
 
     @Test
@@ -50,10 +50,10 @@ class CourseControllerTest {
         when(courseService.findById("OOP101")).thenReturn(oopCourse());
 
         mockMvc.perform(get("/api/courses/OOP101"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.data.courseName").value("Lap trinh huong doi tuong"))
-            .andExpect(jsonPath("$.data.lecturerId").value("GV001"))
-            .andExpect(jsonPath("$.data.lecturer.fullName").value("Tran Thi B"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.courseName").value("Lap trinh huong doi tuong"))
+                .andExpect(jsonPath("$.data.lecturerId").value("GV001"))
+                .andExpect(jsonPath("$.data.lecturer.fullName").value("Tran Thi B"));
     }
 
     @Test
@@ -61,10 +61,10 @@ class CourseControllerTest {
         when(courseService.search("oop")).thenReturn(List.of(oopCourse()));
 
         mockMvc.perform(get("/api/courses/search").param("keyword", "oop"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.data[0].courseId").value("OOP101"))
-            .andExpect(jsonPath("$.data[0].lecturerId").value("GV001"))
-            .andExpect(jsonPath("$.data[0].lecturer.fullName").value("Tran Thi B"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data[0].courseId").value("OOP101"))
+                .andExpect(jsonPath("$.data[0].lecturerId").value("GV001"))
+                .andExpect(jsonPath("$.data[0].lecturer.fullName").value("Tran Thi B"));
     }
 
     @Test
@@ -72,8 +72,8 @@ class CourseControllerTest {
         when(courseService.findById("MISSING")).thenThrow(new CourseNotFoundException("MISSING"));
 
         mockMvc.perform(get("/api/courses/MISSING"))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.errorCode").value("COURSE_NOT_FOUND"));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value("COURSE_NOT_FOUND"));
     }
 
     @Test
@@ -81,19 +81,19 @@ class CourseControllerTest {
         when(courseService.findById("OOP101")).thenThrow(new LecturerNotFoundException("GV001", "OOP101"));
 
         mockMvc.perform(get("/api/courses/OOP101"))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.errorCode").value("LECTURER_NOT_FOUND"));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value("LECTURER_NOT_FOUND"));
     }
 
     private CourseWithLecturer oopCourse() {
         Course course = new Course(
-            "OOP101",
-            "Lap trinh huong doi tuong",
-            3,
-            "GV001",
-            60,
-            20,
-            List.of(new Schedule(DayOfWeek.MONDAY, LocalTime.of(7, 30), LocalTime.of(9, 30), "A101"))
+                "OOP101",
+                "Lap trinh huong doi tuong",
+                3,
+                "GV001",
+                60,
+                20,
+                List.of(new Schedule(DayOfWeek.MONDAY, LocalTime.of(7, 30), LocalTime.of(9, 30), "A101"))
         );
         return new CourseWithLecturer(course, new Lecturer("GV001", "Tran Thi B", "Khoa Cong nghe thong tin"));
     }
