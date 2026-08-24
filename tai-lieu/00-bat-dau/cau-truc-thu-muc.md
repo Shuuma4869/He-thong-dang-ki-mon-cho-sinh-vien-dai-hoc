@@ -7,7 +7,6 @@
 +-- data/              Dữ liệu JSON demo
 +-- tai-lieu/          Tài liệu phân tích, thiết kế, vận hành, báo cáo
 +-- kiem-thu/          Tài liệu kiểm thử và kết quả kiểm thử
-+-- thiet-ke/          Tài nguyên thiết kế và UML
 +-- ho-so-nop-bai/     Sơ đồ, ảnh demo, minh chứng kiểm thử
 +-- scripts/           Script chạy và kiểm tra dự án
 +-- .github/           Mẫu GitHub
