@@ -1,6 +1,6 @@
 # Hệ thống đăng ký môn học
 
-Đồ án cuối kỳ OOP nhóm 2 - Đại học Phenikaa.
+Dự án BTL cuối kỳ OOP nhóm 2 lớp CSE702051-1-1-26(N01) - Đại học Phenikaa.
 
 Đây là bản nộp đã đóng băng: mã nguồn, dữ liệu demo, tài liệu, kết quả kiểm thử và các minh chứng trong `ho-so-nop-bai/` được giữ cùng một trạng thái để đánh giá.
 
@@ -235,7 +235,7 @@ Kết quả kiểm thử của bản nộp:
 - Backend: 99 tests pass, 0 failures, 0 errors, 0 skipped.
 - Backend package: pass.
 - Frontend typecheck: pass.
-- Frontend build: pass khi chạy ngoài sandbox nếu môi trường chặn Vite/esbuild bằng `spawn EPERM`.
+- Frontend build: pass.
 - Kiểm thử tích hợp trình duyệt: pass.
 
 ## Phân công tổng quan
