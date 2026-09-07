@@ -2,8 +2,6 @@
 
 Dự án BTL cuối kỳ OOP nhóm 2 lớp CSE702051-1-1-26(N01) - Đại học Phenikaa.
 
-Đây là bản nộp đã đóng băng: mã nguồn, dữ liệu demo, tài liệu, kết quả kiểm thử và các minh chứng trong `ho-so-nop-bai/` được giữ cùng một trạng thái để đánh giá.
-
 Dự án là một hệ thống đăng ký môn học dạng full-stack local. Frontend React hiển thị dashboard sinh viên, danh sách môn học, đăng ký/hủy đăng ký, thời khóa biểu và hồ sơ. Backend Spring Boot cung cấp REST API, kiểm tra nghiệp vụ đăng ký bằng validator chain và lưu dữ liệu bằng JSON File IO.
 
 Dự án phục vụ học tập/demo OOP, chưa phải hệ thống production.
@@ -255,37 +253,6 @@ Kết quả kiểm thử của bản nộp:
 - Frontend typecheck: pass.
 - Frontend build: pass.
 - Kiểm thử tích hợp trình duyệt: pass.
-
-## Phân công tổng quan
-
-Nhóm có thể chia theo module:
-
-- Frontend UI và API client.
-- Backend model/service/validator.
-- Repository JSON File IO.
-- REST API/DTO/controller.
-- Kiểm thử, tài liệu và demo.
-
-Chi tiết xem `tai-lieu/04-quy-trinh-nhom/phan-cong-thanh-vien.md`.
-
-## Tài liệu chi tiết
-
-- `tai-lieu/00-bat-dau/muc-luc-tai-lieu.md`
-- `tai-lieu/00-bat-dau/gioi-thieu-du-an.md`
-- `tai-lieu/02-kien-truc/kien-truc-tong-the.md`
-- `tai-lieu/02-kien-truc/kien-truc-frontend.md`
-- `tai-lieu/02-kien-truc/kien-truc-backend.md`
-- `tai-lieu/02-kien-truc/kien-truc-du-lieu-va-file-io.md`
-- `tai-lieu/03-thiet-ke/thiet-ke-lop-va-doi-tuong.md`
-- `tai-lieu/03-thiet-ke/thiet-ke-api-rest.md`
-- `tai-lieu/03-thiet-ke/thiet-ke-validator.md`
-- `kiem-thu/bao-cao-kiem-thu.md`
-- `kiem-thu/bao-cao-kiem-thu-tich-hop.md`
-- `tai-lieu/07-van-hanh/huong-dan-chay-backend.md`
-- `tai-lieu/07-van-hanh/huong-dan-chay-frontend.md`
-- `tai-lieu/08-bao-cao-va-demo/kich-ban-du-lieu-demo.md`
-- `tai-lieu/08-bao-cao-va-demo/kich-ban-demo-he-thong.md`
-- `tai-lieu/08-bao-cao-va-demo/cau-hoi-bao-ve.md`
 
 ## Giới hạn hiện tại
 
