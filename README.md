@@ -2,8 +2,6 @@
 
 Dự án BTL cuối kỳ OOP nhóm 2 lớp CSE702051-1-1-26(N01) - Đại học Phenikaa.
 
-Đây là bản nộp đã đóng băng: mã nguồn, dữ liệu demo, tài liệu, kết quả kiểm thử và các minh chứng trong `ho-so-nop-bai/` được giữ cùng một trạng thái để đánh giá.
-
 Dự án là một hệ thống đăng ký môn học dạng full-stack local. Frontend React hiển thị dashboard sinh viên, danh sách môn học, đăng ký/hủy đăng ký, thời khóa biểu và hồ sơ. Backend Spring Boot cung cấp REST API, kiểm tra nghiệp vụ đăng ký bằng validator chain và lưu dữ liệu bằng JSON File IO.
 
 Dự án phục vụ học tập/demo OOP, chưa phải hệ thống production.
