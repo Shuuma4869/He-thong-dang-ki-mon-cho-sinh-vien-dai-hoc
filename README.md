@@ -115,16 +115,20 @@ Frontend không đọc trực tiếp `data/*.json`. Controller, service và mode
 
 Các tệp sinh ra khi chạy dự án như `backend/target/` và `frontend/dist/` không thuộc bản nộp, nên không có trong cây thư mục trên.
 
-## Yêu cầu môi trường
+## Cài đặt và chạy dự án
 
-- Git
-- JDK 21
-- Node.js 20 trở lên
-- npm 10 trở lên
+### 1. Chuẩn bị môi trường
 
-Không cần cài Maven hệ thống vì backend dùng Maven Wrapper.
+Dự án hỗ trợ Windows 10/11 qua các script `.bat`. Cài các công cụ sau và mở một terminal mới sau khi cài để PATH được cập nhật:
 
-Kiểm tra nhanh:
+- Git.
+- JDK 21 (không phải JRE). `java -version` và `javac -version` phải hiển thị phiên bản `21`.
+- Node.js 20 trở lên, kèm npm 10 trở lên.
+- Internet cho lần cài đầu tiên: `npm ci` tải package frontend, Maven Wrapper tải Maven/dependency backend.
+
+Không cần cài Maven riêng vì repository đã có Maven Wrapper tại `backend/mvnw.cmd`.
+
+Kiểm tra môi trường trong PowerShell hoặc Command Prompt:
 
 ```powershell
 git --version
@@ -134,68 +138,82 @@ node -v
 npm -v
 ```
 
-## Cách chạy nhanh
+### 2. Clone và cài dependency
 
-Clone repository:
+Clone vào một đường dẫn ngắn, không dấu tiếng Việt để giảm rủi ro classpath trên Windows:
 
 ```powershell
-mkdir projects
-cd projects
+mkdir C:\projects
+cd C:\projects
 git clone https://github.com/Shuuma4869/He-thong-dang-ki-mon-cho-sinh-vien-dai-hoc.git he-thong-dang-ky-mon-hoc
 cd he-thong-dang-ky-mon-hoc
 ```
 
-Nên clone vào thư mục không dấu tiếng Việt để giảm rủi ro lỗi classpath trên Windows.
-
-Chạy toàn bộ dự án bằng một lệnh:
-
-```powershell
-scripts\chay-du-an.bat
-```
-
-Script sẽ kiểm tra/build frontend, package backend, mở backend, mở frontend và mở trình duyệt tại `http://localhost:3000`.
-
-Nếu port `8080` đang bị ứng dụng khác chiếm, script sẽ tự chạy backend ở `18080` và truyền `VITE_API_BASE_URL=http://localhost:18080/api` cho frontend.
-
-Nếu muốn chạy từng phần:
-
-Chạy backend:
-
-```powershell
-scripts\chay-backend.bat
-```
-
-Chạy frontend ở terminal khác:
+Cài đúng phiên bản package frontend đã được khóa trong `package-lock.json`, rồi kiểm tra Maven Wrapper nhận đúng JDK 21:
 
 ```powershell
 cd frontend
-npm install
-npm run dev
+npm ci
+cd ..
+backend\mvnw.cmd -v
 ```
 
-Frontend mặc định chạy tại:
+Không cần tạo `.env` hoặc `.env.local` để chạy mặc định. Frontend dùng API `http://localhost:8080/api`; script tổng tự đổi sang port `18080` khi `8080` đã bị chiếm.
 
-```text
-http://localhost:3000
+### 3. Chạy toàn bộ bằng script
+
+Từ thư mục gốc repository, chạy:
+
+```powershell
+.\scripts\chay-du-an.bat
 ```
 
-Backend mặc định chạy tại:
+Script tự cài `node_modules` nếu thiếu, chạy typecheck/build frontend, package backend, mở hai cửa sổ backend/frontend và mở trình duyệt tại `http://localhost:3000`.
 
-```text
-http://localhost:8080
+- Frontend: `http://localhost:3000`
+- Backend mặc định: `http://localhost:8080`
+- API mặc định: `http://localhost:8080/api`
+- Khi port `8080` bận: backend dùng `http://localhost:18080` và frontend tự nhận đúng API base.
+
+Không đóng hai cửa sổ Backend/Frontend do script mở ra trong lúc đang demo. Dừng từng phần bằng `Ctrl+C` trong cửa sổ tương ứng.
+
+### 4. Chạy từng phần
+
+Mở hai terminal tại thư mục gốc repository.
+
+Terminal 1 - backend:
+
+```powershell
+.\scripts\chay-backend.bat
 ```
 
-Khi port `8080` bận, script `.bat` dùng port dự phòng:
+Script tự package JAR nếu `backend/target/` chưa tồn tại. Ghi lại port in trên màn hình: mặc định là `8080`, hoặc `18080` nếu port mặc định bận.
 
-```text
-http://localhost:18080
+Terminal 2 - frontend:
+
+```powershell
+.\scripts\chay-frontend.bat 8080
 ```
 
-API base:
+Nếu backend đang chạy ở `18080`, thay lệnh terminal 2 bằng:
 
-```text
-http://localhost:8080/api
+```powershell
+.\scripts\chay-frontend.bat 18080
 ```
+
+`chay-frontend.bat` cũng tự chạy `npm ci` khi chưa có `frontend/node_modules`.
+
+### 5. Kiểm tra trước khi sử dụng hoặc nộp bài
+
+Chạy toàn bộ kiểm tra từ thư mục gốc:
+
+```powershell
+.\scripts\kiem-tra-du-an.bat
+```
+
+Script tự cài dependency frontend nếu cần, sau đó chạy `npm run typecheck`, `npm run build`, `backend\mvnw.cmd clean test` và `backend\mvnw.cmd clean package`.
+
+Các thư mục `frontend/node_modules/`, `frontend/dist/` và `backend/target/` là tệp sinh ra khi cài/build, đã được `.gitignore` loại trừ và có thể xóa rồi tạo lại bằng các lệnh trên.
 
 ## Demo account
 
