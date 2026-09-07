@@ -10,4 +10,3 @@ Quy trình cơ bản:
 4. Push nhánh cá nhân.
 5. Tạo pull request để review.
 6. Chỉ merge khi build/test liên quan đã pass.
-

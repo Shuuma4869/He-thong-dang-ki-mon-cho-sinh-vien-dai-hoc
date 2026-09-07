@@ -8,5 +8,4 @@ Gợi ý tên branch:
 - `docs/report-and-demo`.
 - `fix/runtime-login`.
 
-Không làm việc trực tiếp trên `main`. `develop` dùng để tích hợp. `reference/full-solution` dùng làm bản tham khảo local của trưởng nhóm.
-
+Không làm việc trực tiếp trên `main`. `develop` dùng để tích hợp; `main` lưu bản nộp đã đóng băng sau khi hoàn tất review.

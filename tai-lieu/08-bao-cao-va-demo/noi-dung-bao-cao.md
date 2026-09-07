@@ -13,4 +13,3 @@ Gợi ý cấu trúc báo cáo:
 9. Kiểm thử.
 10. Demo hệ thống.
 11. Giới hạn và hướng phát triển.
-

@@ -10,4 +10,3 @@ Thư mục này lưu các tài liệu hỗ trợ nộp bài và demo:
 - `minh-chung-kiem-thu/`: kết quả test/build/E2E dạng Markdown.
 
 Các file `.mmd` là source Mermaid để có thể copy vào Markdown, draw.io, Mermaid Live Editor hoặc công cụ render khác. Chưa lưu ảnh export nếu môi trường chưa có renderer Mermaid.
-

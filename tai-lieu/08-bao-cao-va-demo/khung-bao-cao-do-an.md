@@ -19,4 +19,3 @@ Trình bày test class, test case chính, kết quả build/test và ảnh demo.
 ## Chương 5. Kết luận
 
 Nêu kết quả đạt được, giới hạn và hướng phát triển.
-

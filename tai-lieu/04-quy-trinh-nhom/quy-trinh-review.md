@@ -9,4 +9,3 @@ Checklist review:
 - Backend test pass nếu sửa backend.
 - Frontend typecheck/build pass nếu sửa frontend.
 - Tài liệu cập nhật khi đổi API hoặc nghiệp vụ.
-
