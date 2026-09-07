@@ -2,6 +2,8 @@
 
 Đồ án cuối kỳ OOP nhóm 2 - Đại học Phenikaa.
 
+Đây là bản nộp đã đóng băng: mã nguồn, dữ liệu demo, tài liệu, kết quả kiểm thử và các minh chứng trong `ho-so-nop-bai/` được giữ cùng một trạng thái để đánh giá.
+
 Dự án là một hệ thống đăng ký môn học dạng full-stack local. Frontend React hiển thị dashboard sinh viên, danh sách môn học, đăng ký/hủy đăng ký, thời khóa biểu và hồ sơ. Backend Spring Boot cung cấp REST API, kiểm tra nghiệp vụ đăng ký bằng validator chain và lưu dữ liệu bằng JSON File IO.
 
 Dự án phục vụ học tập/demo OOP, chưa phải hệ thống production.
@@ -79,19 +81,39 @@ Frontend không đọc trực tiếp `data/*.json`. Controller, service và mode
 
 ```text
 .
-+-- frontend/          # React + TypeScript + Vite
-+-- backend/           # Spring Boot backend
-+-- data/              # students, lecturers, courses, registrations
-+-- tai-lieu/          # Tài liệu phân tích, kiến trúc, thiết kế, vận hành, báo cáo
-+-- kiem-thu/          # Tài liệu kiểm thử, ma trận test case, kết quả kiểm thử
-+-- thiet-ke/          # Tài nguyên thiết kế và thư mục UML
-+-- ho-so-nop-bai/     # Hồ sơ nộp bài và ảnh demo đã chọn
-+-- scripts/           # Script chạy backend/frontend/kiểm tra
-+-- .github/           # Mẫu GitHub
-+-- .env.example       # Ghi chú cấu hình môi trường cấp root
-+-- frontend/.env.example
-+-- README.md
++-- .github/                         # Cấu hình và biểu mẫu GitHub
++-- backend/                         # Ứng dụng Spring Boot
+|   +-- src/main/java/...             # API, service, validator, repository, model, DTO
+|   +-- src/main/resources/           # Cấu hình backend
+|   +-- src/test/java/...             # Unit test, repository test, controller test
+|   +-- src/test/resources/           # Cấu hình test
+|   +-- mvnw, mvnw.cmd                # Maven Wrapper
+|   `-- pom.xml
++-- frontend/                        # Ứng dụng React + TypeScript + Vite
+|   +-- public/assets/                # Logo, ảnh minh họa và avatar
+|   +-- src/app/                      # Điểm khởi tạo và định tuyến
+|   +-- src/features/                 # Các chức năng giao diện theo nghiệp vụ
+|   +-- src/shared/                   # API client, component và hằng số dùng chung
+|   +-- package.json
+|   `-- vite.config.ts
++-- data/                            # Dữ liệu JSON: sinh viên, giảng viên, học phần, đăng ký
++-- ho-so-nop-bai/                   # Thành phần bàn giao của bản nộp
+|   +-- anh-demo/                     # Ảnh chụp màn hình minh chứng
+|   +-- bao-cao/                      # Báo cáo Word
+|   +-- slide/                        # Slide trình bày
+|   +-- flowchart/, so-do/, use-case/ # Lưu đồ, sơ đồ và use case (Markdown/Mermaid)
+|   +-- workflow/                     # Luồng xử lý chính
+|   `-- minh-chung-kiem-thu/          # Kết quả kiểm thử và dataset demo
++-- kiem-thu/                        # Ma trận test, chiến lược và báo cáo kiểm thử
++-- scripts/                         # Script chạy backend, frontend và kiểm tra dự án
++-- tai-lieu/                        # Yêu cầu, kiến trúc, thiết kế, vận hành và hướng dẫn
++-- .env.example                     # Biến môi trường mẫu cấp root
++-- .gitignore
++-- pom.xml                          # Maven aggregator của repository
+`-- README.md                        # Tài liệu bắt đầu và mô tả bản nộp
 ```
+
+Các tệp sinh ra khi chạy dự án như `backend/target/` và `frontend/dist/` không thuộc bản nộp, nên không có trong cây thư mục trên.
 
 ## Yêu cầu môi trường
 
@@ -208,7 +230,7 @@ Chạy toàn bộ:
 scripts\kiem-tra-du-an.bat
 ```
 
-Kết quả kiểm thử gần nhất của bản tham chiếu local:
+Kết quả kiểm thử của bản nộp:
 
 - Backend: 99 tests pass, 0 failures, 0 errors, 0 skipped.
 - Backend package: pass.
