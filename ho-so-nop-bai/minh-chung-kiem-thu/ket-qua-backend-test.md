@@ -3,7 +3,9 @@
 Lệnh chạy:
 
 ```powershell
-backend\mvnw.cmd clean test
+cd backend
+.\mvnw.cmd test
+.\mvnw.cmd verify
 ```
 
 Kết quả gần nhất:
@@ -16,3 +18,12 @@ Skipped: 0
 BUILD SUCCESS
 ```
 
+Failsafe integration test:
+
+```text
+Tests run: 10
+Failures: 0
+Errors: 0
+Skipped: 0
+BUILD SUCCESS
+```

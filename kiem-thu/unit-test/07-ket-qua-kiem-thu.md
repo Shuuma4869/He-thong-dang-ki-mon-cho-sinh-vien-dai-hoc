@@ -11,10 +11,18 @@ Skipped: 0
 
 Backend package: pass.
 
+Integration test gần nhất:
+
+```text
+Tests run: 10
+Failures: 0
+Errors: 0
+Skipped: 0
+```
+
 Frontend:
 
 - `npm run typecheck`: pass.
-- `npm run build`: pass khi chạy ngoài sandbox Windows. Nếu sandbox chặn Vite/esbuild bằng `spawn EPERM`, chạy lại ngoài sandbox.
-- `scripts\kiem-tra-du-an.bat`: pass khi chạy ngoài sandbox.
+- `npm run build`: pass trên Windows.
 
 Không ghi phần trăm coverage vì dự án chưa cấu hình đo coverage.

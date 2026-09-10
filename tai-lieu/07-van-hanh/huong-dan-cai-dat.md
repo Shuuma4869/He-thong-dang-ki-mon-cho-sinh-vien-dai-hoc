@@ -13,9 +13,8 @@ Cài frontend dependency:
 
 ```powershell
 cd frontend
-npm install
+npm ci
 cd ..
 ```
 
 Backend dependency được Maven Wrapper tải khi chạy lệnh build/test lần đầu.
-

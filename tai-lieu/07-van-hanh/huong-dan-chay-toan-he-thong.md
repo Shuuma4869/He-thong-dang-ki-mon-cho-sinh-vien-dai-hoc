@@ -1,26 +1,61 @@
 # Hướng dẫn chạy toàn hệ thống
 
-Cách nhanh nhất:
+Quy trình chính được chạy bằng các lệnh PowerShell trực tiếp để từng bước có kết quả rõ ràng.
+
+## Chuẩn bị và kiểm tra
 
 ```powershell
-scripts\chay-du-an.bat
+git --version
+java -version
+node -v
+npm -v
+
+cd frontend
+npm ci
+npm run typecheck
+npm run build
+cd ..\backend
+.\mvnw.cmd test
+.\mvnw.cmd verify
 ```
 
-Script sẽ:
+`test` chạy nhóm test Surefire (unit, controller slice và regression). `verify` chạy lại nhóm này, build backend và chạy integration test `*IT.java` bằng Maven Failsafe.
 
-1. Kiểm tra Java, Node.js, npm, `frontend/package.json` và `backend/mvnw.cmd`.
-2. Kiểm tra/cài frontend dependency nếu thiếu.
-3. Chạy `npm run typecheck`.
-4. Chạy `npm run build`.
-5. Chạy `backend\mvnw.cmd clean package`.
-6. Mở backend.
-7. Mở frontend.
-8. Mở trình duyệt tại `http://localhost:3000`.
+Trên Windows có thể dùng wrapper tương đương trong `scripts/`:
 
-Backend mặc định chạy tại `http://localhost:8080`. Nếu port `8080` đang bị ứng dụng khác chiếm, script sẽ tự chạy backend ở `http://localhost:18080` và truyền API base tương ứng cho frontend:
-
-```text
-VITE_API_BASE_URL=http://localhost:18080/api
+```powershell
+.\scripts\kiem-tra-du-an.bat
+.\scripts\chay-du-an.bat
 ```
 
-Không đóng cửa sổ backend/frontend khi đang demo.
+Hai script này dùng `backend\mvnw.cmd clean verify`, vì vậy không bỏ qua integration test.
+
+## Chạy ứng dụng
+
+Terminal backend:
+
+```powershell
+cd backend
+.\mvnw.cmd spring-boot:run
+```
+
+Terminal frontend:
+
+```powershell
+cd frontend
+npm run dev
+```
+
+- Backend: `http://localhost:8080`
+- API: `http://localhost:8080/api`
+- Frontend: `http://localhost:3000`
+
+## Smoke test
+
+```powershell
+curl.exe -i http://localhost:8080/api/courses
+curl.exe -i http://localhost:8080/api/courses/OOP101
+curl.exe -i "http://localhost:8080/api/courses/search?keyword=OOP"
+```
+
+Ba request phải trả HTTP `200` và JSON dữ liệu hợp lệ. Sau đó thực hiện checklist trong `kiem-thu/kiem-thu-e2e.md`.

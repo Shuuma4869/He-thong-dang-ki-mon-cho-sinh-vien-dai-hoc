@@ -10,3 +10,13 @@ Nội dung chính:
 - `ma-tran-test-case.md`: ma trận test case.
 - `kiem-thu-api.md`, `kiem-thu-frontend.md`, `kiem-thu-e2e.md`: kiểm thử theo lớp.
 - `unit-test/`: tài liệu unit test theo module.
+
+Các lệnh chính:
+
+```powershell
+cd backend
+.\mvnw.cmd test
+.\mvnw.cmd verify
+```
+
+`test` chạy 99 unit/controller-slice/regression test bằng Surefire. `verify` chạy lại nhóm này, build JAR và chạy thêm 10 integration test bằng Failsafe.

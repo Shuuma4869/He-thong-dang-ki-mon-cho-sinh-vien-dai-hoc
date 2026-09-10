@@ -20,7 +20,7 @@ Nên chạy backend trước để các flow core hoạt động đầy đủ.
 
 ```powershell
 cd frontend
-npm install
+npm ci
 npm run dev
 ```
 
@@ -34,12 +34,6 @@ API runtime mặc định:
 
 ```text
 http://localhost:8080/api
-```
-
-Khi chạy bằng script tổng `scripts\chay-du-an.bat`, frontend sẽ tự nhận `VITE_API_BASE_URL` theo port backend thực tế. Nếu `8080` bị chiếm và backend phải chạy ở `18080`, script tổng sẽ truyền:
-
-```text
-VITE_API_BASE_URL=http://localhost:18080/api
 ```
 
 Nếu cần override:
@@ -71,7 +65,7 @@ npm run typecheck
 npm run build
 ```
 
-Nếu `npm run build` gặp `spawn EPERM` trong sandbox, chạy lại ngoài sandbox. Đây là lỗi môi trường chặn Vite/esbuild, không phải lỗi source code nếu build ngoài sandbox pass.
+Nếu `npm run build` gặp `spawn EPERM`, kiểm tra quyền khởi chạy process con của Node.js/Vite rồi chạy lại. Đây là lỗi môi trường, không phải lỗi source code nếu build thành công sau khi quyền được cấp.
 
 ## Phạm vi dữ liệu
 
