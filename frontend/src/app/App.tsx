@@ -394,6 +394,7 @@ export default function App() {
       <RegisterConfirmModal
         course={selectedCourseForRegister}
         currentTotalCredits={currentTotalCredits}
+        maxCredits={student.maxCredits}
         registeredCourses={registeredCoursesList}
         onClose={() => setSelectedCourseForRegister(null)}
         onConfirmSuccess={handleConfirmRegisterSuccess}

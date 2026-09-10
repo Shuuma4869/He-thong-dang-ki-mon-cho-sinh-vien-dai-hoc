@@ -38,6 +38,7 @@ export function mapCourseResponse(response: CourseResponse): Course {
     name: response.courseName,
     lecturer: response.lecturer.fullName,
     lecturerId: response.lecturerId,
+    faculty: response.lecturer.faculty,
     credits: response.credits,
     schedules: response.schedules.map(mapScheduleResponse),
     enrolled: response.currentCapacity,

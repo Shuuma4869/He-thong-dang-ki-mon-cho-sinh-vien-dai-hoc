@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   AlertTriangle,
   CheckCircle2,
@@ -15,6 +15,7 @@ import { getApiErrorMessage } from '@/shared/api/apiError';
 interface RegisterConfirmModalProps {
   course: Course | null;
   currentTotalCredits: number;
+  maxCredits: number;
   registeredCourses: Course[];
   onClose: () => void;
   onConfirmSuccess: (course: Course) => Promise<void> | void;
@@ -23,6 +24,7 @@ interface RegisterConfirmModalProps {
 export const RegisterConfirmModal: React.FC<RegisterConfirmModalProps> = ({
   course,
   currentTotalCredits,
+  maxCredits,
   registeredCourses,
   onClose,
   onConfirmSuccess,
@@ -30,11 +32,15 @@ export const RegisterConfirmModal: React.FC<RegisterConfirmModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  useEffect(() => {
+    setErrorMessage(null);
+    setIsSubmitting(false);
+  }, [course?.id]);
+
   if (!course) return null;
 
   const newTotalCredits = currentTotalCredits + course.credits;
-  const maxLimit = 24;
-  const isExceedLimit = newTotalCredits > maxLimit;
+  const isExceedLimit = newTotalCredits > maxCredits;
 
   // Schedule conflict check
   let conflictingCourseName = '';
@@ -124,7 +130,7 @@ export const RegisterConfirmModal: React.FC<RegisterConfirmModalProps> = ({
               <div>
                 <strong className="font-bold text-red-950">Vượt quá tín chỉ cho phép</strong>
                 <p className="mt-0.5 text-red-800">
-                  Tổng số tín chỉ ({newTotalCredits} TC) sẽ vượt quá mức tối đa {maxLimit} TC cho học kỳ này.
+                  Tổng số tín chỉ ({newTotalCredits} TC) sẽ vượt quá mức tối đa {maxCredits} TC cho học kỳ này.
                 </p>
               </div>
             </div>
@@ -162,7 +168,7 @@ export const RegisterConfirmModal: React.FC<RegisterConfirmModalProps> = ({
           <div className="bg-blue-50/60 p-3.5 rounded-xl border border-blue-100 flex items-center justify-between text-xs font-medium text-slate-800">
             <span>Tín chỉ hiện tại: <strong>{currentTotalCredits} TC</strong></span>
             <ArrowRight className="w-4 h-4 text-blue-600" />
-            <span>Sau đăng ký: <strong className={isExceedLimit ? 'text-red-600 font-bold' : 'text-blue-700 font-bold'}>{newTotalCredits} / {maxLimit} TC</strong></span>
+            <span>Sau đăng ký: <strong className={isExceedLimit ? 'text-red-600 font-bold' : 'text-blue-700 font-bold'}>{newTotalCredits} / {maxCredits} TC</strong></span>
           </div>
         </div>
 
