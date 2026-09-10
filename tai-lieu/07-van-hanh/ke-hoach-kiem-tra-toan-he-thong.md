@@ -4,7 +4,7 @@ Quy trình áp dụng cho repository hiện tại:
 
 `clone → môi trường → dependency → unit test → integration test → build → chạy BE → health/smoke → chạy frontend → E2E → kết luận`
 
-Các lệnh dùng PowerShell trên Windows. Maven dùng `backend/mvnw.cmd`, không cần cài Maven riêng.
+Các lệnh chính dùng Git Bash trên Windows. Maven dùng `backend/mvnw.cmd`, không cần cài Maven riêng. Nếu dùng PowerShell, cú pháp Maven Wrapper tương đương là `.\mvnw.cmd`.
 
 ## 0. Bức tranh hệ thống trước khi chạy
 
@@ -13,11 +13,11 @@ Các lệnh dùng PowerShell trên Windows. Maven dùng `backend/mvnw.cmd`, khô
 - Dữ liệu runtime development nằm trong `data/`: `students.json`, `lecturers.json`, `courses.json` và `registrations.json`.
 - Unit test kiểm tra từng lớp hoặc controller slice; integration test `*IT.java` khởi động Spring context và dùng fixture riêng trong `backend/src/test/resources/integration-data/`.
 - `mvnw.cmd verify` là mốc kiểm tra backend đầy đủ: Surefire → package → Failsafe.
-- `scripts\kiem-tra-du-an.bat` và `scripts\chay-du-an.bat` là launcher tùy chọn. Hiểu và chạy các lệnh thủ công trong tài liệu này giúp chẩn đoán từng tầng khi launcher dừng ở một bước.
+- `scripts/kiem-tra-du-an.bat` và `scripts/chay-du-an.bat` là launcher tùy chọn. Hiểu và chạy các lệnh thủ công trong tài liệu này giúp chẩn đoán từng tầng khi launcher dừng ở một bước.
 
 ## 1. Clone repository
 
-```powershell
+```bash
 git clone https://github.com/Shuuma4869/He-thong-dang-ki-mon-cho-sinh-vien-dai-hoc.git he-thong-dang-ky-mon-hoc
 cd he-thong-dang-ky-mon-hoc
 git branch --show-current
@@ -28,7 +28,7 @@ Mục đích: tạo working copy sạch và xác nhận đúng repository. Kỳ 
 
 ## 2. Kiểm tra môi trường
 
-```powershell
+```bash
 git --version
 java -version
 javac -version
@@ -40,7 +40,7 @@ Mục đích: xác nhận toolchain. Kỳ vọng: JDK/Javac major version `21`, 
 
 ## 3. Cài dependency
 
-```powershell
+```bash
 cd frontend
 npm ci
 cd ..
@@ -50,9 +50,9 @@ Mục đích: cài đúng dependency theo lockfile. Kỳ vọng: exit code `0`, 
 
 ## 4. Unit test và regression test
 
-```powershell
+```bash
 cd backend
-.\mvnw.cmd test
+./mvnw.cmd test
 cd ..
 ```
 
@@ -72,9 +72,9 @@ Báo cáo ở `backend/target/surefire-reports/`.
 
 ## 5. Integration test và build backend
 
-```powershell
+```bash
 cd backend
-.\mvnw.cmd verify
+./mvnw.cmd verify
 cd ..
 ```
 
@@ -92,7 +92,7 @@ Phải có `backend/target/course-registration-0.0.1-SNAPSHOT.jar`, `surefire-re
 
 ## 6. Build frontend
 
-```powershell
+```bash
 cd frontend
 npm run typecheck
 npm run build
@@ -113,10 +113,10 @@ Integration test tự động không cần backup thủ công vì các lớp `*I
 
 Tạo bản sao baseline ngoài repository:
 
-```powershell
-$backupDir = Join-Path $env:TEMP 'course-registration-data-backup'
-New-Item -ItemType Directory -Force $backupDir | Out-Null
-Copy-Item data\*.json $backupDir -Force
+```bash
+backup_dir="../course-registration-data-backup"
+mkdir -p "$backup_dir"
+cp data/*.json "$backup_dir"/
 ```
 
 Mục đích: khôi phục dữ liệu demo sau các test có mutation.
@@ -125,17 +125,17 @@ Mục đích: khôi phục dữ liệu demo sau các test có mutation.
 
 Mở Terminal 1 tại root:
 
-```powershell
+```bash
 cd backend
-.\mvnw.cmd spring-boot:run
+./mvnw.cmd spring-boot:run
 ```
 
 Mục đích: chạy API thật. Kỳ vọng: Spring Boot báo started tại `http://localhost:8080`; giữ terminal mở.
 
 Nếu port 8080 bận:
 
-```powershell
-.\mvnw.cmd spring-boot:run "-Dspring-boot.run.arguments=--server.port=18080"
+```bash
+./mvnw.cmd spring-boot:run "-Dspring-boot.run.arguments=--server.port=18080"
 ```
 
 Khi đó thay `8080` bằng `18080` trong các URL và cấu hình frontend.
@@ -144,11 +144,11 @@ Khi đó thay `8080` bằng `18080` trong các URL và cấu hình frontend.
 
 Mở Terminal 2 tại root. Repository chưa cấu hình Actuator, nên dùng API thật làm health probe:
 
-```powershell
-curl.exe -i http://localhost:8080/api/students/23010690
-curl.exe -i http://localhost:8080/api/courses
-curl.exe -i http://localhost:8080/api/courses/OOP101
-curl.exe -i "http://localhost:8080/api/courses/search?keyword=OOP"
+```bash
+curl -i http://localhost:8080/api/students/23010690
+curl -i http://localhost:8080/api/courses
+curl -i http://localhost:8080/api/courses/OOP101
+curl -i "http://localhost:8080/api/courses/search?keyword=OOP"
 ```
 
 Kỳ vọng cả bốn request: HTTP `200`, JSON có `success: true`; danh sách có 40 học phần; chi tiết có `OOP101`; tìm kiếm `OOP` có `OOP101`.
@@ -157,16 +157,15 @@ Kỳ vọng cả bốn request: HTTP `200`, JSON có `success: true`; danh sách
 
 Mở Terminal 3 tại root:
 
-```powershell
+```bash
 cd frontend
 npm run dev
 ```
 
 Kỳ vọng: Vite tại `http://localhost:3000`, mở được màn hình đăng nhập và gọi đúng backend. Nếu BE dùng 18080:
 
-```powershell
-$env:VITE_API_BASE_URL = 'http://localhost:18080/api'
-npm run dev
+```bash
+VITE_API_BASE_URL=http://localhost:18080/api npm run dev
 ```
 
 ## 11. E2E thủ công
@@ -197,9 +196,9 @@ Thực hiện tuần tự trên `http://localhost:3000`, ghi PASS/FAIL sau mỗi
 
 Dừng frontend/backend rồi chạy tại root. Thao tác này đưa dữ liệu development về đúng trạng thái trước E2E để người tiếp theo có thể lặp lại cùng test case với cùng kết quả mong đợi:
 
-```powershell
-$backupDir = Join-Path $env:TEMP 'course-registration-data-backup'
-Copy-Item "$backupDir\*.json" data -Force
+```bash
+backup_dir="../course-registration-data-backup"
+cp "$backup_dir"/*.json data/
 git diff -- data
 ```
 
@@ -209,4 +208,4 @@ Kỳ vọng: `git diff -- data` không trả về diff. Nếu còn diff, chưa �
 
 Kết luận `PASS` khi môi trường đúng phiên bản, `npm ci` thành công, `mvnw.cmd test` có 99 test pass, `mvnw.cmd verify` có 10 integration test pass và tạo JAR, frontend typecheck/build pass, smoke test trả HTTP 200, E2E-01 đến E2E-17 đạt kỳ vọng và dữ liệu đã restore sạch.
 
-Trên Windows, `scripts\kiem-tra-du-an.bat` tương đương frontend check + `backend\mvnw.cmd clean verify`; `scripts\chay-du-an.bat` verify trước khi mở backend/frontend. Hai script không thay thế E2E thủ công.
+Trên Windows, `scripts/kiem-tra-du-an.bat` tương đương frontend check + `backend/mvnw.cmd clean verify`; `scripts/chay-du-an.bat` verify trước khi mở backend/frontend. Hai script không thay thế E2E thủ công.

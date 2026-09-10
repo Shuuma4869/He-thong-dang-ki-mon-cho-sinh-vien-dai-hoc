@@ -2,23 +2,25 @@
 
 Chạy toàn bộ backend test:
 
-```powershell
+Các lệnh Maven trong tài liệu dùng Git Bash. Trong PowerShell, đổi tiền tố `./` thành `.\`.
+
+```bash
 cd backend
-.\mvnw.cmd test
+./mvnw.cmd test
 ```
 
 Chạy integration test và build backend:
 
-```powershell
+```bash
 cd backend
-.\mvnw.cmd verify
+./mvnw.cmd verify
 ```
 
 Chạy một test class:
 
-```powershell
+```bash
 cd backend
-.\mvnw.cmd -Dtest=StudentServiceTest test
+./mvnw.cmd -Dtest=StudentServiceTest test
 ```
 
 Chạy frontend check:

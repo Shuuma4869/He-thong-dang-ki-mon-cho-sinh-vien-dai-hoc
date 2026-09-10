@@ -14,10 +14,12 @@ Nội dung chính:
 
 Các lệnh chính:
 
-```powershell
+Các lệnh dưới đây dùng Git Bash. Trong PowerShell, dùng `.\mvnw.cmd` thay cho `./mvnw.cmd`.
+
+```bash
 cd backend
-.\mvnw.cmd test
-.\mvnw.cmd verify
+./mvnw.cmd test
+./mvnw.cmd verify
 ```
 
 `test` chạy 99 unit/controller-slice/regression test bằng Surefire. `verify` chạy lại nhóm này, build JAR và chạy thêm 10 integration test bằng Failsafe.

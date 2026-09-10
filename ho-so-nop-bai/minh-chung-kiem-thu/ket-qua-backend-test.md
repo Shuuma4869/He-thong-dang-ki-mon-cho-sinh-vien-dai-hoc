@@ -2,10 +2,10 @@
 
 Lệnh chạy:
 
-```powershell
+```bash
 cd backend
-.\mvnw.cmd test
-.\mvnw.cmd verify
+./mvnw.cmd test
+./mvnw.cmd verify
 ```
 
 Kết quả gần nhất:
