@@ -65,9 +65,9 @@ call npm run build
 if errorlevel 1 goto :failed
 
 echo.
-echo [2/4] Build backend...
+echo [2/4] Verify backend (unit + integration tests) va build JAR...
 cd /d "%PROJECT_ROOT%\backend"
-call mvnw.cmd clean package
+call mvnw.cmd clean verify
 if errorlevel 1 goto :failed
 
 echo.

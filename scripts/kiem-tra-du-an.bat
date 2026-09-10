@@ -24,7 +24,7 @@ if errorlevel 1 (
 )
 
 if not exist "%FRONTEND_DIR%\package.json" (
-  echo Khong tim thay frontend\package.json. Vui long chay script tu dung thu muc repository.
+  echo Khong tim thay frontend\package.json. Vui long kiem tra cau truc du an.
   exit /b 1
 )
 
@@ -50,11 +50,9 @@ if errorlevel 1 exit /b 1
 call npm run build
 if errorlevel 1 exit /b 1
 
-echo Kiem tra backend...
+echo Kiem tra backend: unit/regression va integration tests...
 cd /d "%BACKEND_DIR%"
-call mvnw.cmd clean test
-if errorlevel 1 exit /b 1
-call mvnw.cmd clean package
+call mvnw.cmd clean verify
 if errorlevel 1 exit /b 1
 
 echo Hoan thanh tat ca kiem tra.
