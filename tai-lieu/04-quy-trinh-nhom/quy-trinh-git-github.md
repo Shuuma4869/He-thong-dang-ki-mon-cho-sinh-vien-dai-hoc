@@ -26,7 +26,14 @@ git switch -c feature/<ten-module>
 Sau khi hoàn thành:
 
 ```powershell
-scripts\kiem-tra-du-an.bat
+cd backend
+.\mvnw.cmd test
+.\mvnw.cmd verify
+cd ..\frontend
+npm ci
+npm run typecheck
+npm run build
+cd ..
 git add .
 git commit -m "feat(module): mo ta ngan gon"
 git push -u origin feature/<ten-module>

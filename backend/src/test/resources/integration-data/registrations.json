@@ -1,0 +1,13 @@
+[
+  {
+    "registrationId": "REG-SV-TEST",
+    "studentId": "SV-TEST",
+    "status": "ACTIVE",
+    "registeredAt": "2026-09-01T08:00:00",
+    "details": [
+      {
+        "courseId": "CORE101"
+      }
+    ]
+  }
+]

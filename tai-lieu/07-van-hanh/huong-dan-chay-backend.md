@@ -19,10 +19,9 @@ javac -version
 Từ root repository:
 
 ```powershell
-scripts\chay-backend.bat
+cd backend
+.\mvnw.cmd spring-boot:run
 ```
-
-Script này chạy JAR đã package của backend. Nếu chưa có JAR trong `backend/target`, script sẽ tự chạy `mvnw.cmd -DskipTests package` trước khi mở backend. Cách chạy qua JAR giúp giảm lỗi classpath trên Windows khi project nằm trong đường dẫn có dấu tiếng Việt.
 
 Backend chạy tại:
 
@@ -30,22 +29,10 @@ Backend chạy tại:
 http://localhost:8080
 ```
 
-Nếu `8080` đang bị ứng dụng khác chiếm, `scripts\chay-backend.bat` sẽ tự chuyển backend sang:
-
-```text
-http://localhost:18080
-```
-
 API base:
 
 ```text
 http://localhost:8080/api
-```
-
-Khi dùng port dự phòng, API base là:
-
-```text
-http://localhost:18080/api
 ```
 
 Root `/` có thể trả 404. Kiểm tra API bằng:
@@ -57,11 +44,12 @@ http://localhost:8080/api/courses
 ## Kiểm tra backend
 
 ```powershell
-backend\mvnw.cmd clean test
-backend\mvnw.cmd clean package
+cd backend
+.\mvnw.cmd test
+.\mvnw.cmd verify
 ```
 
-Kết quả regression gần nhất: 99 tests pass.
+`test` chạy 99 unit/controller-slice/regression test bằng Surefire. `verify` chạy lại nhóm này, build JAR và chạy thêm 10 integration test bằng Failsafe.
 
 ## Cấu hình
 

@@ -6,7 +6,8 @@ Không công bố coverage phần trăm vì dự án chưa cấu hình công c�
 
 ## Công cụ
 
-- Backend: JUnit 5, AssertJ, Mockito, Spring Boot Test, MockMvc.
+- Backend unit test: JUnit 5, AssertJ, Mockito, Spring Boot Test, MockMvc và Maven Surefire.
+- Backend integration test: `@SpringBootTest`, MockMvc, JSON repository thật và Maven Failsafe.
 - Repository/File IO: `@TempDir`, không mutate root `data/*.json`.
 - Frontend: TypeScript typecheck và Vite production build.
 - Kiểm thử tích hợp trình duyệt: kiểm tra luồng người dùng thật trên frontend + backend local.
@@ -17,6 +18,13 @@ Backend:
 
 ```text
 Tests run: 99, Failures: 0, Errors: 0, Skipped: 0
+BUILD SUCCESS
+```
+
+Integration test:
+
+```text
+Tests run: 10, Failures: 0, Errors: 0, Skipped: 0
 BUILD SUCCESS
 ```
 
@@ -33,7 +41,6 @@ npm run typecheck PASS
 npm run build PASS
 ```
 
-Ghi chú môi trường: trong sandbox, Vite/esbuild có thể lỗi `spawn EPERM`. Khi chạy ngoài sandbox, build pass; lỗi này là đặc thù môi trường, không phải source-code failure.
 
 ## Nhóm test
 
@@ -46,7 +53,8 @@ Ghi chú môi trường: trong sandbox, Vite/esbuild có thể lỗi `spawn EPER
 | Validator | existence, duplicate, capacity, credit, schedule conflict, deterministic order |
 | Timetable | empty state, active registration, multi-schedule, cancelled excluded, ordering |
 | Repository/File IO | read/write JSON, missing file, malformed JSON, UTF-8, path traversal |
-| Controller | response envelope và error envelope qua MockMvc |
+| Controller slice | response envelope và error envelope qua `@WebMvcTest`; service được mock |
+| Integration API | HTTP request qua controller, service, validator và JSON repository thật |
 
 ## Error-code contract
 
@@ -93,5 +101,6 @@ Request courseId validation:
 
 - Unit/repository tests không phụ thuộc đường dẫn máy cá nhân.
 - Repository tests dùng thư mục tạm.
-- Runtime verification có backup/restore baseline data.
+- Integration test sao chép fixture riêng vào thư mục `@TempDir` trước từng test.
+- Integration test không đọc hoặc ghi `data/*.json` development.
 - Sau kiểm thử, `git diff -- data/` phải rỗng.

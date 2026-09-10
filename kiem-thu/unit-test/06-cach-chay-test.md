@@ -4,14 +4,14 @@ Chạy toàn bộ backend test:
 
 ```powershell
 cd backend
-.\mvnw.cmd clean test
+.\mvnw.cmd test
 ```
 
-Chạy package backend:
+Chạy integration test và build backend:
 
 ```powershell
 cd backend
-.\mvnw.cmd clean package
+.\mvnw.cmd verify
 ```
 
 Chạy một test class:
@@ -31,3 +31,4 @@ npm run build
 npm run dev
 ```
 
+`@WebMvcTest` thuộc nhóm unit/controller slice vì service được mock. Integration test `*IT.java` chỉ chạy ở lệnh `verify`.

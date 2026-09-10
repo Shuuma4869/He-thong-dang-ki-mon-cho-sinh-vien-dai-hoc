@@ -1,0 +1,16 @@
+[
+  {
+    "id": "SV-TEST",
+    "fullName": "Sinh vien Test",
+    "className": "TEST-01",
+    "major": "Cong nghe thong tin",
+    "maxCredits": 6
+  },
+  {
+    "id": "SV-EMPTY",
+    "fullName": "Sinh vien Chua dang ky",
+    "className": "TEST-02",
+    "major": "Cong nghe thong tin",
+    "maxCredits": 18
+  }
+]

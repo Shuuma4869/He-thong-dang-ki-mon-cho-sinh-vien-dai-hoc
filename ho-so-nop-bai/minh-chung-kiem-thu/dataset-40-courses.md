@@ -14,7 +14,8 @@ Ràng buộc dữ liệu demo hiện tại:
 Test khóa dữ liệu:
 
 ```powershell
-backend\mvnw.cmd clean test
+cd backend
+.\mvnw.cmd test
 ```
 
 Test liên quan: `DemoDataIntegrityTest`.

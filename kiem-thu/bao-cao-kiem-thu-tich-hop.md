@@ -2,86 +2,48 @@
 
 ## Phạm vi
 
-Kiểm thử tích hợp trên trình duyệt thật cho “Hệ thống đăng ký môn học”, gồm frontend React, backend Spring Boot và dữ liệu JSON local.
+Kiểm thử tích hợp tự động cho backend xác nhận request API đi qua controller, service, validator và JSON repository thật. Các controller slice `@WebMvcTest` không nằm trong nhóm này vì service của chúng được mock.
 
 ## Môi trường
 
-Backend:
+Backend integration test:
 
-- URL: `http://localhost:8080`
-- API base: `http://localhost:8080/api`
-- Data source: `data/*.json`
-- Không dùng database, JPA, Hibernate, JWT hoặc Spring Security.
-
-Frontend:
-
-- URL: `http://localhost:3000`
-- React + TypeScript + Vite
-- API runtime mặc định: `http://localhost:8080/api`
+- Spring Boot 3.3, JUnit 5 và MockMvc.
+- Maven Failsafe chạy các lớp `*IT.java` khi thực hiện `mvnw.cmd verify`.
+- Không mock controller, service, validator hoặc repository.
+- Không mở HTTP port thật; smoke test riêng chịu trách nhiệm kiểm tra server socket.
 
 ## Bảo vệ dữ liệu
 
-Trước thao tác ghi, backup:
+Fixture nằm trong `backend/src/test/resources/integration-data/`. Trước mỗi test, bốn file JSON được sao chép vào thư mục tạm do JUnit `@TempDir` quản lý. Property `app.data-dir` được override bằng `@DynamicPropertySource`, vì vậy test đăng ký/hủy đăng ký không chạm `data/` development và không cần backup thủ công.
 
-- `data/students.json`
-- `data/lecturers.json`
-- `data/courses.json`
-- `data/registrations.json`
-
-Sau kiểm thử, restore baseline:
-
-- 23010690: OOP101 + WEB201 + DSA102 + DBS202 + SE204, tổng 15 tín chỉ.
-- SV002: không có registration active.
-- SV003: MATH110.
-- DBS202: `currentCapacity = 28`.
-
-## Luồng trình duyệt
+## Integration test tự động
 
 | Nhóm | Scenario | Kết quả |
 |---|---|---|
-| Auth | Login demo 23010690 với mật khẩu bất kỳ | PASS |
-| Auth | Login SV999 | PASS, backend trả `STUDENT_NOT_FOUND` |
-| Auth | Logout | PASS |
-| Dashboard | 23010690 hiển thị baseline 5 môn, 15/18 tín chỉ | PASS |
-| Course | Danh sách hiển thị 40 môn, tối đa 10 môn/trang | PASS |
-| Course | Search `DBS202` | PASS |
-| Course | Search keyword không tồn tại | PASS, empty state |
-| Course | Course detail | PASS |
-| Registration | Đăng ký UX205 cho 23010690 | PASS, tổng tín chỉ 15 -> 17 |
-| Registration | Duplicate course | PASS, `DUPLICATE_REGISTRATION` |
-| Registration | Course full AI301 | PASS, `COURSE_FULL` |
-| Registration | Schedule conflict NET203 trên baseline 23010690 | PASS, `SCHEDULE_CONFLICT` |
-| Registration | Credit exceeded CLOUD301 | PASS, `CREDIT_LIMIT_EXCEEDED` |
-| Registration | Hủy UX205 | PASS, tổng tín chỉ 17 -> 15 |
-| Persistence | Restart backend sau mutation | PASS, JSON persistence hoạt động |
-| Timetable | Timetable cập nhật khi đăng ký/hủy | PASS |
-| Profile | Hồ sơ 23010690 hiển thị đúng dữ liệu API | PASS |
-| Notifications | Demo/local render, mark read/all read | PASS |
-| Multi-user | SV002 empty state, không lẫn dữ liệu 23010690 | PASS |
-| Responsive | Desktop/mobile smoke | PASS |
+| Course API | Danh sách đọc từ course/lecturer repository và trả schedule | PASS |
+| Course detail | Trả đúng học phần, giảng viên và sĩ số | PASS |
+| Course search | Tìm không phân biệt hoa thường | PASS |
+| Course error | Course không tồn tại trả `COURSE_NOT_FOUND` | PASS |
+| Registration | Đăng ký thành công, persistence và tăng sĩ số | PASS |
+| Duplicate | Trả `DUPLICATE_REGISTRATION`, file không đổi | PASS |
+| Capacity | Trả `COURSE_FULL` | PASS |
+| Credit | Trả `CREDIT_LIMIT_EXCEEDED` | PASS |
+| Schedule | Trả `SCHEDULE_CONFLICT` | PASS |
+| Cancellation | Hủy đăng ký, persistence và giảm sĩ số | PASS |
 
-## Negative APIs
+Kết quả gần nhất: 10 test, 0 failure, 0 error, 0 skipped.
 
-| API | Kết quả |
-|---|---|
-| `POST /api/students/23010690/registrations` với course đã đăng ký | `400 DUPLICATE_REGISTRATION` |
-| `POST /api/students/23010690/registrations` với `AI301` | `400 COURSE_FULL` |
-| `POST /api/students/23010690/registrations` với `CLOUD301` | `400 CREDIT_LIMIT_EXCEEDED` |
-| `GET /api/students/SV999/registrations` | `400 STUDENT_NOT_FOUND` |
+## Smoke test và E2E
 
-Các negative case không mutate `courses.json` hoặc `registrations.json`.
-
-## Ảnh minh chứng
-
-Ảnh minh chứng cho luồng đăng nhập, danh sách học phần và trạng thái đăng ký được lưu trong `ho-so-nop-bai/anh-demo/` khi nhóm cần chuẩn bị hồ sơ nộp bài. Các ảnh phát sinh khi kiểm thử giao diện được quản lý riêng, không tự đưa vào commit nếu chưa có quyết định của nhóm.
+Smoke test khởi động backend thật và gọi `/api/courses`, `/api/courses/OOP101`, `/api/courses/search?keyword=OOP` bằng `curl.exe`. E2E frontend vẫn là checklist thủ công trong `kiem-thu/kiem-thu-e2e.md` vì project chưa có Playwright hoặc Cypress.
 
 ## Ghi chú kỹ thuật
 
-- Browser automation không cần truy cập trực tiếp `localStorage`; remember/session flow được xác nhận qua hành vi và source.
-- `frontend/src/shared/api/httpClient.ts` không gắn `Authorization`, `Bearer`, token hoặc password vào header.
+- `mvnw.cmd test` chạy nhóm Surefire gồm unit test, controller slice và regression test.
+- `mvnw.cmd verify` chạy unit test, package và integration test.
 - Frontend không đọc trực tiếp `data/*.json`.
-- Sandbox có thể chặn Vite/esbuild bằng `spawn EPERM`; build ngoài sandbox pass.
 
 ## Kết luận
 
-Kiểm thử tích hợp PASS. Hệ thống chạy được frontend-backend thật với JSON File IO, registration mutation/persistence và các validator chính.
+Kiểm thử tích hợp PASS. Luồng API đã được kiểm tra qua nhiều layer với JSON File IO cô lập khỏi dữ liệu development.

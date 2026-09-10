@@ -1,0 +1,98 @@
+[
+  {
+    "courseId": "CORE101",
+    "courseName": "Lap trinh huong doi tuong",
+    "credits": 3,
+    "lecturerId": "GV-TEST",
+    "maxCapacity": 50,
+    "currentCapacity": 10,
+    "schedules": [
+      {
+        "dayOfWeek": "MONDAY",
+        "startTime": "08:00",
+        "endTime": "10:00",
+        "room": "A101"
+      }
+    ]
+  },
+  {
+    "courseId": "WEB202",
+    "courseName": "Lap trinh Web",
+    "credits": 2,
+    "lecturerId": "GV-TEST",
+    "maxCapacity": 40,
+    "currentCapacity": 5,
+    "schedules": [
+      {
+        "dayOfWeek": "TUESDAY",
+        "startTime": "08:00",
+        "endTime": "10:00",
+        "room": "A202"
+      }
+    ]
+  },
+  {
+    "courseId": "FULL303",
+    "courseName": "Hoc phan da day",
+    "credits": 2,
+    "lecturerId": "GV-TEST",
+    "maxCapacity": 1,
+    "currentCapacity": 1,
+    "schedules": [
+      {
+        "dayOfWeek": "WEDNESDAY",
+        "startTime": "08:00",
+        "endTime": "10:00",
+        "room": "A303"
+      }
+    ]
+  },
+  {
+    "courseId": "LIMIT404",
+    "courseName": "He thong nang cao",
+    "credits": 4,
+    "lecturerId": "GV-TEST",
+    "maxCapacity": 30,
+    "currentCapacity": 4,
+    "schedules": [
+      {
+        "dayOfWeek": "THURSDAY",
+        "startTime": "08:00",
+        "endTime": "10:00",
+        "room": "A404"
+      }
+    ]
+  },
+  {
+    "courseId": "CLASH505",
+    "courseName": "Hoc phan trung lich",
+    "credits": 2,
+    "lecturerId": "GV-TEST",
+    "maxCapacity": 30,
+    "currentCapacity": 4,
+    "schedules": [
+      {
+        "dayOfWeek": "MONDAY",
+        "startTime": "09:00",
+        "endTime": "11:00",
+        "room": "A505"
+      }
+    ]
+  },
+  {
+    "courseId": "DATA606",
+    "courseName": "Cau truc du lieu",
+    "credits": 3,
+    "lecturerId": "GV-TEST",
+    "maxCapacity": 45,
+    "currentCapacity": 8,
+    "schedules": [
+      {
+        "dayOfWeek": "FRIDAY",
+        "startTime": "13:00",
+        "endTime": "15:00",
+        "room": "A606"
+      }
+    ]
+  }
+]
