@@ -18,13 +18,13 @@ Các lệnh chính dùng Git Bash trên Windows. Maven dùng `backend/mvnw.cmd`,
 ## 1. Clone repository
 
 ```bash
-git clone https://github.com/Shuuma4869/He-thong-dang-ki-mon-cho-sinh-vien-dai-hoc.git he-thong-dang-ky-mon-hoc
+git clone --branch full-solution --single-branch https://github.com/Shuuma4869/He-thong-dang-ki-mon-cho-sinh-vien-dai-hoc.git he-thong-dang-ky-mon-hoc
 cd he-thong-dang-ky-mon-hoc
 git branch --show-current
 git status --short
 ```
 
-Mục đích: tạo working copy sạch và xác nhận đúng repository. Kỳ vọng: clone thành công, có `backend/`, `frontend/`, `data/`, `scripts/`, `kiem-thu/`, branch mặc định thường là `main`, và clone mới không có thay đổi.
+Mục đích: tạo working copy sạch từ đúng nhánh đang kiểm tra. Kỳ vọng: clone thành công, `git branch --show-current` là `full-solution`, có `backend/`, `frontend/`, `data/`, `scripts/`, `kiem-thu/`, `tai-lieu/`, và clone mới không có thay đổi. Nếu đang ở `main`, dừng lại và chuyển nhánh trước khi chạy test.
 
 ## 2. Kiểm tra môi trường
 
@@ -127,15 +127,22 @@ Mở Terminal 1 tại root:
 
 ```bash
 cd backend
-./mvnw.cmd spring-boot:run
+java -jar target/course-registration-0.0.1-SNAPSHOT.jar --server.port=8080
 ```
 
-Mục đích: chạy API thật. Kỳ vọng: Spring Boot báo started tại `http://localhost:8080`; giữ terminal mở.
+Mục đích: chạy JAR đã được tạo ở bước verify để kiểm tra runtime thật. Dùng JAR giúp cùng một cách chạy với launcher Windows và tránh lỗi classpath của `spring-boot:run` khi đường dẫn Windows có dấu. Kỳ vọng: Spring Boot báo started tại `http://localhost:8080`; giữ terminal mở.
 
-Nếu port 8080 bận:
+Trước khi chạy, kiểm tra xem backend của dự án đã có sẵn hay cổng bị chương trình khác chiếm:
 
 ```bash
-./mvnw.cmd spring-boot:run "-Dspring-boot.run.arguments=--server.port=18080"
+curl -fsS http://localhost:8080/api/students/23010690 >/dev/null && echo "Backend da san sang tren 8080"
+netstat -ano | grep -E '[:.]8080[[:space:]].*LISTENING'
+```
+
+Nếu request health trả `200`, dùng backend đang chạy và không mở thêm tiến trình. Nếu request không trả `200` nhưng cổng 8080 vẫn LISTENING, dùng cổng 18080:
+
+```bash
+java -jar target/course-registration-0.0.1-SNAPSHOT.jar --server.port=18080
 ```
 
 Khi đó thay `8080` bằng `18080` trong các URL và cấu hình frontend.
@@ -181,12 +188,12 @@ Thực hiện tuần tự trên `http://localhost:3000`, ghi PASS/FAIL sau mỗi
 | E2E-05 | Mở Đăng ký môn học | Tải đủ 40 học phần, phân trang hoạt động. |
 | E2E-06 | Tìm `OOP101` và `oop101` | Tìm được `OOP101`, không phụ thuộc hoa thường. |
 | E2E-07 | Xem rồi đóng chi tiết `OOP101` | Đúng môn/giảng viên/lịch/sĩ số; đóng không mất bộ lọc. |
-| E2E-08 | Đăng ký `UX205` và xác nhận | Thành công; tín chỉ 15 → 17; môn và sĩ số cập nhật. |
-| E2E-09 | Đăng ký lại `UX205` | `DUPLICATE_REGISTRATION`; dữ liệu không đổi. |
-| E2E-10 | Thử đăng ký `AI301` | `COURSE_FULL`; không thêm môn, không tăng sĩ số. |
-| E2E-11 | Thử `NET203` khi `OOP101` active | `SCHEDULE_CONFLICT`; tổng tín chỉ không đổi. |
-| E2E-12 | Thử `CLOUD301` | `CREDIT_LIMIT_EXCEEDED`; không ghi registration. |
-| E2E-13 | Hủy `UX205` | Thành công; tín chỉ 17 → 15; sĩ số hoàn lại. |
+| E2E-08 | Thử `NET203` khi `OOP101` active | Modal cảnh báo trùng lịch; xác nhận trả `SCHEDULE_CONFLICT`; tổng tín chỉ không đổi. Thực hiện khi baseline còn 15 TC để không bị ưu tiên bởi lỗi giới hạn tín chỉ. |
+| E2E-09 | Thử `CLOUD301` khi baseline còn 15 TC | Modal hiển thị `20 / 18 TC` và cảnh báo vượt giới hạn; xác nhận trả `CREDIT_LIMIT_EXCEEDED`; không ghi registration. |
+| E2E-10 | Thử đăng ký `AI301` | Sĩ số `40/40`; nút đăng ký bị khóa, không thêm môn. `COURSE_FULL` được bao phủ bởi integration/API test. |
+| E2E-11 | Đăng ký `UX205` và xác nhận | Thành công; tín chỉ 15 → 17; môn và sĩ số cập nhật. Modal hiển thị đúng giới hạn 18 TC. |
+| E2E-12 | Tìm lại `UX205` sau khi đăng ký | Hiển thị `Đã đăng ký` và nút bị khóa; không phát sinh request đăng ký trùng. Mã lỗi `DUPLICATE_REGISTRATION` được kiểm tra trong integration test/API. |
+| E2E-13 | Hủy `UX205` | Thành công; tín chỉ 17 → 15; sĩ số hoàn lại; dữ liệu trở về baseline. |
 | E2E-14 | Mở Thời khóa biểu | Chỉ có môn active, đúng ngày/giờ/phòng. |
 | E2E-15 | Đăng xuất rồi đăng nhập lại `23010690` | Session cũ bị xóa; dashboard tải lại được. |
 | E2E-16 | Đăng nhập `SV002` | Đăng nhập được; empty state hoặc 0 tín chỉ. |

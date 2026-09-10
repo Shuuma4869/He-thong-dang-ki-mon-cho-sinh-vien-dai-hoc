@@ -21,7 +21,19 @@ Nếu backend chưa chạy, mở terminal ở root:
 
 ```bash
 cd backend
-./mvnw.cmd spring-boot:run
+java -jar target/course-registration-0.0.1-SNAPSHOT.jar --server.port=8080
+```
+
+Nếu thấy `Web server failed to start. Port 8080 was already in use`, đây là lỗi trùng cổng, không phải lỗi test/source. Kiểm tra backend hiện có trước:
+
+```bash
+curl -i http://localhost:8080/api/students/23010690
+```
+
+Nếu trả `200`, dùng backend đó và không khởi động thêm. Nếu không trả `200` nhưng cổng vẫn bị chiếm, dùng cổng dự phòng:
+
+```bash
+java -jar target/course-registration-0.0.1-SNAPSHOT.jar --server.port=18080
 ```
 
 Nếu chạy frontend thủ công khi backend đang ở `18080`, tạo `frontend/.env.local` từ `frontend/.env.example` và sửa:
@@ -54,14 +66,14 @@ Lần chạy đầu `backend/mvnw.cmd` sẽ tải Maven và dependency vào cach
 ```bash
 cd backend
 ./mvnw.cmd verify
-./mvnw.cmd spring-boot:run
+java -jar target/course-registration-0.0.1-SNAPSHOT.jar --server.port=8080
 ```
 
 Nếu vẫn gặp `ClassNotFoundException`, chạy lại:
 
 ```bash
 ./mvnw.cmd clean verify
-./mvnw.cmd spring-boot:run
+java -jar target/course-registration-0.0.1-SNAPSHOT.jar --server.port=8080
 ```
 
 ## `npm run build` lỗi `spawn EPERM`
