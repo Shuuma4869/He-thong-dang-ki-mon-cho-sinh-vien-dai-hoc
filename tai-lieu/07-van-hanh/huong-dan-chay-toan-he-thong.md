@@ -38,14 +38,20 @@ Terminal backend:
 
 ```bash
 cd backend
-./mvnw.cmd spring-boot:run
+java -jar target/course-registration-0.0.1-SNAPSHOT.jar --server.port=8080
+```
+
+Nếu `8080` đã bị ứng dụng khác chiếm, không chạy thêm một backend trên cùng cổng; dùng `18080` và giữ cùng giá trị đó trong `VITE_API_BASE_URL`:
+
+```bash
+java -jar target/course-registration-0.0.1-SNAPSHOT.jar --server.port=18080
 ```
 
 Terminal frontend:
 
 ```bash
 cd frontend
-npm run dev
+VITE_API_BASE_URL=http://localhost:8080/api npm run dev
 ```
 
 - Backend: `http://localhost:8080`

@@ -47,6 +47,17 @@ git clone https://github.com/Shuuma4869/He-thong-dang-ki-mon-cho-sinh-vien-dai-h
 cd he-thong-dang-ky-mon-hoc
 ```
 
+Nếu đang kiểm tra các thay đổi trên nhánh `full-solution` trước khi nhánh này được chọn làm mặc định, phải chuyển nhánh ngay sau khi clone:
+
+```powershell
+git fetch origin
+git switch full-solution
+git pull --ff-only origin full-solution
+git branch --show-current
+```
+
+Kết quả cuối phải là `full-solution`; nếu đang ở `main`, chưa được chạy các bước test của nhánh nâng cấp.
+
 ### 2. Kiểm tra môi trường
 
 ```powershell
@@ -103,19 +114,29 @@ Mở terminal thứ nhất:
 
 ```bash
 cd backend
-./mvnw.cmd spring-boot:run
+java -jar target/course-registration-0.0.1-SNAPSHOT.jar --server.port=8080
 ```
 
-Backend chạy tại `http://localhost:8080` và đọc dữ liệu development trong `data/`.
+Lệnh `verify` ở bước 5 đã tạo JAR. Chạy JAR giúp runtime giống launcher Windows và không gặp lỗi classpath khi repository nằm trong đường dẫn có dấu. Backend đọc dữ liệu development trong `data/`.
+
+Trước khi chạy, nếu `8080` đã có backend của dự án thì dùng lại backend đó; nếu `8080` bị chương trình khác chiếm, chọn cổng dự phòng:
+
+```bash
+curl -fsS http://localhost:8080/api/students/23010690 >/dev/null && backend_port=8080
+if [ -z "$backend_port" ] && netstat -ano | grep -E '[:.]8080[[:space:]].*LISTENING' >/dev/null; then backend_port=18080; fi
+if [ -z "$backend_port" ]; then backend_port=8080; fi
+echo "Backend port: $backend_port"
+java -jar target/course-registration-0.0.1-SNAPSHOT.jar --server.port="$backend_port"
+```
 
 ### 8. Smoke test API
 
 Mở terminal thứ hai tại root repository:
 
-```powershell
-curl.exe -i http://localhost:8080/api/courses
-curl.exe -i http://localhost:8080/api/courses/OOP101
-curl.exe -i "http://localhost:8080/api/courses/search?keyword=OOP"
+```bash
+curl -i http://localhost:8080/api/courses
+curl -i http://localhost:8080/api/courses/OOP101
+curl -i "http://localhost:8080/api/courses/search?keyword=OOP"
 ```
 
 Kết quả mong đợi là HTTP `200`, JSON có `success: true` và dữ liệu học phần.
@@ -124,12 +145,19 @@ Kết quả mong đợi là HTTP `200`, JSON có `success: true` và dữ liệu
 
 Trong terminal thứ hai:
 
-```powershell
+```bash
 cd frontend
-npm run dev
+VITE_API_BASE_URL=http://localhost:8080/api npm run dev
 ```
 
 Frontend chạy tại `http://localhost:3000` và gọi API tại `http://localhost:8080/api`.
+
+Nếu backend dùng `18080`, thay cả hai URL bằng `18080`:
+
+```bash
+cd frontend
+VITE_API_BASE_URL=http://localhost:18080/api npm run dev
+```
 
 ### 10. Kiểm tra E2E thủ công
 

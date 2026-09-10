@@ -100,7 +100,6 @@ export const RegisteredCoursesPage: React.FC<RegisteredCoursesPageProps> = ({
               <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-600 uppercase tracking-wider">
                 <th className="py-3.5 px-4 w-28">Mã Môn</th>
                 <th className="py-3.5 px-4 min-w-[200px]">Tên Môn Học</th>
-                <th className="py-3.5 px-4 w-32">Nhóm/Lớp HP</th>
                 <th className="py-3.5 px-4 text-center w-20">Tín Chỉ</th>
                 <th className="py-3.5 px-4 min-w-[160px]">Giảng Viên</th>
                 <th className="py-3.5 px-4 min-w-[180px]">Lịch Học</th>
@@ -112,13 +111,13 @@ export const RegisteredCoursesPage: React.FC<RegisteredCoursesPageProps> = ({
             <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
               {isLoading ? (
                 <tr>
-                  <td colSpan={9} className="py-12 text-center text-slate-500">
+                  <td colSpan={8} className="py-12 text-center text-slate-500">
                     <div className="font-bold text-slate-700 text-sm">Đang tải danh sách đã đăng ký...</div>
                   </td>
                 </tr>
               ) : errorMessage ? (
                 <tr>
-                  <td colSpan={9} className="py-12 text-center text-slate-500">
+                  <td colSpan={8} className="py-12 text-center text-slate-500">
                     <div className="max-w-sm mx-auto space-y-3">
                       <p className="font-bold text-red-700 text-sm">Không thể tải danh sách đã đăng ký.</p>
                       <p className="text-xs text-slate-500">{errorMessage}</p>
@@ -133,7 +132,7 @@ export const RegisteredCoursesPage: React.FC<RegisteredCoursesPageProps> = ({
                 </tr>
               ) : registeredCourses.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="py-12 text-center text-slate-500">
+                  <td colSpan={8} className="py-12 text-center text-slate-500">
                     <div className="max-w-xs mx-auto space-y-3">
                       <FileSpreadsheet className="w-10 h-10 text-slate-300 mx-auto" />
                       <p className="font-bold text-slate-800 text-sm">Chưa có môn học nào được đăng ký</p>
@@ -159,6 +158,7 @@ export const RegisteredCoursesPage: React.FC<RegisteredCoursesPageProps> = ({
                     5: 'Thứ 5',
                     6: 'Thứ 6',
                     7: 'Thứ 7',
+                    8: 'Chủ Nhật',
                   };
 
                   return (
@@ -192,7 +192,7 @@ export const RegisteredCoursesPage: React.FC<RegisteredCoursesPageProps> = ({
                         <div className="flex items-center gap-1.5 text-slate-800">
                           <Clock className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                           <span className="font-semibold">
-                            {daysMap[schedule?.dayOfWeek || 2]}:
+                            {schedule?.dayLabel ?? daysMap[schedule?.dayOfWeek || 2] ?? 'Chưa có lịch'}:
                           </span>
                           <span>{schedule?.periods}</span>
                         </div>

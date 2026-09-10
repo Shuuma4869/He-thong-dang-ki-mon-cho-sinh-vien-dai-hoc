@@ -18,11 +18,26 @@ javac -version
 
 Từ root repository:
 
-Các lệnh dưới đây dùng Git Bash. Nếu dùng PowerShell, thay `./mvnw.cmd` bằng `.\mvnw.cmd`.
+Các lệnh dưới đây dùng Git Bash. Nếu dùng PowerShell, thay `./mvnw.cmd` bằng `.\mvnw.cmd` ở các bước test.
 
 ```bash
 cd backend
-./mvnw.cmd spring-boot:run
+java -jar target/course-registration-0.0.1-SNAPSHOT.jar --server.port=8080
+```
+
+Lệnh `verify` phải được chạy trước để tạo JAR. Dùng JAR cho runtime tránh lỗi classpath Windows khi repository nằm trong đường dẫn có dấu.
+
+Trước khi chạy, kiểm tra cổng 8080:
+
+```bash
+curl -fsS http://localhost:8080/api/students/23010690 >/dev/null && echo "Backend da chay tren 8080"
+netstat -ano | grep -E '[:.]8080[[:space:]].*LISTENING'
+```
+
+Nếu request health không trả về nhưng `netstat` cho thấy 8080 đang bị chương trình khác chiếm, chạy JAR ở cổng 18080:
+
+```bash
+java -jar target/course-registration-0.0.1-SNAPSHOT.jar --server.port=18080
 ```
 
 Backend chạy tại:
