@@ -24,7 +24,7 @@ Integration test API nằm tại:
 
 Chạy bằng:
 
-```powershell
+```bash
 cd backend
-.\mvnw.cmd verify
+./mvnw.cmd verify
 ```

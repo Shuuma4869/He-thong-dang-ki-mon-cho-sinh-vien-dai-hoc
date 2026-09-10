@@ -19,9 +19,9 @@ http://localhost:8080/api/courses
 
 Nếu backend chưa chạy, mở terminal ở root:
 
-```powershell
+```bash
 cd backend
-.\mvnw.cmd spring-boot:run
+./mvnw.cmd spring-boot:run
 ```
 
 Nếu chạy frontend thủ công khi backend đang ở `18080`, tạo `frontend/.env.local` từ `frontend/.env.example` và sửa:
@@ -45,23 +45,23 @@ Cài JDK 21 và mở terminal mới để cập nhật `JAVA_HOME`/`PATH`.
 
 ## Maven Wrapper tải dependency chậm
 
-Lần chạy đầu `backend\mvnw.cmd` sẽ tải Maven và dependency vào cache người dùng. Đây là hành vi bình thường.
+Lần chạy đầu `backend/mvnw.cmd` sẽ tải Maven và dependency vào cache người dùng. Đây là hành vi bình thường.
 
 ## Backend lỗi khi project nằm trong đường dẫn có dấu
 
 Ưu tiên clone repository vào đường dẫn ngắn, không dấu. Sau đó chạy:
 
-```powershell
+```bash
 cd backend
-.\mvnw.cmd verify
-.\mvnw.cmd spring-boot:run
+./mvnw.cmd verify
+./mvnw.cmd spring-boot:run
 ```
 
 Nếu vẫn gặp `ClassNotFoundException`, chạy lại:
 
-```powershell
-.\mvnw.cmd clean verify
-.\mvnw.cmd spring-boot:run
+```bash
+./mvnw.cmd clean verify
+./mvnw.cmd spring-boot:run
 ```
 
 ## `npm run build` lỗi `spawn EPERM`

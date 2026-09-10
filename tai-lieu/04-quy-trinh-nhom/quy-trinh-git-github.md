@@ -25,11 +25,11 @@ git switch -c feature/<ten-module>
 
 Sau khi hoàn thành:
 
-```powershell
+```bash
 cd backend
-.\mvnw.cmd test
-.\mvnw.cmd verify
-cd ..\frontend
+./mvnw.cmd test
+./mvnw.cmd verify
+cd ../frontend
 npm ci
 npm run typecheck
 npm run build

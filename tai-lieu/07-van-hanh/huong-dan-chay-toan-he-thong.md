@@ -1,10 +1,12 @@
 # Hướng dẫn chạy toàn hệ thống
 
-Quy trình chính được chạy bằng các lệnh PowerShell trực tiếp để từng bước có kết quả rõ ràng.
+Quy trình chính được chạy bằng Git Bash để từng bước có kết quả rõ ràng. Người dùng PowerShell có thể dùng cú pháp Maven Wrapper tương đương được ghi chú bên dưới.
 
 ## Chuẩn bị và kiểm tra
 
-```powershell
+Khối lệnh này dùng Git Bash. Trong PowerShell, dùng `.\mvnw.cmd` thay cho `./mvnw.cmd`.
+
+```bash
 git --version
 java -version
 node -v
@@ -14,9 +16,9 @@ cd frontend
 npm ci
 npm run typecheck
 npm run build
-cd ..\backend
-.\mvnw.cmd test
-.\mvnw.cmd verify
+cd ../backend
+./mvnw.cmd test
+./mvnw.cmd verify
 ```
 
 `test` chạy nhóm test Surefire (unit, controller slice và regression). `verify` chạy lại nhóm này, build backend và chạy integration test `*IT.java` bằng Maven Failsafe.
@@ -34,14 +36,14 @@ Hai script này dùng `backend\mvnw.cmd clean verify`, vì vậy không bỏ qua
 
 Terminal backend:
 
-```powershell
+```bash
 cd backend
-.\mvnw.cmd spring-boot:run
+./mvnw.cmd spring-boot:run
 ```
 
 Terminal frontend:
 
-```powershell
+```bash
 cd frontend
 npm run dev
 ```
@@ -52,10 +54,10 @@ npm run dev
 
 ## Smoke test
 
-```powershell
-curl.exe -i http://localhost:8080/api/courses
-curl.exe -i http://localhost:8080/api/courses/OOP101
-curl.exe -i "http://localhost:8080/api/courses/search?keyword=OOP"
+```bash
+curl -i http://localhost:8080/api/courses
+curl -i http://localhost:8080/api/courses/OOP101
+curl -i "http://localhost:8080/api/courses/search?keyword=OOP"
 ```
 
 Ba request phải trả HTTP `200` và JSON dữ liệu hợp lệ. Sau đó thực hiện checklist trong `kiem-thu/kiem-thu-e2e.md`.

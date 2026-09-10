@@ -18,9 +18,11 @@ javac -version
 
 Từ root repository:
 
-```powershell
+Các lệnh dưới đây dùng Git Bash. Nếu dùng PowerShell, thay `./mvnw.cmd` bằng `.\mvnw.cmd`.
+
+```bash
 cd backend
-.\mvnw.cmd spring-boot:run
+./mvnw.cmd spring-boot:run
 ```
 
 Backend chạy tại:
@@ -43,10 +45,10 @@ http://localhost:8080/api/courses
 
 ## Kiểm tra backend
 
-```powershell
+```bash
 cd backend
-.\mvnw.cmd test
-.\mvnw.cmd verify
+./mvnw.cmd test
+./mvnw.cmd verify
 ```
 
 `test` chạy 99 unit/controller-slice/regression test bằng Surefire. `verify` chạy lại nhóm này, build JAR và chạy thêm 10 integration test bằng Failsafe.

@@ -68,9 +68,11 @@ cd ..
 
 ### 4. Chạy unit test
 
-```powershell
+Các lệnh Maven trong hướng dẫn dùng cú pháp Git Bash. Nếu dùng PowerShell, thay `./mvnw.cmd` bằng `.\mvnw.cmd`.
+
+```bash
 cd backend
-.\mvnw.cmd test
+./mvnw.cmd test
 cd ..
 ```
 
@@ -78,9 +80,9 @@ Lệnh này chạy 99 test thuộc nhóm Surefire, gồm unit test cho service/v
 
 ### 5. Chạy integration test và build backend
 
-```powershell
+```bash
 cd backend
-.\mvnw.cmd verify
+./mvnw.cmd verify
 cd ..
 ```
 
@@ -99,9 +101,9 @@ cd ..
 
 Mở terminal thứ nhất:
 
-```powershell
+```bash
 cd backend
-.\mvnw.cmd spring-boot:run
+./mvnw.cmd spring-boot:run
 ```
 
 Backend chạy tại `http://localhost:8080` và đọc dữ liệu development trong `data/`.
