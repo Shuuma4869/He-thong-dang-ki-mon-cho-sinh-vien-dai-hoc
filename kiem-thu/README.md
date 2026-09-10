@@ -9,6 +9,7 @@ Nội dung chính:
 - `chien-luoc-kiem-thu.md`: chiến lược kiểm thử.
 - `ma-tran-test-case.md`: ma trận test case.
 - `kiem-thu-api.md`, `kiem-thu-frontend.md`, `kiem-thu-e2e.md`: kiểm thử theo lớp.
+- Kế hoạch chạy đầy đủ: `../tai-lieu/07-van-hanh/ke-hoach-kiem-tra-toan-he-thong.md`.
 - `unit-test/`: tài liệu unit test theo module.
 
 Các lệnh chính:

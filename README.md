@@ -38,6 +38,8 @@ Dự án phục vụ học tập/demo OOP, chưa phải hệ thống production.
 
 Máy cần Git, JDK 21, Node.js 20 trở lên và npm 10 trở lên. Maven được chạy bằng Wrapper trong `backend/`; lần chạy đầu cần Internet để tải dependency.
 
+Kế hoạch đầy đủ theo từng bước, lệnh chạy và kết quả mong đợi nằm tại [`tai-lieu/07-van-hanh/ke-hoach-kiem-tra-toan-he-thong.md`](tai-lieu/07-van-hanh/ke-hoach-kiem-tra-toan-he-thong.md).
+
 ### 1. Clone repository
 
 ```powershell
@@ -155,4 +157,4 @@ Nếu dùng Windows, các wrapper trong `scripts/` thực hiện cùng quy trìn
 
 ## Lưu ý
 
-Dự án dùng JSON File IO, phù hợp học tập và demo. Chưa có transaction, xử lý đồng thời, phân quyền production hoặc cổng quản trị/giảng viên.
+Dự án dùng JSON File IO, chưa có transaction, xử lý đồng thời, chưa có e2e testing tự động, phân quyền production hoặc cổng quản trị/giảng viên.
