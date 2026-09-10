@@ -6,6 +6,15 @@ Quy trình áp dụng cho repository hiện tại:
 
 Các lệnh dùng PowerShell trên Windows. Maven dùng `backend/mvnw.cmd`, không cần cài Maven riêng.
 
+## 0. Bức tranh hệ thống trước khi chạy
+
+- Frontend React/Vite chạy ở port `3000`, gọi REST API qua `VITE_API_BASE_URL`.
+- Backend Spring Boot chạy ở port `8080`, nhận request tại `/api`, áp dụng service và validator rồi đọc/ghi JSON qua repository/file.
+- Dữ liệu runtime development nằm trong `data/`: `students.json`, `lecturers.json`, `courses.json` và `registrations.json`.
+- Unit test kiểm tra từng lớp hoặc controller slice; integration test `*IT.java` khởi động Spring context và dùng fixture riêng trong `backend/src/test/resources/integration-data/`.
+- `mvnw.cmd verify` là mốc kiểm tra backend đầy đủ: Surefire → package → Failsafe.
+- `scripts\kiem-tra-du-an.bat` và `scripts\chay-du-an.bat` là launcher tùy chọn. Hiểu và chạy các lệnh thủ công trong tài liệu này giúp chẩn đoán từng tầng khi launcher dừng ở một bước.
+
 ## 1. Clone repository
 
 ```powershell
@@ -94,7 +103,15 @@ Mục đích: kiểm tra TypeScript và tạo build production. Kỳ vọng: typ
 
 ## 7. Backup dữ liệu trước E2E
 
-Đăng ký/hủy đăng ký có thể ghi JSON. Tạo bản sao baseline ngoài repository:
+### Vì sao kế hoạch có bước backup và khôi phục?
+
+Dự án dùng JSON File IO thay cho database. Khi chạy backend thật, các thao tác E2E như đăng ký `UX205` và hủy `UX205` sẽ ghi trực tiếp vào `data/registrations.json` và cập nhật sĩ số trong `data/courses.json`. Đây là mutation thật của dữ liệu development, không phải dữ liệu giả chỉ tồn tại trên giao diện.
+
+Nếu không khôi phục sau E2E, dữ liệu baseline có thể không còn trạng thái 5 môn và 15/18 tín chỉ. Những lần demo hoặc kiểm tra tiếp theo khi đó có thể cho kết quả khác, đồng thời `git diff -- data` sẽ xuất hiện thay đổi ngoài ý muốn. Vì vậy backup/restore là bước bảo vệ tính lặp lại của quy trình kiểm thử, không phải một chức năng mới của ứng dụng.
+
+Integration test tự động không cần backup thủ công vì các lớp `*IT.java` sao chép fixture vào thư mục tạm `@TempDir` và override `app.data-dir`; chúng không đọc/ghi `data/` development. Các health/smoke request trong kế hoạch đều là thao tác đọc nên cũng không làm thay đổi dữ liệu. Bước backup chỉ cần thiết trước nhóm E2E thủ công có đăng ký hoặc hủy đăng ký qua backend đang chạy thật.
+
+Tạo bản sao baseline ngoài repository:
 
 ```powershell
 $backupDir = Join-Path $env:TEMP 'course-registration-data-backup'
@@ -178,7 +195,7 @@ Thực hiện tuần tự trên `http://localhost:3000`, ghi PASS/FAIL sau mỗi
 
 ## 12. Khôi phục dữ liệu
 
-Dừng frontend/backend rồi chạy tại root:
+Dừng frontend/backend rồi chạy tại root. Thao tác này đưa dữ liệu development về đúng trạng thái trước E2E để người tiếp theo có thể lặp lại cùng test case với cùng kết quả mong đợi:
 
 ```powershell
 $backupDir = Join-Path $env:TEMP 'course-registration-data-backup'
