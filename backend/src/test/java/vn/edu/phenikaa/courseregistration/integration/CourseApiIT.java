@@ -43,7 +43,7 @@ class CourseApiIT {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.length()").value(6))
                 .andExpect(jsonPath("$.data[0].courseId").value("CORE101"))
-                .andExpect(jsonPath("$.data[0].lecturer.fullName").value("Giang vien Test"))
+                .andExpect(jsonPath("$.data[0].lecturer.fullName").value("TS. Giảng viên Test"))
                 .andExpect(jsonPath("$.data[0].schedules[0].room").value("A101"));
     }
 
@@ -63,6 +63,18 @@ class CourseApiIT {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.length()").value(1))
                 .andExpect(jsonPath("$.data[0].courseId").value("DATA606"));
+    }
+
+    @Test
+    void searchCoursesMatchesPartialLecturerTitleAndUnaccentedName() throws Exception {
+        mockMvc.perform(get("/api/courses/search").param("keyword", "TS."))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.length()").value(6))
+                .andExpect(jsonPath("$.data[0].lecturer.fullName").value("TS. Giảng viên Test"));
+
+        mockMvc.perform(get("/api/courses/search").param("keyword", "giang vien"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.length()").value(6));
     }
 
     @Test
