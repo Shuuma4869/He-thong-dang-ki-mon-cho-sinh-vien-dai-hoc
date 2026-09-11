@@ -103,6 +103,9 @@ newEnd == existingStart
 | LOGIN_SUCCESS | 23010690 | password bất kỳ | success |
 | EMPTY_REGISTRATION | SV002 | none | `courses: []`, `totalCredits: 0` |
 | SEARCH_BY_ID | none | OOP | OOP101 |
+| SEARCH_BY_LECTURER_TITLE | none | TS. | Các giảng viên và học phần có học vị TS. |
+| SEARCH_BY_LECTURER_NAME | none | Tên có dấu hoặc không dấu | Các học phần của giảng viên tương ứng |
+| SEARCH_BY_LECTURER_ID | none | GV001 | Các học phần của GV001 |
 | SEARCH_ALL_DATA | none | UX205 hoặc CLOUD301 | tìm trên toàn bộ 40 môn |
 | PAGINATION | none | page 1-4 | mỗi trang tối đa 10 môn |
 | REGISTER_SUCCESS | 23010690 | UX205 | success, totalCredits 15 -> 17 |
@@ -119,8 +122,11 @@ newEnd == existingStart
 - `Web` -> WEB201.
 - `UX205` -> UX205.
 - `Cloud` -> CLOUD301.
+- `TS.` -> gợi ý giảng viên có học vị TS. và các học phần họ phụ trách.
+- `pham quoc` -> các học phần của `TS. Phạm Quốc Bảo`.
+- `GV001` -> các học phần do giảng viên có mã GV001 phụ trách.
 
-Search là lowercase contains theo JVM locale root, không cam kết bỏ dấu tiếng Việt.
+Search là contains sau khi chuẩn hóa chữ thường và bỏ dấu tiếng Việt, kể cả quy đổi `Đ/đ` thành `D/d`. Frontend hiển thị riêng gợi ý giảng viên và học phần liên quan; backend áp dụng cùng quy tắc cho danh sách kết quả.
 
 ## Data integrity
 

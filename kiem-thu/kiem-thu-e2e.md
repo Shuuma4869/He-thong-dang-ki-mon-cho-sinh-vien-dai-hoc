@@ -6,7 +6,12 @@ Luồng E2E cần kiểm tra sau khi chạy backend và frontend:
 2. Đăng nhập `23010690`.
 3. Xem Dashboard.
 4. Mở Hồ sơ sinh viên.
-5. Mở Đăng ký môn học, tìm kiếm môn.
+5. Mở Đăng ký môn học và kiểm tra tìm kiếm:
+   - Gõ một phần mã học phần như `OOP`, chọn học phần được gợi ý và xác nhận modal chi tiết mở đúng.
+   - Gõ `TS.`, xác nhận danh sách gợi ý có nhóm **Giảng viên** và **Học phần liên quan**.
+   - Chọn một giảng viên, xác nhận trang danh sách chỉ còn các học phần của giảng viên đó.
+   - Tìm tên giảng viên không dấu, ví dụ `pham quoc`, và xác nhận kết quả giống khi nhập tên có dấu.
+   - Tìm bằng mã giảng viên như `GV001`, xác nhận các học phần liên quan xuất hiện.
 6. Xem chi tiết một môn.
 7. Thử môn trùng lịch và môn vượt giới hạn tín chỉ khi dữ liệu baseline còn nguyên.
 8. Thử môn đầy và xác nhận nút đăng ký bị khóa.

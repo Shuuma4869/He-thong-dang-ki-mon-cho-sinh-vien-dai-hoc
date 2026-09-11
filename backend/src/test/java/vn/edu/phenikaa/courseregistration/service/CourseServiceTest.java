@@ -54,7 +54,7 @@ class CourseServiceTest {
     void searchReturnsCoursesWithLecturers() {
         Course course = new Course("OOP101", "Lap trinh huong doi tuong", 3, "GV001", 60, 20, List.of());
         Lecturer lecturer = new Lecturer("GV001", "Tran Thi B", "Khoa Cong nghe thong tin");
-        when(courseRepository.search("oop")).thenReturn(List.of(course));
+        when(courseRepository.findAll()).thenReturn(List.of(course));
         when(lecturerRepository.findAll()).thenReturn(List.of(lecturer));
         CourseService service = new CourseService(courseRepository, lecturerRepository);
 
@@ -64,6 +64,30 @@ class CourseServiceTest {
                     assertThat(result.course()).isSameAs(course);
                     assertThat(result.lecturer()).isSameAs(lecturer);
                 });
+    }
+
+    @Test
+    void searchMatchesLecturerUsingPartialTitleNameIdAndUnaccentedText() {
+        Course oop = new Course("OOP101", "Lap trinh huong doi tuong", 3, "GV001", 60, 20, List.of());
+        Course db = new Course("DBI101", "Co so du lieu", 3, "GV002", 50, 10, List.of());
+        Lecturer oopLecturer = new Lecturer("GV001", "TS. Phạm Quốc Bảo", "Khoa Công nghệ thông tin");
+        Lecturer dbLecturer = new Lecturer("GV002", "TS. Đặng Minh Khoa", "Khoa Công nghệ thông tin");
+        when(courseRepository.findAll()).thenReturn(List.of(oop, db));
+        when(lecturerRepository.findAll()).thenReturn(List.of(oopLecturer, dbLecturer));
+        CourseService service = new CourseService(courseRepository, lecturerRepository);
+
+        assertThat(service.search("TS."))
+                .extracting(result -> result.course().getCourseId())
+                .containsExactly("OOP101", "DBI101");
+        assertThat(service.search("pham quoc"))
+                .extracting(result -> result.course().getCourseId())
+                .containsExactly("OOP101");
+        assertThat(service.search("GV002"))
+                .extracting(result -> result.course().getCourseId())
+                .containsExactly("DBI101");
+        assertThat(service.search("dang minh"))
+                .extracting(result -> result.course().getCourseId())
+                .containsExactly("DBI101");
     }
 
     @Test

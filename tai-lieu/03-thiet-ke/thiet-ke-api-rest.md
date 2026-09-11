@@ -109,7 +109,7 @@ Trả chi tiết một course.
 
 ### GET `/api/courses/search?keyword=...`
 
-Tìm theo `courseId` hoặc `courseName` bằng lowercase contains. Không cam kết accent folding.
+Tìm theo chuỗi con trong `courseId`, `courseName`, `lecturerId`, tên giảng viên hoặc khoa của giảng viên. Việc so khớp không phân biệt hoa thường và dấu tiếng Việt, kể cả `Đ/đ`; ví dụ `TS.`, `pham quoc` và `GV001` đều là từ khóa hợp lệ.
 
 Course item:
 

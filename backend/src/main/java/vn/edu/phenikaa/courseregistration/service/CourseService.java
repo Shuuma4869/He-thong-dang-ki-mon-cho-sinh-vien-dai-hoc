@@ -1,9 +1,11 @@
 package vn.edu.phenikaa.courseregistration.service;
 
+import java.text.Normalizer;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import vn.edu.phenikaa.courseregistration.exception.CourseNotFoundException;
@@ -19,6 +21,8 @@ import vn.edu.phenikaa.courseregistration.repository.LecturerRepository;
  */
 @Service
 public class CourseService {
+    private static final Pattern DIACRITICS = Pattern.compile("\\p{M}+");
+
     private final CourseRepository courseRepository;
     private final LecturerRepository lecturerRepository;
 
@@ -38,7 +42,14 @@ public class CourseService {
     }
 
     public List<CourseWithLecturer> search(String keyword) {
-        return attachLecturers(courseRepository.search(keyword));
+        if (keyword == null || keyword.isBlank()) {
+            return findAll();
+        }
+
+        String normalizedKeyword = normalizeSearchText(keyword);
+        return findAll().stream()
+                .filter(result -> matchesSearch(result, normalizedKeyword))
+                .toList();
     }
 
     private List<CourseWithLecturer> attachLecturers(List<Course> courses) {
@@ -69,5 +80,34 @@ public class CourseService {
 
     private String normalizeId(String id) {
         return id == null ? "" : id.trim().toLowerCase(Locale.ROOT);
+    }
+
+    private boolean matchesSearch(CourseWithLecturer result, String normalizedKeyword) {
+        Course course = result.course();
+        Lecturer lecturer = result.lecturer();
+
+        return containsNormalized(course.getCourseId(), normalizedKeyword)
+                || containsNormalized(course.getCourseName(), normalizedKeyword)
+                || containsNormalized(course.getLecturerId(), normalizedKeyword)
+                || containsNormalized(lecturer.getId(), normalizedKeyword)
+                || containsNormalized(lecturer.getFullName(), normalizedKeyword)
+                || containsNormalized(lecturer.getFaculty(), normalizedKeyword);
+    }
+
+    private boolean containsNormalized(String value, String normalizedKeyword) {
+        return normalizeSearchText(value).contains(normalizedKeyword);
+    }
+
+    private String normalizeSearchText(String value) {
+        if (value == null) {
+            return "";
+        }
+
+        String decomposed = Normalizer.normalize(value, Normalizer.Form.NFD);
+        return DIACRITICS.matcher(decomposed)
+                .replaceAll("")
+                .toLowerCase(Locale.ROOT)
+                .replace('đ', 'd')
+                .trim();
     }
 }
