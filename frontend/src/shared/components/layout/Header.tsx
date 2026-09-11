@@ -36,6 +36,26 @@ interface HeaderProps {
   onOpenCourseDetail?: (course: Course) => void;
 }
 
+interface LecturerSuggestion {
+  id: string;
+  name: string;
+  faculty?: string;
+  courseCount: number;
+}
+
+const normalizeSearchText = (value?: string): string => {
+  return (value ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/đ/g, 'd')
+    .trim();
+};
+
+const includesSearch = (value: string | undefined, normalizedQuery: string): boolean => {
+  return normalizeSearchText(value).includes(normalizedQuery);
+};
+
 export const Header: React.FC<HeaderProps> = ({
   student,
   currentSemester,
@@ -61,13 +81,50 @@ export const Header: React.FC<HeaderProps> = ({
 
   const matchingCourses = React.useMemo(() => {
     if (!searchQuery.trim() || !courses.length) return [];
-    const q = searchQuery.toLowerCase().trim();
+    const q = normalizeSearchText(searchQuery);
     return courses.filter(
       (c) =>
-        c.code.toLowerCase().includes(q) ||
-        c.name.toLowerCase().includes(q) ||
-        c.lecturer.toLowerCase().includes(q)
-    ).slice(0, 6);
+        includesSearch(c.code, q) ||
+        includesSearch(c.name, q) ||
+        includesSearch(c.lecturer, q) ||
+        includesSearch(c.lecturerId, q) ||
+        includesSearch(c.faculty, q)
+    ).slice(0, 8);
+  }, [searchQuery, courses]);
+
+  const matchingLecturers = React.useMemo<LecturerSuggestion[]>(() => {
+    if (!searchQuery.trim() || !courses.length) return [];
+
+    const q = normalizeSearchText(searchQuery);
+    const lecturersById = new Map<string, LecturerSuggestion>();
+
+    courses.forEach((course) => {
+      if (
+        !includesSearch(course.lecturer, q) &&
+        !includesSearch(course.lecturerId, q) &&
+        !includesSearch(course.faculty, q)
+      ) {
+        return;
+      }
+
+      const id = course.lecturerId ?? course.lecturer;
+      const existing = lecturersById.get(id);
+      if (existing) {
+        existing.courseCount += 1;
+        return;
+      }
+
+      lecturersById.set(id, {
+        id,
+        name: course.lecturer,
+        faculty: course.faculty,
+        courseCount: 1,
+      });
+    });
+
+    return Array.from(lecturersById.values())
+      .sort((a, b) => a.name.localeCompare(b.name, 'vi'))
+      .slice(0, 5);
   }, [searchQuery, courses]);
 
   useEffect(() => {
@@ -87,6 +144,12 @@ export const Header: React.FC<HeaderProps> = ({
     } else {
       onNavigate('courses');
     }
+  };
+
+  const handleSelectLecturerSuggestion = (lecturer: LecturerSuggestion) => {
+    onSearchChange(lecturer.name);
+    setIsSearchFocused(false);
+    onNavigate('courses');
   };
 
   const studentEmail = student.email ?? 'Chưa đồng bộ email';
@@ -125,63 +188,108 @@ export const Header: React.FC<HeaderProps> = ({
         {isSearchFocused && searchQuery.trim().length > 0 && (
           <div className="absolute left-0 right-0 top-12 bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150">
             <div className="px-4 py-2.5 bg-slate-50 border-b border-slate-100 flex items-center justify-between text-xs font-bold text-slate-500 uppercase tracking-wider">
-              <span>Gợi Ý Môn Học ({matchingCourses.length})</span>
+              <span>Gợi Ý Tìm Kiếm ({matchingLecturers.length + matchingCourses.length})</span>
               <span className="text-[10px] text-blue-600 font-normal">Nhấn chọn để xem chi tiết</span>
             </div>
 
-            {matchingCourses.length === 0 ? (
+            {matchingLecturers.length === 0 && matchingCourses.length === 0 ? (
               <div className="p-6 text-center text-xs text-slate-500">
-                Không tìm thấy môn học nào khớp với "<strong>{searchQuery}</strong>"
+                Không tìm thấy học phần hoặc giảng viên khớp với "<strong>{searchQuery}</strong>"
               </div>
             ) : (
-              <div className="divide-y divide-slate-100 max-h-80 overflow-y-auto">
-                {matchingCourses.map((course) => {
-                  const isRegistered = registeredCourseIds.includes(course.id);
-                  const isFull = course.enrolled >= course.capacity;
-
-                  return (
-                    <div
-                      key={course.id}
-                      onClick={() => handleSelectCourseSuggestion(course)}
-                      className="p-3 hover:bg-blue-50/60 transition-colors cursor-pointer flex items-center justify-between gap-3 group"
-                    >
-                      <div className="space-y-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="px-1.5 py-0.5 font-mono text-[10px] font-bold bg-blue-100 text-blue-800 rounded">
-                            {course.code}
-                          </span>
-                          <span className="text-xs font-bold text-slate-900 truncate group-hover:text-blue-700 transition-colors">
-                            {course.name}
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-slate-500 truncate flex items-center gap-2">
-                          <span>{course.lecturer}</span>
-                          <span>•</span>
-                          <span>{course.lecturerId ?? 'Chưa đồng bộ'}</span>
-                        </p>
-                      </div>
-
-                      <div className="flex items-center gap-2 shrink-0">
-                        <span className="px-2 py-0.5 text-[10px] font-bold bg-slate-100 text-slate-700 rounded">
-                          {course.credits} TC
-                        </span>
-                        {isRegistered ? (
-                          <span className="px-2 py-0.5 text-[10px] font-bold bg-blue-600 text-white rounded-full">
-                            Đã đăng ký
-                          </span>
-                        ) : isFull ? (
-                          <span className="px-2 py-0.5 text-[10px] font-bold bg-red-100 text-red-700 rounded-full">
-                            Đã đầy
-                          </span>
-                        ) : (
-                          <span className="px-2 py-0.5 text-[10px] font-bold bg-emerald-100 text-emerald-700 rounded-full">
-                            Còn chỗ
-                          </span>
-                        )}
-                      </div>
+              <div className="max-h-96 overflow-y-auto">
+                {matchingLecturers.length > 0 && (
+                  <div>
+                    <div className="px-4 py-2 bg-slate-50/80 border-b border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                      Giảng viên
                     </div>
-                  );
-                })}
+                    <div className="divide-y divide-slate-100">
+                      {matchingLecturers.map((lecturer) => (
+                        <button
+                          type="button"
+                          key={lecturer.id}
+                          onClick={() => handleSelectLecturerSuggestion(lecturer)}
+                          className="w-full p-3 hover:bg-blue-50/60 transition-colors cursor-pointer flex items-center justify-between gap-3 text-left group"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+                              <UserCheck className="w-4 h-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-xs font-bold text-slate-900 truncate group-hover:text-blue-700 transition-colors">
+                                {lecturer.name}
+                              </p>
+                              <p className="text-[11px] text-slate-500 truncate">
+                                {lecturer.id} • {lecturer.faculty ?? 'Chưa đồng bộ khoa'}
+                              </p>
+                            </div>
+                          </div>
+                          <span className="px-2 py-1 text-[10px] font-bold bg-indigo-50 text-indigo-700 rounded-full shrink-0">
+                            {lecturer.courseCount} học phần
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {matchingCourses.length > 0 && (
+                  <div>
+                    <div className="px-4 py-2 bg-slate-50/80 border-y border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                      Học phần liên quan
+                    </div>
+                    <div className="divide-y divide-slate-100">
+                      {matchingCourses.map((course) => {
+                        const isRegistered = registeredCourseIds.includes(course.id);
+                        const isFull = course.enrolled >= course.capacity;
+
+                        return (
+                          <button
+                            type="button"
+                            key={course.id}
+                            onClick={() => handleSelectCourseSuggestion(course)}
+                            className="w-full p-3 hover:bg-blue-50/60 transition-colors cursor-pointer flex items-center justify-between gap-3 text-left group"
+                          >
+                            <div className="space-y-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="px-1.5 py-0.5 font-mono text-[10px] font-bold bg-blue-100 text-blue-800 rounded">
+                                  {course.code}
+                                </span>
+                                <span className="text-xs font-bold text-slate-900 truncate group-hover:text-blue-700 transition-colors">
+                                  {course.name}
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-slate-500 truncate flex items-center gap-2">
+                                <span>{course.lecturer}</span>
+                                <span>•</span>
+                                <span>{course.lecturerId ?? 'Chưa đồng bộ'}</span>
+                              </p>
+                            </div>
+
+                            <div className="flex items-center gap-2 shrink-0">
+                              <span className="px-2 py-0.5 text-[10px] font-bold bg-slate-100 text-slate-700 rounded">
+                                {course.credits} TC
+                              </span>
+                              {isRegistered ? (
+                                <span className="px-2 py-0.5 text-[10px] font-bold bg-blue-600 text-white rounded-full">
+                                  Đã đăng ký
+                                </span>
+                              ) : isFull ? (
+                                <span className="px-2 py-0.5 text-[10px] font-bold bg-red-100 text-red-700 rounded-full">
+                                  Đã đầy
+                                </span>
+                              ) : (
+                                <span className="px-2 py-0.5 text-[10px] font-bold bg-emerald-100 text-emerald-700 rounded-full">
+                                  Còn chỗ
+                                </span>
+                              )}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
