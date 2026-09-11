@@ -23,7 +23,7 @@ Fixture nằm trong `backend/src/test/resources/integration-data/`. Trước m�
 |---|---|---|
 | Course API | Danh sách đọc từ course/lecturer repository và trả schedule | PASS |
 | Course detail | Trả đúng học phần, giảng viên và sĩ số | PASS |
-| Course search | Tìm không phân biệt hoa thường | PASS |
+| Course search | Tìm một phần theo mã/tên học phần và mã/tên/khoa giảng viên, không phân biệt hoa thường hoặc dấu tiếng Việt | PASS |
 | Course error | Course không tồn tại trả `COURSE_NOT_FOUND` | PASS |
 | Registration | Đăng ký thành công, persistence và tăng sĩ số | PASS |
 | Duplicate | Trả `DUPLICATE_REGISTRATION`, file không đổi | PASS |
@@ -32,7 +32,7 @@ Fixture nằm trong `backend/src/test/resources/integration-data/`. Trước m�
 | Schedule | Trả `SCHEDULE_CONFLICT` | PASS |
 | Cancellation | Hủy đăng ký, persistence và giảm sĩ số | PASS |
 
-Kết quả gần nhất: 10 test, 0 failure, 0 error, 0 skipped.
+Kết quả gần nhất: 11 integration test, 0 failure, 0 error, 0 skipped. Báo cáo chi tiết do Maven Failsafe sinh ra khi chạy `mvnw.cmd verify`.
 
 ## Smoke test và E2E
 

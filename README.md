@@ -137,6 +137,7 @@ Mở terminal thứ hai tại root repository:
 curl -i http://localhost:8080/api/courses
 curl -i http://localhost:8080/api/courses/OOP101
 curl -i "http://localhost:8080/api/courses/search?keyword=OOP"
+curl -i "http://localhost:8080/api/courses/search?keyword=TS."
 ```
 
 Kết quả mong đợi là HTTP `200`, JSON có `success: true` và dữ liệu học phần.
