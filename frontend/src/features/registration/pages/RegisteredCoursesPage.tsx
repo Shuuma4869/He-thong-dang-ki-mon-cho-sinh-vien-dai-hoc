@@ -174,10 +174,6 @@ export const RegisteredCoursesPage: React.FC<RegisteredCoursesPageProps> = ({
                         </span>
                       </td>
 
-                      <td className="py-4 px-4 font-medium text-slate-700">
-                        {course.classGroup}
-                      </td>
-
                       <td className="py-4 px-4 text-center">
                         <span className="inline-block px-2 py-0.5 bg-blue-50 text-blue-800 font-bold rounded border border-blue-100">
                           {course.credits} TC
